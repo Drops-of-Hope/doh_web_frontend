@@ -1,10 +1,11 @@
-import NavBar from "@/components/organisms/NavBar";
+import { NavBar, Hero } from "@/components";
 
 export default function Home() {
+
   return (
     <main>
       <NavBar />
-      
+      <Hero />
     </main>
   );
 }
