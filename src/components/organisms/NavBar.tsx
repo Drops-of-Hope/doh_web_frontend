@@ -23,7 +23,7 @@ export default function Navbar() {
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="mx-auto flex items-center justify-between">
         
         <div className="flex items-center -space-x-2">
           <Image
