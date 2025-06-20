@@ -1,5 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
+import { Button } from "@/components";
+import { FaArrowDown } from 'react-icons/fa';
 
 export default function Hero() {
   return (
@@ -59,8 +61,14 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className='h-full w-[20%] flex items-center justify-center'>
-              middle part where button goes
+            <div className='h-full w-[20%] flex justify-center p-4'>
+              <div className="flex items-center gap-2 z-1 mt-auto">
+                <Button 
+                    title="EXPLORE" 
+                    rightIcon={<FaArrowDown size={16} className="text-white-primary" />}
+                    containerStyles="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-3xl text-white-primary font-medium text-sm tracking-wider transition-all duration-300 ease-in-out hover:scale-101 shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50"
+                />
+              </div>
             </div>
 
             <div className='h-full w-[40%] flex items-center justify-center -space-x-10'>

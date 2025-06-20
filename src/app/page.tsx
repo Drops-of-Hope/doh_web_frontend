@@ -6,6 +6,7 @@ export default function Home() {
     <main>
       <NavBar />
       <Hero />
+      <Hero />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,16 +17,23 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 ease-in-out h-[20vh] ${
+      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 ease-in-out ${
         isScrolled 
-          ? 'bg-white/10 backdrop-blur-md border-b border-white/20 shadow-lg' 
+          ? 'bg-white/10 backdrop-blur-md shadow-lg' 
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         
-        <div className="flex items-center space-x-2">
-          <span className="text-red-500 font-bold text-lg font-body">DROPS OF HOPE</span>
+        <div className="flex items-center -space-x-2">
+          <Image
+                  src="/assets/logo.png"
+                  alt="Logo"
+                  width={48}
+                  height={48}
+                  className=''
+          />
+          <span className="text-red-500 font-medium text-xs font-body">DROPS OF HOPE</span>
         </div>
 
         <div className="hidden md:flex items-center space-x-8">
@@ -57,15 +65,14 @@ export default function Navbar() {
 
         
         <div className="flex items-center space-x-4">
-          <button className="text-red-600 hover:text-gray-600 transition-colors duration-200 font-medium cursor-pointer">
+          <button className="text-red-600 hover:text-gray-600 transition-colors duration-200 font-medium cursor-pointer text-sm">
             Login
           </button>
           <span className="text-red-600">|</span>
-          <button className="text-red-600 hover:text-gray-600 transition-colors duration-200 font-medium cursor-pointer">
+          <button className="text-red-600 hover:text-gray-600 transition-colors duration-200 font-medium cursor-pointer text-sm">
             Sign up
           </button>
         </div>
-
         <div className="md:hidden">
           <button className="text-white hover:text-red-300 transition-colors duration-200">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
