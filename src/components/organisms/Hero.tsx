@@ -1,9 +1,22 @@
+"use client";
+
 import React from 'react';
 import Image from 'next/image';
 import { Button } from "@/components";
 import { FaArrowDown } from 'react-icons/fa';
 
 export default function Hero() {
+
+  const scrollToNextSection = () => {
+    const nextSection = document.getElementById('section-1');
+    if (nextSection) {
+      nextSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <div className="relative h-screen w-full bg-gradient-blue-primary overflow-hidden">
       <Image
@@ -15,22 +28,21 @@ export default function Hero() {
       />
 
       <div className="absolute bottom-0 w-full h-[50%] z-1 pointer-events-none">
-        <div className="absolute bottom-0 w-full h-full bg-gradient-blue-primary-90" />
-        <div className="absolute bottom-0 w-full h-full bg-gradient-blue-primary-70" />
+        <div className="absolute bottom-0 w-full h-full bg-gradient-blue-primary-120" />
       </div>
 
       <div className='h-[50%]'>
         <div className='h-[20%]'>
-          
+          {/* space left for the nav bar */}
         </div>
         <div className='h-[80%] flex flex-col items-center overflow-hidden font-landing-heading'>
 
           <div className='h-[20%] w-full flex flex-col items-center justify-center'>
-            <div className='text-3xl px-0 py-0 text-white-primary'>DROPS OF</div>
+            <div className='text-lg xs:text-xl sm:text-2xl md:text-3xl px-0 py-0 text-white-primary'>DROPS OF</div>
           </div>
 
-          <div className='h-[80%] w-full flex flex-col items-center justify-center overflow-hidden'>
-            <div className="text-14xl px-0 py-0 tracking-[5rem] bg-gradient-hope">
+          <div className='h-[25%] md:h-[80%] w-full flex flex-col items-center justify-center overflow-hidden'>
+            <div className="text-[5rem] md:text-[16rem] px-0 py-0 tracking-[2rem] md:tracking-[5rem] bg-gradient-hope">
               HOPE
             </div>
           </div>
@@ -67,6 +79,7 @@ export default function Hero() {
                     title="EXPLORE" 
                     rightIcon={<FaArrowDown size={16} className="text-white-primary" />}
                     containerStyles="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-3xl text-white-primary font-medium text-sm tracking-wider transition-all duration-300 ease-in-out hover:scale-101 shadow-sm focus:outline-none focus:ring-2 focus:ring-white/50"
+                    handleClick={scrollToNextSection}
                 />
               </div>
             </div>

@@ -35,12 +35,8 @@
     background-image: linear-gradient(to bottom right, #f0f9ff, var(--blue-primary), var(--blue-primary));
   }
 
-  .bg-gradient-blue-primary-90 {
-    background-image: linear-gradient(to top, rgba(179, 208, 233, 0.9), transparent);
-  }
-
-  .bg-gradient-blue-primary-70 {
-    background-image: linear-gradient(to top, rgba(179, 208, 233, 0.7), transparent);
+  .bg-gradient-blue-primary-120 {
+    background-image: linear-gradient(to top, rgba(179, 208, 233, 1.2), transparent);
   }
 
   .text-white-primary {
@@ -63,8 +59,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
-}
-
-.custom-btn {
-  padding: 0.5rem 1rem;
 }

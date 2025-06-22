@@ -15,7 +15,7 @@ const Button = ({
         <button
             disabled={false}
             type={"button"}
-            className={`custom-btn ${containerStyles}`}
+            className={`px-4 py-2 ${containerStyles}`}
             onClick={handleClick}
         >
             <span className={`flex-1 flex items-center justify-center ${iconSpacing}`}>

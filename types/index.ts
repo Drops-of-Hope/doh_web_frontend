@@ -8,3 +8,8 @@ export interface ButtonProps {
     rightIcon?: React.ReactNode;
     iconSpacing?: string;
 }
+
+export interface MobileMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
