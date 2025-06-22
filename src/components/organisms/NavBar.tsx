@@ -2,11 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { MobileMenu } from "@/components";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +27,16 @@ export default function Navbar() {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
+
+  const handleSignIn = () => {
+    signIn("asgardeo");
+  };
+
+  const handleSignOut = () => {
+    signOut();
+  };
+
+
 
   return (
     <nav
@@ -75,13 +88,37 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
-              Login
-            </button>
-            <span className="text-red-600">|</span>
-            <button className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
-              Sign up
-            </button>
+            {status === "loading" ? (
+              <div className="text-red-600 text-sm">Loading...</div>
+            ) : session ? (
+              <>
+                <span className="text-red-600 text-sm">
+                  Welcome, {session.user?.name || session.user?.email}
+                </span>
+                <button 
+                  onClick={handleSignOut}
+                  className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <button 
+                  onClick={handleSignIn}
+                  className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm"
+                >
+                  Login
+                </button>
+                <span className="text-red-600">|</span>
+                <button 
+                  onClick={handleSignIn}
+                  className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm"
+                >
+                  Sign up
+                </button>
+              </>
+            )}
           </div>
         </>
         

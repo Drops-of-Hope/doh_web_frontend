@@ -1,7 +1,9 @@
 import { NavBar, Hero } from "@/components";
+import { auth, signIn, signOut } from "@/auth"
 
-export default function Home() {
-
+export default async function Home() {
+  const session = await auth();
+  
   return (
     <main>
       <NavBar />
