@@ -8,3 +8,8 @@ export {
     Hero
 }
 
+import LpSection from "./organisms/Lp_section"; 
+
+export {
+    LpSection
+}

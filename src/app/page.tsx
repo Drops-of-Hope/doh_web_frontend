@@ -1,14 +1,19 @@
-import { NavBar, Hero } from "@/components";
+import {LpSection} from "@/components";
 
 export default function Home() {
 
   return (
     <main>
-      <NavBar />
-      <Hero />
+      <LpSection />
+      
     </main>
   );
 }
+
+
+
+
+
 
 // root page (eg- landing page)
 // All pages must be created within the app folder 
