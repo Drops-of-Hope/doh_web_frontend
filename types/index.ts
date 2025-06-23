@@ -6,3 +6,7 @@ export interface ButtonProps {
     handleClick?:
     MouseEventHandler<HTMLButtonElement>;
 }
+
+export interface SearchBarProps {
+    title: string;         
+}
