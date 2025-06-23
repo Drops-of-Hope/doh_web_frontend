@@ -1,11 +1,10 @@
-import {LpSection, SearchBar} from "@/components";
+
 
 export default function Home() {
 
   return (
     <main>
-      <LpSection />
-      <SearchBar title="Search for a donor" />
+      hello world
     </main>
   );
 }
