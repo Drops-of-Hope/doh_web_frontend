@@ -19,3 +19,7 @@ export interface LogoProps {
   height?: number;
   textSize?: string;
 }
+
+export interface SearchBarProps {
+    title: string;         
+}

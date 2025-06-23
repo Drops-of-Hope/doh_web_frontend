@@ -1,4 +1,4 @@
-import { NavBar, Hero } from "@/components";
+
 
 export default function Home() {
 
