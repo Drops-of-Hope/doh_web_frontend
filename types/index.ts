@@ -13,3 +13,9 @@ export interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+export interface LogoProps {
+  width?: number;
+  height?: number;
+  textSize?: string;
+}
