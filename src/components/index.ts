@@ -11,8 +11,7 @@ export {
     NavBar,
     Hero,
     LpSection,
-    SearchBar
-    Hero,
+    SearchBar,
     MobileMenu,
     Logo
 }
