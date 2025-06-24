@@ -1,4 +1,4 @@
-import { NavBar, Hero } from "@/components";
+import { Hero, NavBar } from "@/components";
 
 export default function Home() {
 
@@ -6,12 +6,9 @@ export default function Home() {
     <main>
       <NavBar />
       <Hero />
+      <div id="section-1" className="h-[100vh] flex flex-col items-center justify-center">
+        next section to test the hero button scrollable function
+      </div>
     </main>
   );
 }
-
-// root page (eg- landing page)
-// All pages must be created within the app folder 
-
-//structure
-// eg- login page must be inside app->auth->login->page.tsx
