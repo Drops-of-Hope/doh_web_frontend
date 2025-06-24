@@ -86,7 +86,7 @@ export default function Hero() {
 
             <div className='h-full w-[40%]  md:flex md:flex-row  items-center justify-center -space-x-10'>
               <Image
-                  src="/assets/doctor.png"
+                  src="/assets/seth.png"
                   alt="Red Blood"
                   width={220}
                   height={220}
