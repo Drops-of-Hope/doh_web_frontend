@@ -15,11 +15,7 @@ export {
     LpSection,
     SearchBar,
     MobileMenu,
-    Logo
-}
-
-
-    Hero,
+    Logo,
     SideBar,
     Header
 }
