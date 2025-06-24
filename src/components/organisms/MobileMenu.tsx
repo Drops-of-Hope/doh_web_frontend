@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { MobileMenuProps } from '../../../types';
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
@@ -37,34 +38,34 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     >
       <div className="px-4 py-3 space-y-2">
         
-        <a
-          href="/"
+        <Link 
+          href="/" 
           onClick={onClose}
           className="block text-gray-800 hover:text-red-600 transition-colors duration-200 font-normal text-sm px-2 py-1"
         >
           Home
-        </a>
-        <a
-          href="#"
+        </Link>
+        <Link 
+          href="/campaigns" 
           onClick={onClose}
           className="block text-gray-800 hover:text-red-600 transition-colors duration-200 font-normal text-sm px-2 py-1"
         >
           Campaigns
-        </a>
-        <a
-          href="#"
+        </Link>
+        <Link 
+          href="/about" 
           onClick={onClose}
           className="block text-gray-800 hover:text-red-600 transition-colors duration-200 font-normal text-sm px-2 py-1"
         >
           About
-        </a>
-        <a
-          href="#"
+        </Link>
+        <Link 
+          href="/contact" 
           onClick={onClose}
           className="block text-gray-800 hover:text-red-600 transition-colors duration-200 font-normal text-sm px-2 py-1"
         >
           Contact
-        </a>
+        </Link>
         
         <div className="pt-2 mt-2 border-t border-gray-200 space-y-1">
           <button 
