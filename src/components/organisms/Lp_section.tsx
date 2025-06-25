@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function LpSection() {
   return (
-    <div className="flex items-center justify-center bg-white">
+    <div className="flex items-center justify-center">
       <div className="w-full flex items-center justify-between p-8">
 
         {/* Left Text Section */}
@@ -11,7 +11,7 @@ export default function LpSection() {
            <h2 className="text-4xl font-bold leading-tight text-[#F8314C]">
             EMPOWERING COMMUNITIES TO <br /> SAVE LIVES!
           </h2>
-          <p className="text-base max-w-md text-[#222222]">
+          <p className="text-base max-w-md text-gray-600">
             Inspired by the silent strength of everyday champions, Drops of Hope was created to connect those in critical need with those who selflessly contribute.
           </p>
         </div>

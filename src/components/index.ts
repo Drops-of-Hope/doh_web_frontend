@@ -7,6 +7,7 @@ import MobileMenu from "./organisms/MobileMenu";
 import Logo from "./atoms/Logo";
 import SideBar from "./organisms/SideBar";
 import Header from "./organisms/Header";
+import MissionSection from "./organisms/MissionSection";
 
 export {
     Button,
@@ -17,6 +18,7 @@ export {
     MobileMenu,
     Logo,
     SideBar,
-    Header
+    Header,
+    MissionSection
 }
 
