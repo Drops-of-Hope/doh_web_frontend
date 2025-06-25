@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function LpSection() {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center bg-white">
       <div className="w-full flex items-center justify-between p-8">
 
         {/* Left Text Section */}
@@ -17,16 +17,16 @@ export default function LpSection() {
         </div>
 
         {/* Right Image Section */}
-        <div className="w-[60%] relative flex items-center justify-center">
+        <div className="w-[50%] relative flex items-center justify-center">
           <div
             className="
               relative flex items-center justify-center
-              w-[400px] h-[420px] 
+              w-[350px] h-[370px] 
               bg-gradient-to-br from-[#B3D0E9] to-[#486A8F]
               border-[25px] border-[#FEFEFE]
               rounded-2xl
-              rounded-tl-[250px]
-              rounded-br-[250px]
+              rounded-tl-[200px]
+              rounded-br-[200px]
               overflow-hidden
               shadow-[0_10px_40px_rgba(0,0,0,0.1)]
               z-10
@@ -42,8 +42,8 @@ export default function LpSection() {
           </div>
 
           {/* Floating Pills */}
-          <div className="absolute top-14 right-110  w-[350px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10" />
-          <div className="absolute bottom-14 left-95 w-[350px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10" />
+          <div className="absolute top-14 right-95  w-[250px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10" />
+          <div className="absolute bottom-14 left-95 w-[250px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10" />
         </div>
 
       </div>
