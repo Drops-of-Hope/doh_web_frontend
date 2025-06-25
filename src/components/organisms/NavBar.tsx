@@ -51,7 +51,7 @@ export default function Navbar() {
               Campaigns
             </Link>
             <Link
-              href="#"
+              href="/about"
               className="text-nav-link hover:text-red-400 transition-colors duration-200 font-normal text-sm"
             >
               About
