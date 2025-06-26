@@ -14,8 +14,7 @@ export {
     LpSection,
     SearchBar,
     MobileMenu,
-    Logo
-    SearchBar,
+    Logo,
     StatCard
 }
 
