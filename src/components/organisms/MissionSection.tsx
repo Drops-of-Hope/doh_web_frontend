@@ -1,30 +1,28 @@
 import React from 'react';
+import Image from 'next/image';
 
 export default function MissionSection() {
   return (
     <div className="flex items-center justify-center bg-white">
-      <div className="w-full flex items-center justify-between p-8">
-        
+      <div className="w-full flex items-center justify-center p-4 space-x-16">
+
         <div className="flex items-center justify-center w-1/2">
           <div className="relative flex items-center justify-center">
-            <div className="relative flex items-center justify-center">
-              <div className="w-64 h-64 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center shadow-2xl">
-                <svg
-                  className="w-32 h-32 text-white drop-shadow-lg"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2c-4.97 4.97-9 10.23-9 15a9 9 0 0 0 18 0c0-4.77-4.03-10.03-9-15z"/>
-                </svg>
-              </div>
+            <div className="w-64 h-64 bg-gradient-to-br from-white to-[#B3D0E9] rounded-full flex items-center justify-center shadow-2xl">
+              <Image
+                src="/assets/blood.png"
+                alt="Blood drop"
+                width={700}
+                height={700}
+                className=''
+              />
             </div>
           </div>
         </div>
 
-        {/* Right Text Section */}
-        <div className="flex flex-col justify-center space-y-6">
+        <div className="flex flex-col justify-center space-y-6 w-1/2">
           <h2 className="text-4xl font-bold leading-tight text-gray-700">
-            OUR MISSION IS <br /> 
+            OUR MISSION IS <br />
             <span className="text-[#F8314C]">SAVING LIVES</span>
           </h2>
           <p className="text-base max-w-md text-gray-600">
@@ -45,7 +43,7 @@ export default function MissionSection() {
             </div>
           </div>
         </div>
-        
+
       </div>
     </div>
   );

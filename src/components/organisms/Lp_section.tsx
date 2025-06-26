@@ -6,7 +6,6 @@ export default function LpSection() {
     <div className="flex items-center justify-center">
       <div className="w-full flex items-center justify-between p-8">
 
-        {/* Left Text Section */}
         <div className="w-[40%] flex flex-col justify-center space-y-6">
            <h2 className="text-4xl font-bold leading-tight text-[#F8314C]">
             EMPOWERING COMMUNITIES TO <br /> SAVE LIVES!
@@ -16,7 +15,6 @@ export default function LpSection() {
           </p>
         </div>
 
-        {/* Right Image Section */}
         <div className="w-[50%] relative flex items-center justify-center">
           <div
             className="
@@ -42,8 +40,18 @@ export default function LpSection() {
           </div>
 
           {/* Floating Pills */}
-          <div className="absolute top-14 right-95  w-[250px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10" />
-          <div className="absolute bottom-14 left-95 w-[250px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10" />
+          
+
+          <div className="absolute top-14 right-95 w-[250px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10 flex items-center justify-center px-4 text-center">
+            <span className="text-gray-500 font-md text-md font-body">
+              EVERY DROP COUNTS!
+            </span>
+          </div>
+          <div className="absolute bottom-14 left-95 w-[250px] h-[60px] bg-[#FEFEFE] rounded-[20px] shadow-[0_0_50px_0_rgba(0,0,0,0.25)] z-10 flex items-center justify-center px-4 text-center">
+            <span className="text-gray-500 font-md text-md font-body">
+              DONATE BLOOD, SHARE HOPE!
+            </span>
+          </div>
         </div>
 
       </div>
