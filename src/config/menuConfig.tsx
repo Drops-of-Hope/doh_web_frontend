@@ -7,7 +7,7 @@ import {
   FaBox,
   FaTruck,
   FaBullhorn,
-  FaHospital,
+  FaSignOutAlt,
   FaClinicMedical,
   FaTools,
 } from "react-icons/fa";
@@ -18,7 +18,7 @@ export const useNavItems = () => {
   return [
     {
       name: 'Home',
-      href: '/',
+      href: '/blood_bank',
       icon: <FaHome size={20} />,
       active: pathname === '/',
       position: 'top',
@@ -63,38 +63,31 @@ export const useNavItems = () => {
       position: 'top',
     },
     {
-      name: 'Medical Establishments',
+      name: 'Establishments',
       icon: <FaClinicMedical size={20} />,
       active: pathname.includes('/medical-establishments'),
       position: 'top',
-      children: [
-        {
-          name: 'Blood Banks',
-          href: '/medical-establishments/blood-banks',
-          icon: <FaTruck size={18} />, 
-          active: pathname.includes('/medical-establishments/blood-banks'),
-        },
-        {
-          name: 'Hospitals',
-          href: '/medical-establishments/hospitals',
-          icon: <FaHospital size={18} />,
-          active: pathname.includes('/medical-establishments/hospitals'),
-        },
-      ],
     },
     {
       name: 'Profile',
       href: '/profile',
       icon: <FaUser size={20} />,
       active: pathname.includes('/profile'),
-      position: 'bottom',
+      position: 'top',
     },
     {
       name: 'Settings',
       href: '/settings',
       icon: <FaCog size={20} />,
       active: pathname.includes('/settings'),
-      position: 'bottom',
+      position: 'top',
     },
+    {
+      name: 'Logout',
+      href: '/logout',
+      icon: <FaSignOutAlt size={20} />,
+      active: pathname.includes('/logout'),
+      position: 'bottom',
+    }
   ];
 };

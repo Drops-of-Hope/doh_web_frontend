@@ -8,6 +8,7 @@ import Logo from "./atoms/Logo";
 import SideBar from "./organisms/SideBar";
 import Header from "./organisms/Header";
 import MissionSection from "./organisms/MissionSection";
+import SideNavItem from "./atoms/SideNavItem";
 
 export {
     Button,
@@ -19,6 +20,7 @@ export {
     Logo,
     SideBar,
     Header,
-    MissionSection
+    MissionSection,
+    SideNavItem
 }
 
