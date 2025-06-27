@@ -29,14 +29,16 @@ export default function Navbar() {
   };
 
   const handleSignIn = () => {
-    signIn("asgardeo");
+    signIn("asgardeo", {callbackUrl: "/api/auth/callback"});
   };
 
-  const handleSignOut = () => {
-    signOut();
+  const handleSignOut = async () => {
+      await signOut({ redirect: false });
+      const idToken = session.idToken; // get from NextAuth session if you have it
+  const asgardeoLogoutUrl = `https://api.asgardeo.io/t/dropsofhope/oidc/logout?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent("http://localhost:3000/")}`;
+  window.location.href = asgardeoLogoutUrl;
+
   };
-
-
 
   return (
     <nav
