@@ -10,7 +10,6 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session, status } = useSession();
 
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -33,11 +32,19 @@ export default function Navbar() {
   };
 
   const handleSignOut = async () => {
-      await signOut({ redirect: false });
-      const idToken = session.idToken; // get from NextAuth session if you have it
-  const asgardeoLogoutUrl = `https://api.asgardeo.io/t/dropsofhope/oidc/logout?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent("http://localhost:3000/")}`;
-  window.location.href = asgardeoLogoutUrl;
+    await signOut({ redirect: false });
 
+    const logoutUrl = "https://api.asgardeo.io/t/dropsofhope/oidc/logout";
+    const postLogoutRedirectUrl = "http://localhost:3000";
+  
+    let fullLogoutUrl = `${logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUrl)}`;
+
+    const extendedSession = session as any;
+    if (extendedSession?.idToken) {
+      fullLogoutUrl += `&id_token_hint=${extendedSession.idToken}`;
+    }
+
+    window.location.href = fullLogoutUrl;
   };
 
   return (
