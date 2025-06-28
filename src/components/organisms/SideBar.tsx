@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from 'react';
 import { SideNavItem, Logo } from "@/components";
+import Image from 'next/image';
 import { useNavItems } from "@/config/menuConfig";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
 import { cn } from '@/lib/utils'
@@ -22,7 +23,20 @@ export default function SideBar() {
         <aside className="flex h-full flex-col w-full break-words px-2 overflow-x-hidden columns-1">
           <div className="mt-4 relative pb-2">
             <div className='mb-2'>
-              <Logo />
+              <div className="flex items-center -space-x-2">
+                    <Image
+                      src="/assets/logo.png"
+                      alt="Logo"
+                      width={48}
+                      height={48}
+                      className=''
+                    />
+                    {isSidebarExpanded && (
+                      <span className="text-red-500 font-medium font-body text-xs ml-2">
+                        DROPS OF HOPE
+                      </span>
+                    )}
+              </div>
             </div>
             <hr className="border-t border-gray-200 mb-4" />
             <div className="flex flex-col space-y-2">
@@ -53,12 +67,13 @@ export default function SideBar() {
                   <Fragment key={idx}>
                     <div className="space-y-1">
                       <SideNavItem
-                        label={item.name}
-                        icon={item.icon}
-                        path={item.href}
-                        active={item.active}
-                        isSidebarExpanded={isSidebarExpanded}
-                      />
+                          label={item.name}
+                          icon={item.icon}
+                          path={item.href}
+                          active={item.active}
+                          isSidebarExpanded={isSidebarExpanded}
+                          position={item.position}
+                        />
                     </div>
                   </Fragment>
                 );
