@@ -5,7 +5,8 @@ import LpSection from "./organisms/Lp_section";
 import SearchBar from "./molecules/SearchBar";
 import MobileMenu from "./organisms/MobileMenu";
 import Logo from "./atoms/Logo";
-import StatCard from "./molecules/StatCard";    
+import StatCard from "./molecules/StatCard";
+import DonationBanner  from "./organisms/DonationBanner";
 
 export {
     Button,
@@ -15,7 +16,8 @@ export {
     SearchBar,
     MobileMenu,
     Logo,
-    StatCard
+    StatCard,
+    DonationBanner
 }
 
 
