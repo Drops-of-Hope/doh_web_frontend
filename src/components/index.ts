@@ -7,6 +7,7 @@ import MobileMenu from "./organisms/MobileMenu";
 import Logo from "./atoms/Logo";
 import StatCard from "./molecules/StatCard";
 import DonationBanner  from "./organisms/DonationBanner";
+import Footer from "./organisms/Footer";
 
 export {
     Button,
@@ -17,7 +18,8 @@ export {
     MobileMenu,
     Logo,
     StatCard,
-    DonationBanner
+    DonationBanner,
+    Footer
 }
 
 
