@@ -45,7 +45,7 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="#"
+              href="/campaigns"
               className="text-nav-link hover:text-red-400 transition-colors duration-200 font-normal text-sm"
             >
               Campaigns
@@ -65,13 +65,14 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
+            <Link href="/login" className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
               Login
-            </button>
+            </Link>
+
             <span className="text-red-600">|</span>
-            <button className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
+            <Link href="/login" className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
               Sign up
-            </button>
+            </Link>
           </div>
         </>
         

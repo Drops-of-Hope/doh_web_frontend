@@ -1,8 +1,12 @@
 "use client";
 
-import { FaHeart } from "react-icons/fa";
+import { Button } from '@/components';
 
 export default function HomePage() {
+  const handleCreateUser = () => {
+    console.log('Create User');
+  };
+
   return (
     <div className="min-h-[100vh] p-4 pt-0">
       <div className="text-[#2D3748] flex justify-between">
@@ -11,10 +15,11 @@ export default function HomePage() {
           <p className="text-s text-gray-500">Here's your summary for the day</p>
         </div>
         <div className="mt-4">
-          <div className="flex items-center gap-2 bg-gradient-to-r from-red-50 to-pink-50 px-3 py-2 rounded-full border border-red-200 shadow-sm">
-            <FaHeart className="text-red-500 text-sm" />
-            <span className="text-sm font-medium text-red-700">Silver Donor</span>
-          </div>
+          <Button
+            title="Create Campaign"
+            containerStyles="bg-blue-400 hover:bg-blue-500 text-white font-medium rounded-3xl transition-colors duration-200"
+            handleClick={handleCreateUser}
+          />
         </div>
       </div>
     </div>

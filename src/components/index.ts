@@ -9,6 +9,7 @@ import SideBar from "./organisms/SideBar";
 import Header from "./organisms/Header";
 import MissionSection from "./organisms/MissionSection";
 import SideNavItem from "./atoms/SideNavItem";
+import CampaignCard from "./organisms/CampaignCard";
 
 export {
     Button,
@@ -21,6 +22,7 @@ export {
     SideBar,
     Header,
     MissionSection,
-    SideNavItem
+    SideNavItem,
+    CampaignCard
 }
 

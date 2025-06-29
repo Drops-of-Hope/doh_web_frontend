@@ -18,7 +18,7 @@ export default function SideBar() {
 
   return (
     <div className={cn(isSidebarExpanded ? 'w-[200px]' : 'w-[68px]',
-      'transition-all duration-300 ease-in-out transform hidden sm:flex h-fill'
+      'transition-all duration-300 ease-in-out transform hidden sm:flex h-fill bg-white border-r border-gray-200'
     )}>
         <aside className="flex h-full flex-col w-full break-words px-2 overflow-x-hidden columns-1">
           <div className="mt-4 relative pb-2">
