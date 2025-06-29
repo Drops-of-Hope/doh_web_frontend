@@ -7,7 +7,7 @@ export default function Header() {
   const [notificationCount, setNotificationCount] = useState(3);
 
   return (
-    <div className="bg-white p-3">
+    <div className="bg-[#f8f8f8] p-3">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <div className="text-sm text-gray-500">
