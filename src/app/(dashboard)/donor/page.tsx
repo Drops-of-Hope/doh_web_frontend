@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 export default function DonorDashboard() {
     const { data: session, status } = useSession();
@@ -27,6 +27,22 @@ export default function DonorDashboard() {
             </div>
         );
     }
+
+    const handleSignOut = async () => {
+        await signOut({ redirect: false });
+
+        const logoutUrl = "https://api.asgardeo.io/t/dropsofhope/oidc/logout";
+        const postLogoutRedirectUrl = "http://localhost:3000";
+
+        let fullLogoutUrl = `${logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUrl)}`;
+
+        const extendedSession = session as any;
+        if (extendedSession?.idToken) {
+            fullLogoutUrl += `&id_token_hint=${extendedSession.idToken}`;
+        }
+
+        window.location.href = fullLogoutUrl;
+    };
 
     const decoded = (session as any).decodedIdToken as {
         given_name?: string;
@@ -65,6 +81,12 @@ export default function DonorDashboard() {
                         {role}
                     </div>
                 </div>
+                <button
+                    onClick={handleSignOut}
+                    className="mt-6 w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                >
+                    Logout
+                </button>
             </div>
         </div>
     );
