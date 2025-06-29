@@ -23,3 +23,9 @@ export interface LogoProps {
 export interface SearchBarProps {
     title: string;         
 }
+
+export interface StatisticCardProps {
+  title: string;
+  count: number | string;
+  icon: string; 
+}
