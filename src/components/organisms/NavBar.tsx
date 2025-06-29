@@ -1,9 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { useSession, signIn, signOut } from 'next-auth/react';
-import { MobileMenu } from "@/components";
+import { MobileMenu, Logo } from "@/components";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -57,16 +55,7 @@ export default function Navbar() {
     >
       <div className="mx-auto flex items-center justify-between">
         
-        <div className="flex items-center -space-x-2">
-          <Image
-            src="/assets/logo.png"
-            alt="Logo"
-            width={48}
-            height={48}
-            className=''
-          />
-          <span className="text-red-500 font-medium text-xs font-body">DROPS OF HOPE</span>
-        </div>
+        <Logo />
         
         <>
           <div className="hidden md:flex items-center space-x-8">

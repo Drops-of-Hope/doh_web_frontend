@@ -13,3 +13,19 @@ export interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+export interface LogoProps {
+  width?: number;
+  height?: number;
+  textSize?: string;
+}
+
+export interface SearchBarProps {
+    title: string;         
+}
+
+export interface StatisticCardProps {
+  title: string;
+  count: number | string;
+  icon: string; 
+}
