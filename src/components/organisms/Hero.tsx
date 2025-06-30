@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Button } from "@/components";
 import { FaArrowDown } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 export default function Hero() {
 
@@ -19,14 +20,20 @@ export default function Hero() {
 
   return (
     <div className="relative h-screen w-full bg-gradient-blue-primary overflow-hidden">
-      <Image
-        src="/assets/blood.png"
-        alt="Blood"
-        width={1000}
-        height={1000}
-        className="absolute top-[28%] md:top-[43%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0"
-      />
-
+      <motion.div
+        initial={{ opacity: 0.1 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, delay: 0.2 }}
+        className="absolute top-[28%] md:top-[43%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 w-[1000px] h-auto"
+      >
+        <Image
+          src="/assets/blood.png"
+          alt="Blood"
+          width={1000}
+          height={1000}
+          className="w-[1000px] h-auto"
+        />
+      </motion.div>
       <div className="absolute bottom-0 w-full h-[50%] z-1 pointer-events-none">
         <div className="absolute bottom-0 w-full h-full bg-gradient-blue-primary-120" />
       </div>

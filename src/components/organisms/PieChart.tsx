@@ -13,12 +13,14 @@ interface PieChartWithLegendProps {
   data: PieChartData[];
 }
 
-const COLORS = ['#8884d8', '#FFBB28', '#00C49F', '#FF8042', '#0088FE', '#AF19FF'];
+const COLORS = ['#f9576c', '#B3D0E9', '#f97316', '#3b82f6', '#0891b2', '#06b6d4'];
 
 const PieChartWithLegend: React.FC<PieChartWithLegendProps> = ({ title = "Available blood packets", data }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-2xl mx-auto">
-    <h2 className="text-lg font-bold mb-6 ml-10 text-gray-900">{title}</h2>
+      <h2 className="text-base font-semibold mb-1 text-gray-700">
+            {title}
+      </h2>
       <div className="flex flex-col md:flex-row justify-center items-center gap-8">
         {/* Pie Chart */}
         <div className="w-full md:w-1/2 h-[230px]">
