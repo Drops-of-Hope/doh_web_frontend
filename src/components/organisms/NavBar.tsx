@@ -67,19 +67,19 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="#"
+              href="/campaigns"
               className="text-nav-link hover:text-red-400 transition-colors duration-200 font-normal text-sm"
             >
               Campaigns
             </Link>
             <Link
-              href="#"
+              href="/about"
               className="text-nav-link hover:text-red-400 transition-colors duration-200 font-normal text-sm"
             >
               About
             </Link>
             <Link
-              href="#"
+              href="/contact"
               className="text-nav-link hover:text-red-400 transition-colors duration-200 font-normal text-sm"
             >
               Contact

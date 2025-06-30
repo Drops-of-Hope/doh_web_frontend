@@ -27,5 +27,6 @@ export interface SearchBarProps {
 export interface StatisticCardProps {
   title: string;
   count: number | string;
-  icon: string; 
+  icon: React.ReactNode;
+  iconBgColor?: string;
 }
