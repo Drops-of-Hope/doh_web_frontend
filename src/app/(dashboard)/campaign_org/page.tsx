@@ -1,10 +1,9 @@
 "use client";
-import { Button, StatCard, UpcomingCampaigns, DonationBanner } from '@/components';
-import { FaCampground, FaUsers, FaCalendarAlt, FaHeart, FaHandHoldingHeart } from 'react-icons/fa';
+import { StatCard, UpcomingCampaigns, DonationBanner } from '@/components';
+import { FaCampground, FaUsers, FaCalendarAlt, FaHeart } from 'react-icons/fa';
 
 export default function HomePage() {
 
-  // Blood group data with corresponding heights
   const bloodGroupData = [
     { group: 'A+', height: 120 },
     { group: 'A-', height: 180 },
