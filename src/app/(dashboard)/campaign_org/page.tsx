@@ -20,7 +20,7 @@ export default function HomePage() {
       <div className="text-[#2D3748] flex justify-between">
         <div>
           <h1 className="font-semibold">Hello, Nadhiya</h1>
-          <p className="text-s text-gray-500">Here's your summary for the day</p>
+          <p className="text-s text-gray-500">Your summary for the day</p>
         </div>
         <div>
           <div className="flex items-center gap-2 bg-gradient-to-r from-red-50 to-pink-50 px-3 py-2 rounded-full border border-red-200 shadow-sm">

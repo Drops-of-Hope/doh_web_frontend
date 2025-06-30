@@ -56,8 +56,8 @@ export default function Contact() {
         <div className='min-h-[60vh] w-1/2 flex flex-col justify-center items-center p-12'>
           <h2 className="text-4xl font-bold text-gray-700 mb-4">Contact Us</h2>
           <p className="text-md text-gray-500 text-center leading-relaxed">
-            We'd love to hear from you.<br />
-            Whether you have a question about our features, need assistance, or just want to share feedback, we're here to help.
+            We wouldd love to hear from you.<br />
+            Whether you have a question about our features, need assistance, or just want to share feedback, we are here to help.
           </p>
         </div>
 

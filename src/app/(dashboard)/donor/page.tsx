@@ -1,7 +1,7 @@
 "use client";
 
-import { FaHeart, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaTint, FaHandHoldingHeart, FaClock } from "react-icons/fa";
-import { StatCard, Button, UpcomingCampaigns } from "@/components";
+import { FaHeart, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaTint, FaClock } from "react-icons/fa";
+import { StatCard, UpcomingCampaigns } from "@/components";
 
 export default function HomePage() {
 
@@ -13,7 +13,6 @@ export default function HomePage() {
   const isEligible = timeSinceLastDonation >= fourMonthsInMs;
   
   const nextEligibleDate = new Date(lastDonationDate.getTime() + fourMonthsInMs);
-  const daysUntilEligible = Math.ceil((nextEligibleDate.getTime() - currentDate.getTime()) / (24 * 60 * 60 * 1000));
   
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { 
@@ -23,23 +22,12 @@ export default function HomePage() {
     });
   };
 
-  const upcomingCampaigns = [
-      {
-        id: 1,
-        name: "Emergency Relief Fund",
-        date: "2025-07-05",
-        bookedSlots: 65,
-        capacity: 100,
-        icon: <FaHandHoldingHeart className="text-white text-lg" />,
-        bgColor: "bg-red-500",
-      }
-  ];
   return (
     <div className="min-h-[100vh] p-4 pt-0 bg-[#f8f8f8]">
       <div className="text-[#2D3748] flex justify-between">
         <div>
           <h1 className="font-semibold">Hello, Nadhiya</h1>
-          <p className="text-s text-gray-500">Here's your summary for the day</p>
+          <p className="text-s text-gray-500">Your summary for the day</p>
         </div>
         <div className="">
           <div className="flex items-center gap-2 bg-gradient-to-r from-red-50 to-pink-50 px-3 py-2 rounded-full border border-red-200 shadow-sm">
@@ -87,7 +75,7 @@ export default function HomePage() {
                   <FaCheckCircle className="text-[#F8314C] text-xl" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-[#F8314C]">You're Eligible to Donate!</h2>
+                  <h2 className="text-lg font-semibold text-[#F8314C]">You are Eligible to Donate!</h2>
                   <p className="text-gray-600 text-sm">You can donate blood today</p>
                 </div>
               </div>

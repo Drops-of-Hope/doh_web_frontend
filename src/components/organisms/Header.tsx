@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { FaSearch, FaBell, FaUser } from "react-icons/fa";
+import { FaBell } from "react-icons/fa";
 
 export default function Header() {
-  const [notificationCount, setNotificationCount] = useState(3);
 
   return (
     <div className="bg-[#f8f8f8] p-3">
@@ -21,7 +19,7 @@ export default function Header() {
           <div className="relative">
             <button
               className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors duration-200 relative"
-              onClick={() => setNotificationCount(0)}
+
             >
               <FaBell className="w-5 h-5" />
             </button>

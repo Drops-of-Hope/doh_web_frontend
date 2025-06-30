@@ -1,17 +1,6 @@
 "use client";
 import { Button } from '@/components';
 import { FaHandHoldingHeart } from 'react-icons/fa';
-import { ReactNode } from 'react';
-
-interface Campaign {
-  id: number;
-  name: string;
-  date: string;
-  bookedSlots: number;
-  capacity: number;
-  icon: ReactNode;
-  bgColor: string;
-}
 
 interface UpcomingCampaignsProps {
   maxRows?: number | null;

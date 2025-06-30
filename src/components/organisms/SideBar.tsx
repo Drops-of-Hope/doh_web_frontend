@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useState } from 'react';
-import { SideNavItem, Logo } from "@/components";
+import { SideNavItem } from "@/components";
 import Image from 'next/image';
 import { useNavItems } from "@/config/menuConfig";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils'
 export default function SideBar() {
 
   const [ isSidebarExpanded, setIsSidebarExpanded ] = useState(true);
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const navItems = useNavItems();
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);

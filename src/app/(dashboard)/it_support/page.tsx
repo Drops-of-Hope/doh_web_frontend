@@ -26,7 +26,7 @@ export default function HomePage() {
     backupSize: '2.3 GB'
   });
 
-  const [serverStatus, setServerStatus] = useState<ServerStatus>('online');
+  const [serverStatus] = useState<ServerStatus>('online');
 
   useEffect(() => {
 
@@ -68,7 +68,7 @@ export default function HomePage() {
       <div className="text-[#2D3748] flex justify-between">
         <div>
           <h1 className="font-semibold">Hello, Nadhiya</h1>
-          <p className="text-s text-gray-500">Here's your summary for the day</p>
+          <p className="text-s text-gray-500">Your summary for the day</p>
         </div>
         <div className="">
           <Button
