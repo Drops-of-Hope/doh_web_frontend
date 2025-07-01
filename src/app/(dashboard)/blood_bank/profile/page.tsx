@@ -1,8 +1,6 @@
 "use client";
 
-import ProfileHeader from '../../../../components/organisms/ProfileHeader';
-import LoginActivity from '../../../../components/organisms/LoginActivity';
-import AuditLogs from '../../../../components/organisms/AuditLogs';
+import { ProfileHeader, LoginActivity, AuditLogs } from "@/components";
 
 export default function ProfilePage() {
   const handleEdit = () => {
