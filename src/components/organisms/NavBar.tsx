@@ -55,7 +55,6 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex items-center justify-between">
-        
         <Logo />
         
         <>
