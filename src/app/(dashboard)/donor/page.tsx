@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { FaHeart, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaTint, FaClock } from "react-icons/fa";
 import { StatCard, UpcomingCampaigns } from "@/components";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function HomePage() {
 
@@ -38,35 +38,6 @@ export default function HomePage() {
             </div>
         );
     }
-
-        const handleSignOut = async () => {
-        await signOut({ redirect: false });
-
-        const logoutUrl = "https://api.asgardeo.io/t/dropsofhope/oidc/logout";
-        const postLogoutRedirectUrl = "http://localhost:3000";
-
-        let fullLogoutUrl = `${logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUrl)}`;
-
-        const extendedSession = session as any;
-        if (extendedSession?.idToken) {
-            fullLogoutUrl += `&id_token_hint=${extendedSession.idToken}`;
-        }
-
-        window.location.href = fullLogoutUrl;
-    };
-
-    const decoded = (session as any).decodedIdToken as {
-        given_name?: string;
-        family_name?: string;
-        birthdate?: string;
-        email?: string;
-        roles?: string[];
-    };
-
-    const name = `${decoded.given_name ?? ""} ${decoded.family_name ?? ""}`.trim();
-    const birthdate = decoded.birthdate ?? "N/A";
-    const email = decoded.email ?? "N/A";
-    const role = decoded.roles?.[0] ?? "N/A";
   
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { 

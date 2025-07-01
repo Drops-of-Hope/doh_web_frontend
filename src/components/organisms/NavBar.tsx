@@ -2,12 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MobileMenu, Logo } from "@/components";
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { data: session, status } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,22 +27,6 @@ export default function Navbar() {
 
   const handleSignIn = () => {
     signIn("asgardeo", {callbackUrl: "/api/auth/callback"});
-  };
-
-  const handleSignOut = async () => {
-    await signOut({ redirect: false });
-
-    const logoutUrl = "https://api.asgardeo.io/t/dropsofhope/oidc/logout";
-    const postLogoutRedirectUrl = "http://localhost:3000";
-  
-    let fullLogoutUrl = `${logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUrl)}`;
-
-    const extendedSession = session as any;
-    if (extendedSession?.idToken) {
-      fullLogoutUrl += `&id_token_hint=${extendedSession.idToken}`;
-    }
-
-    window.location.href = fullLogoutUrl;
   };
 
   return (
