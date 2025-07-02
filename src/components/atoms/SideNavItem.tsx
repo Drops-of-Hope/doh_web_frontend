@@ -11,6 +11,7 @@ interface SideNavItemProps {
   active: boolean;
   isSidebarExpanded: boolean;
   position?: 'top' | 'bottom';
+  onClick?: () => void;
 }
 
 export default function SideNavItem({
@@ -20,6 +21,7 @@ export default function SideNavItem({
   active,
   isSidebarExpanded,
   position = 'top',
+  onClick,
 }: SideNavItemProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
@@ -31,59 +33,78 @@ export default function SideNavItem({
       const rect = navItemRef.current.getBoundingClientRect();
       setTooltipPosition({
         top: rect.top + rect.height / 2,
-        left: rect.right + 8, 
+        left: rect.right + 8,
       });
       setShowTooltip(true);
     }
   };
 
-  return (
-    <div className="relative">
-      <Link href={path}>
-        <div
-          ref={navItemRef}
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
+  const navContent = (
+    <div
+      ref={navItemRef}
+      className={cn(
+        'group flex items-center gap-2 px-2 py-1 rounded-md transition-colors cursor-pointer',
+        isBottomPosition
+          ? active
+            ? 'bg-red-100 text-red-600 font-semibold'
+            : 'hover:bg-gray-50'
+          : active
+          ? 'bg-blue-100 text-blue-600 font-semibold'
+          : 'hover:bg-gray-50'
+      )}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={() => setShowTooltip(false)}
+      onClick={handleClick}
+    >
+      <div
+        className={cn(
+          'min-w-[20px] text-xl p-2 rounded-xl transition-all duration-200',
+          isBottomPosition
+            ? 'text-gray-700 group-hover:text-gray-500'
+            : 'text-[#FB7373] group-hover:bg-[#CE121A] group-hover:text-white'
+        )}
+      >
+        {icon}
+      </div>
+
+      {isSidebarExpanded && (
+        <span
           className={cn(
-            'group flex items-center gap-2 px-2 py-1 rounded-md transition-colors cursor-pointer',
+            'text-sm font-semibold transition-colors duration-200',
             isBottomPosition
               ? active
-                ? 'bg-red-100 text-red-600 font-semibold'
-                : 'hover:bg-gray-50'
+                ? 'text-red-600'
+                : 'text-red-400 group-hover:text-red-700'
               : active
-              ? 'bg-blue-100 text-blue-600 font-semibold'
-              : 'hover:bg-gray-50'
+              ? 'text-blue-600'
+              : 'text-[#A0AEC0] group-hover:text-[#2D3748]'
           )}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={() => setShowTooltip(false)}
         >
-          <div
-            className={cn(
-              'min-w-[20px] text-xl p-2 rounded-xl transition-all duration-200',
-              isBottomPosition
-                ? 'text-gray-700 group-hover:text-gray-500'
-                : 'text-[#FB7373] group-hover:bg-[#CE121A] group-hover:text-white'
-            )}
-          >
-            {icon}
-          </div>
+          {label}
+        </span>
+      )}
+    </div>
+  );
 
-          {isSidebarExpanded && (
-            <span
-              className={cn(
-                'text-sm font-semibold transition-colors duration-200',
-                isBottomPosition
-                  ? active
-                    ? 'text-red-600'
-                    : 'text-red-400 group-hover:text-red-700'
-                  : active
-                  ? 'text-blue-600'
-                  : 'text-[#A0AEC0] group-hover:text-[#2D3748]'
-              )}
-            >
-              {label}
-            </span>
-          )}
-        </div>
-      </Link>
+  return (
+    <div className="relative">
+      {onClick ? (
+        <button type="button" className="w-full text-left">
+          {navContent}
+        </button>
+      ) : (
+        <Link href={path}>
+          {navContent}
+        </Link>
+      )}
+      
       {!isSidebarExpanded && showTooltip && (
         <div
           className="fixed px-2 py-1 bg-white text-gray-700 text-sm rounded-sm shadow-md border border-gray-200 whitespace-nowrap pointer-events-none z-[1000] transition-opacity duration-200"

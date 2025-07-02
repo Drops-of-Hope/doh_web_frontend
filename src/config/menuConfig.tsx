@@ -1,4 +1,5 @@
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from 'next-auth/react';
 import {
   FaHome,
   FaUser,
@@ -14,6 +15,20 @@ import {
 
 export const useNavItems = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
+    const logoutUrl = "https://api.asgardeo.io/t/dropsofhope/oidc/logout";
+    const postLogoutRedirectUrl = "http://localhost:3000";
+  
+    let fullLogoutUrl = `${logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUrl)}`;
+    const extendedSession = session as any;
+    if (extendedSession?.idToken) {
+      fullLogoutUrl += `&id_token_hint=${extendedSession.idToken}`;
+    }
+    window.location.href = fullLogoutUrl;
+  };
 
   return [
     {
@@ -84,10 +99,10 @@ export const useNavItems = () => {
     },
     {
       name: 'Logout',
-      href: '/logout',
       icon: <FaSignOutAlt size={20} />,
       active: pathname.includes('/logout'),
       position: 'bottom',
+      onClick: handleSignOut, 
     }
   ];
 };

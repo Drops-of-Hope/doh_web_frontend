@@ -8,9 +8,9 @@ import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
 import { cn } from '@/lib/utils'
 
 export default function SideBar() {
-
-  const [ isSidebarExpanded, setIsSidebarExpanded ] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const navItems = useNavItems();
+  
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
@@ -50,6 +50,7 @@ export default function SideBar() {
                           path={item.href}
                           active={item.active}
                           isSidebarExpanded={isSidebarExpanded}
+                          onClick={item.onClick}
                         />
                       </div>
                     </Fragment>
@@ -72,6 +73,7 @@ export default function SideBar() {
                           active={item.active}
                           isSidebarExpanded={isSidebarExpanded}
                           position={item.position}
+                          onClick={item.onClick} 
                         />
                     </div>
                   </Fragment>
@@ -80,7 +82,8 @@ export default function SideBar() {
             })}
           </div>
         </aside>
-         <div className="mt-[calc(calc(90vh)-40px)] relative">
+
+        <div className="mt-[calc(calc(90vh)-40px)] relative">
           <button
             type="button"
             className="absolute bottom-32 right-[-12px] flex h-6 w-6 items-center justify-center border border-muted-foreground/20 rounded-full bg-accent shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out text-[#2D3748]"
