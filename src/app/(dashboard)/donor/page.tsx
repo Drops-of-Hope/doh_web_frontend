@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { FaHeart, FaCheckCircle, FaTimesCircle, FaCalendarAlt, FaTint, FaClock } from "react-icons/fa";
 import { StatCard, UpcomingCampaigns } from "@/components";
+import { useSession } from "next-auth/react";
 
 export default function HomePage() {
 
@@ -13,6 +15,29 @@ export default function HomePage() {
   const isEligible = timeSinceLastDonation >= fourMonthsInMs;
   
   const nextEligibleDate = new Date(lastDonationDate.getTime() + fourMonthsInMs);
+  const { data: session, status } = useSession();
+
+      useEffect(() => {
+        if (status === "authenticated") {
+            console.log("Donor Session Data:", session);
+        }
+    }, [session, status]);
+
+    if (status === "loading") {
+        return (
+            <div className="flex items-center justify-center min-h-screen text-red-600 text-lg">
+                Loading your donor dashboard...
+            </div>
+        );
+    }
+
+    if (!session) {
+        return (
+            <div className="flex items-center justify-center min-h-screen text-red-600 text-lg">
+                You are not signed in.
+            </div>
+        );
+    }
   
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { 
@@ -154,4 +179,5 @@ export default function HomePage() {
       </div>
     </div>
   );
+
 }

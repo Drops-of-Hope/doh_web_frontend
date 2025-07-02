@@ -16,6 +16,9 @@ import PieChartWithLegend from "./organisms/PieChart";
 import UpcomingCampaigns from "./organisms/UpcomingCampaigns";
 import BloodRequestsCard from "./organisms/BloodRequestsCard";
 import DonationBanner from "./organisms/DonationBanner";
+import ProfileHeader from "./organisms/ProfileHeader";
+import LoginActivity from "./organisms/LoginActivity";
+import AuditLogs from "./organisms/AuditLogs";
 
 export {
     Button,
@@ -35,6 +38,9 @@ export {
     PieChartWithLegend,
     UpcomingCampaigns,
     BloodRequestsCard,
-    DonationBanner
+    DonationBanner,
+    ProfileHeader,
+    LoginActivity,
+    AuditLogs
 }
 

@@ -1,9 +1,9 @@
-import { Hero, NavBar } from "@/components";
+import { NavBar, Hero } from "@/components";
 
-export default function Home() {
-
-  return (
-    <main className="bg-white">
+export default async function Home() {
+  
+  return (  
+    <main>
       <NavBar />
       <Hero />
       <div id="section-1" className="h-[100vh] flex flex-col items-center justify-center">

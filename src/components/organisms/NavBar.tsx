@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MobileMenu, Logo } from "@/components";
+import { signIn } from 'next-auth/react';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,6 +25,10 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
   };
 
+  const handleSignIn = () => {
+    signIn("asgardeo", {callbackUrl: "/api/auth/callback"});
+  };
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-300 ease-in-out ${
@@ -33,7 +38,6 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto flex items-center justify-between">
-        
         <Logo />
         
         <>
@@ -65,14 +69,21 @@ export default function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/login" className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
-              Login
-            </Link>
-
-            <span className="text-red-600">|</span>
-            <Link href="/login" className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm">
-              Sign up
-            </Link>
+              <>
+                <button 
+                  onClick={handleSignIn}
+                  className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm"
+                >
+                  Login
+                </button>
+                <span className="text-red-600">|</span>
+                <button 
+                  onClick={handleSignIn}
+                  className="text-red-600 hover:text-red-800 transition-colors duration-200 font-medium cursor-pointer text-sm"
+                >
+                  Sign up
+                </button>
+              </>
           </div>
         </>
         
