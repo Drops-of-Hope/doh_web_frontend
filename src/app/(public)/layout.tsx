@@ -1,4 +1,4 @@
-import { NavBar } from "@/components";
+import { NavBar, Footer } from "@/components";
 
 export default function PublicLayout({
   children,
@@ -9,6 +9,10 @@ export default function PublicLayout({
     <div className="bg-white">
         <NavBar />
         {children}
+        <div className="mt-8">
+          <Footer />
+        </div>
+        
     </div>
   );
 }
