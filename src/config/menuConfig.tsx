@@ -23,7 +23,7 @@ export const useNavItems = () => {
     const postLogoutRedirectUrl = "http://localhost:3000";
   
     let fullLogoutUrl = `${logoutUrl}?post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUrl)}`;
-    const extendedSession = session as any;
+    const extendedSession = session as { idToken?: string } | null;
     if (extendedSession?.idToken) {
       fullLogoutUrl += `&id_token_hint=${extendedSession.idToken}`;
     }
