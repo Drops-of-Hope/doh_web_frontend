@@ -35,7 +35,7 @@ export const useNavItems = () => {
       name: 'Home',
       href: '/blood_bank',
       icon: <FaHome size={20} />,
-      active: pathname === '/',
+      active: pathname === '/blood_bank',
       position: 'top',
     },
     {
@@ -85,16 +85,16 @@ export const useNavItems = () => {
     },
     {
       name: 'Profile',
-      href: '/profile',
+      href: '/blood_bank/profile',
       icon: <FaUser size={20} />,
-      active: pathname.includes('/profile'),
+      active: pathname.includes('/blood_bank/profile'),
       position: 'top',
     },
     {
       name: 'Settings',
-      href: '/settings',
+      href: '/blood_bank/settings',
       icon: <FaCog size={20} />,
-      active: pathname.includes('/settings'),
+      active: pathname.includes('/blood_bank/settings'),
       position: 'top',
     },
     {

@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
@@ -56,7 +55,7 @@ export default function SideNavItem({
             ? 'bg-red-100 text-red-600 font-semibold'
             : 'hover:bg-gray-50'
           : active
-          ? 'bg-blue-100 text-blue-600 font-semibold'
+          ? 'text-blue-600 font-semibold'
           : 'hover:bg-gray-50'
       )}
       onMouseEnter={handleMouseEnter}
@@ -68,12 +67,13 @@ export default function SideNavItem({
           'min-w-[20px] text-xl p-2 rounded-xl transition-all duration-200',
           isBottomPosition
             ? 'text-gray-700 group-hover:text-gray-500'
+            : active
+            ? 'bg-[#CE121A] text-white'
             : 'text-[#FB7373] group-hover:bg-[#CE121A] group-hover:text-white'
         )}
       >
         {icon}
       </div>
-
       {isSidebarExpanded && (
         <span
           className={cn(
@@ -83,7 +83,7 @@ export default function SideNavItem({
                 ? 'text-red-600'
                 : 'text-red-400 group-hover:text-red-700'
               : active
-              ? 'text-blue-600'
+              ? 'text-[#2D3748]'
               : 'text-[#A0AEC0] group-hover:text-[#2D3748]'
           )}
         >
