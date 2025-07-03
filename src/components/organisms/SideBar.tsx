@@ -9,10 +9,27 @@ import { cn } from '@/lib/utils'
 
 export default function SideBar() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const navItems = useNavItems();
-  
+     
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
+    // Close all expanded items when sidebar collapses
+    if (isSidebarExpanded) {
+      setExpandedItems(new Set());
+    }
+  };
+
+  const toggleItemExpansion = (itemName: string) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemName)) {
+        newSet.delete(itemName);
+      } else {
+        newSet.add(itemName);
+      }
+      return newSet;
+    });
   };
 
   return (
@@ -38,7 +55,7 @@ export default function SideBar() {
               </div>
             </div>
             <hr className="border-t border-gray-200 mb-4" />
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 flex-1 overflow-y-auto">
               {navItems.map((item, idx) => {
                 if (item.position === 'top') {
                   return (
@@ -51,6 +68,9 @@ export default function SideBar() {
                           active={item.active}
                           isSidebarExpanded={isSidebarExpanded}
                           onClick={item.onClick}
+                          children={item.children}
+                          isExpanded={expandedItems.has(item.name)}
+                          onToggleExpanded={() => toggleItemExpansion(item.name)}
                         />
                       </div>
                     </Fragment>
@@ -59,7 +79,7 @@ export default function SideBar() {
               })}
             </div>
           </div>
-
+           
           <div className="sticky bottom-0 mt-auto whitespace-nowrap mb-4 transition duration-200 block">
             {navItems.map((item, idx) => {
               if (item.position === 'bottom') {
@@ -73,8 +93,8 @@ export default function SideBar() {
                           active={item.active}
                           isSidebarExpanded={isSidebarExpanded}
                           position={item.position}
-                          onClick={item.onClick} 
-                        />
+                          onClick={item.onClick}
+                         />
                     </div>
                   </Fragment>
                 );
@@ -82,7 +102,7 @@ export default function SideBar() {
             })}
           </div>
         </aside>
-
+         
         <div className="mt-[calc(calc(90vh)-40px)] relative">
           <button
             type="button"

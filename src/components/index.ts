@@ -20,6 +20,7 @@ import ProfileHeader from "./organisms/ProfileHeader";
 import LoginActivity from "./organisms/LoginActivity";
 import AuditLogs from "./organisms/AuditLogs";
 import Footer from "./organisms/Footer";
+import MetricCard from "./molecules/MetricCard";
 
 export {
     Button,
@@ -43,6 +44,7 @@ export {
     ProfileHeader,
     LoginActivity,
     AuditLogs,
-    Footer
+    Footer,
+    MetricCard
 }
 

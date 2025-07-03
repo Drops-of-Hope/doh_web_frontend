@@ -11,6 +11,9 @@ import {
   FaSignOutAlt,
   FaClinicMedical,
   FaTools,
+  FaHandPaper,
+  FaExclamationCircle,
+  FaClipboardList
 } from "react-icons/fa";
 
 export const useNavItems = () => {
@@ -46,9 +49,9 @@ export const useNavItems = () => {
       children: [
         {
           name: 'Inventory',
-          href: '/inventory',
+          href: '/blood_bank/inventory',
           icon: <FaBox size={18} />,
-          active: pathname.includes('/inventory'),
+          active: pathname.includes('/blood_bank/inventory'),
         },
         {
           name: 'Blood Tests',
@@ -59,7 +62,7 @@ export const useNavItems = () => {
         {
           name: 'Blood Requests',
           href: '/blood-requests',
-          icon: <FaTruck size={18} />,
+          icon: <FaClipboardList size={18} />,
           active: pathname.includes('/blood-requests'),
         },
         {
