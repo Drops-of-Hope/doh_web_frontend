@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { MetricCardProps } from '../../../types';
 
-const MetricCard = ({ icon, iconBgColor, heading, body, count }: MetricCardProps) => {
+const MetricCard = ({ iconBgColor, heading, body, count }: MetricCardProps) => {
   return (
     <div className="bg-[#FFFFFF] rounded-2xl shadow-sm p-6 text-center w-[310px] h-[310px] max-w-xs">
       <div className="w-[64px] h-[64px] mx-auto flex items-center justify-center rounded-xl" style={{ backgroundColor: iconBgColor }}>
