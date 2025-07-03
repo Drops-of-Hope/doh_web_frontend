@@ -1,12 +1,12 @@
 import { MouseEventHandler } from "react";
 
 export interface ButtonProps {
-    title: string;
-    containerStyles?: string;
-    handleClick?: MouseEventHandler<HTMLButtonElement>;
-    leftIcon?: React.ReactNode;
-    rightIcon?: React.ReactNode;
-    iconSpacing?: string;
+  title: string;
+  containerStyles?: string;
+  handleClick?: MouseEventHandler<HTMLButtonElement>;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  iconSpacing?: string;
 }
 
 export interface MobileMenuProps {
@@ -21,7 +21,7 @@ export interface LogoProps {
 }
 
 export interface SearchBarProps {
-    title: string;         
+  title: string;         
 }
 
 export interface StatisticCardProps {
@@ -29,4 +29,12 @@ export interface StatisticCardProps {
   count: number | string;
   icon: React.ReactNode;
   iconBgColor?: string;
+}
+
+export interface MetricCardProps {
+  icon: React.ReactNode;
+  iconBgColor?: string; 
+  heading: string;
+  body: string;
+  count: number;
 }
