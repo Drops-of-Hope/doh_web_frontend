@@ -19,7 +19,7 @@ import DonationBanner from "./organisms/DonationBanner";
 import ProfileHeader from "./organisms/ProfileHeader";
 import LoginActivity from "./organisms/LoginActivity";
 import AuditLogs from "./organisms/AuditLogs";
-import MetricCard from "./molecules/MetricCard";
+import Footer from "./organisms/Footer";
 
 export {
     Button,
@@ -43,6 +43,6 @@ export {
     ProfileHeader,
     LoginActivity,
     AuditLogs,
-    MetricCard
+    Footer
 }
 
