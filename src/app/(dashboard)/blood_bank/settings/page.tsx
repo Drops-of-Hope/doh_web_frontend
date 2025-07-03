@@ -1,7 +1,5 @@
 "use client";
 
-import { ProfileHeader, LoginActivity, AuditLogs } from "@/components";
-
 export default function SettingsPage() {
 
   return (
