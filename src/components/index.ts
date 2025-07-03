@@ -21,6 +21,9 @@ import LoginActivity from "./organisms/LoginActivity";
 import AuditLogs from "./organisms/AuditLogs";
 import Footer from "./organisms/Footer";
 import MetricCard from "./molecules/MetricCard";
+import BloodInventoryTable from "./organisms/BloodInventoryTable";
+import BloodUsage from "./organisms/BloodUsage";
+import DonationUsageChart from "./organisms/DonationUsageChart";
 
 export {
     Button,
@@ -45,6 +48,9 @@ export {
     LoginActivity,
     AuditLogs,
     Footer,
-    MetricCard
+    MetricCard,
+    BloodInventoryTable,
+    BloodUsage,
+    DonationUsageChart
 }
 
