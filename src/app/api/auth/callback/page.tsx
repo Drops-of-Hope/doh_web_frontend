@@ -15,12 +15,13 @@ export default function AuthCallbackPage() {
 
             console.log("User roles:", roles);
 
-            const rolePriority = ["Blood Bank", "Hospital", "IT Support", "donor"] as const;
+            const rolePriority = ["Blood Bank", "Hospital", "IT Support", "donor", "selfsignup"] as const;
             const roleToPath: Record<typeof rolePriority[number], string> = {
                 "Blood Bank": "/blood_bank",
                 "Hospital": "/hospital",
                 "IT Support": "/it_support",
-                "donor": "/donor"
+                "donor": "/donor",
+                "selfsignup" : "/donor"
             };
 
             for (const role of rolePriority) {
