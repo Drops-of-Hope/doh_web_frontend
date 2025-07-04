@@ -55,9 +55,9 @@ export const useNavItems = () => {
         },
         {
           name: 'Blood Tests',
-          href: '/blood-tests',
+          href: '/blood_bank/test',
           icon: <FaFlask size={18} />,
-          active: pathname.includes('/blood-tests'),
+          active: pathname.includes('/blood_bank/test'),
         },
         {
           name: 'Blood Requests',
