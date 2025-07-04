@@ -1,7 +1,7 @@
 "use client";
 
-import { MetricCard, SearchBar } from '@/components';
-import { FaFlask, FaExclamationTriangle, FaCheckCircle, FaClipboardCheck, FaSearch, FaSort, FaFilter } from 'react-icons/fa';
+import { MetricCard, SearchBar, TestTable } from '@/components';
+import { FaFlask, FaExclamationTriangle, FaCheckCircle, FaClipboardCheck } from 'react-icons/fa';
 
 export default function TestPage() {
 
@@ -79,6 +79,7 @@ export default function TestPage() {
           </div>
         </div>
       </div>
+        <TestTable />
     </div>
   );
 }

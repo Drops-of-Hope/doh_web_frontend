@@ -25,6 +25,7 @@ import BloodInventoryTable from "./organisms/BloodInventoryTable";
 import BloodUsage from "./organisms/BloodUsage";
 import DonationUsageChart from "./organisms/DonationUsageChart";
 import ScheduleAppointment from "./organisms/ScheduleAppointment";
+import TestTable from "./organisms/TestTable";
 
 export {
     Button,
@@ -53,6 +54,7 @@ export {
     BloodInventoryTable,
     BloodUsage,
     DonationUsageChart,
-    ScheduleAppointment
+    ScheduleAppointment,
+    TestTable
 }
 
