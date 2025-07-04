@@ -24,6 +24,7 @@ import MetricCard from "./molecules/MetricCard";
 import BloodInventoryTable from "./organisms/BloodInventoryTable";
 import BloodUsage from "./organisms/BloodUsage";
 import DonationUsageChart from "./organisms/DonationUsageChart";
+import ScheduleAppointment from "./organisms/ScheduleAppointment";
 
 export {
     Button,
@@ -51,6 +52,7 @@ export {
     MetricCard,
     BloodInventoryTable,
     BloodUsage,
-    DonationUsageChart
+    DonationUsageChart,
+    ScheduleAppointment
 }
 
