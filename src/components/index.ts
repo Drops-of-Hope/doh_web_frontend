@@ -23,6 +23,9 @@ import Footer from "./organisms/Footer";
 import DonateCard from "./organisms/DonateCard";
 import CampaignOrganizerHeader from "./organisms/CampaignOrganizerHeader";
 import ITSupportHeader from "./organisms/ITSupportHeader";
+import PersonalInformation from "./organisms/PersonalInformation";
+import RecentDonations from "./organisms/RecentDonations";
+import SummarySection from "./organisms/SummarySection";
 
 export {
     Button,
@@ -49,6 +52,9 @@ export {
     Footer,
     DonateCard,
     CampaignOrganizerHeader,
-    ITSupportHeader
+    ITSupportHeader,
+    PersonalInformation,
+    RecentDonations,
+    SummarySection
 }
 
