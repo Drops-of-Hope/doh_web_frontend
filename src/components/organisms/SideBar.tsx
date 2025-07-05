@@ -3,14 +3,44 @@
 import { Fragment, useState } from 'react';
 import { SideNavItem } from "@/components";
 import Image from 'next/image';
-import { useNavItems } from "@/config/menuConfig";
+import { useNavItems } from "@/hooks/useNavItems";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function SideBar() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const navItems = useNavItems();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+
+  // Function to determine dashboard type from URL path
+  const getDashboardType = () => {
+    if (pathname.startsWith('/donor')) return 'donor';
+    if (pathname.startsWith('/hospital')) return 'hospital';
+    if (pathname.startsWith('/it_support')) return 'it_support';
+    if (pathname.startsWith('/campaign_org')) return 'campaign_org';
+    return 'blood_bank';
+  };
+
+  // Alternative: Get dashboard type from session/user role
+  // const getDashboardTypeFromSession = () => {
+  //   if (!session?.user) return 'blood_bank';
+  //   const userRole = session.user.role;
+  //   switch (userRole) {
+  //     case 'donor': return 'donor';
+  //     case 'hospital': return 'hospital';
+  //     case 'it_support': return 'it_support';
+  //     case 'campaign_org': return 'campaign_org';
+  //     default: return 'blood_bank';
+  //   }
+  // };
+
+  const dashboardType = getDashboardType();
+  const navItems = useNavItems(dashboardType);
+
+
      
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);

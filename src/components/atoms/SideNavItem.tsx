@@ -3,7 +3,6 @@ import Link from 'next/link';
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
-
 interface SideNavItemProps {
   label: string;
   icon: React.ReactNode;
@@ -30,7 +29,7 @@ export default function SideNavItem({
   isSidebarExpanded,
   position = 'top',
   onClick,
-  children,
+  children = [], // Default to empty array instead of undefined
   isExpanded = false,
   onToggleExpanded,
 }: SideNavItemProps) {
@@ -38,7 +37,7 @@ export default function SideNavItem({
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const navItemRef = useRef<HTMLDivElement>(null);
   const isBottomPosition = position === 'bottom';
-  const hasChildren = children && children.length > 0;
+  const hasChildren = Array.isArray(children) && children.length > 0; // More robust check
 
   const handleMouseEnter = () => {
     if (!isSidebarExpanded && navItemRef.current) {
