@@ -69,7 +69,7 @@ export {
     RequestCampaign,
     OngoingCampaign,
     UpcomingCampaignWithBanner,
-    BrowseCampaigns
+    BrowseCampaigns,
     DonateCard,
     CampaignOrganizerHeader,
     ITSupportHeader,
