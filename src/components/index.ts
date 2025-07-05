@@ -22,6 +22,7 @@ import AuditLogs from "./organisms/AuditLogs";
 import Footer from "./organisms/Footer";
 import DonateCard from "./organisms/DonateCard";
 import CampaignOrganizerHeader from "./organisms/CampaignOrganizerHeader";
+import ITSupportHeader from "./organisms/ITSupportHeader";
 
 export {
     Button,
@@ -47,6 +48,7 @@ export {
     AuditLogs,
     Footer,
     DonateCard,
-    CampaignOrganizerHeader
+    CampaignOrganizerHeader,
+    ITSupportHeader
 }
 
