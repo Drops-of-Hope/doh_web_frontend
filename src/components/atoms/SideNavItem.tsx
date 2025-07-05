@@ -1,7 +1,15 @@
 'use client';
+
 import Link from 'next/link';
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
+
+interface SubItem {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  active: boolean;
+}
 
 interface SideNavItemProps {
   label: string;
@@ -11,12 +19,7 @@ interface SideNavItemProps {
   isSidebarExpanded: boolean;
   position?: 'top' | 'bottom';
   onClick?: () => void;
-  children?: Array<{
-    name: string;
-    href: string;
-    icon: React.ReactNode;
-    active: boolean;
-  }>;
+  subItems?: SubItem[]; // Renamed from children
   isExpanded?: boolean;
   onToggleExpanded?: () => void;
 }
@@ -29,7 +32,7 @@ export default function SideNavItem({
   isSidebarExpanded,
   position = 'top',
   onClick,
-  children = [], // Default to empty array instead of undefined
+  subItems = [],
   isExpanded = false,
   onToggleExpanded,
 }: SideNavItemProps) {
@@ -37,7 +40,7 @@ export default function SideNavItem({
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const navItemRef = useRef<HTMLDivElement>(null);
   const isBottomPosition = position === 'bottom';
-  const hasChildren = Array.isArray(children) && children.length > 0; // More robust check
+  const hasChildren = Array.isArray(subItems) && subItems.length > 0;
 
   const handleMouseEnter = () => {
     if (!isSidebarExpanded && navItemRef.current) {
@@ -122,7 +125,7 @@ export default function SideNavItem({
 
       {hasChildren && isSidebarExpanded && isExpanded && (
         <div className="ml-6 mt-1 space-y-1">
-          {children.map((child, index) => (
+          {subItems.map((child, index) => (
             <Link key={index} href={child.href}>
               <div
                 className={cn(
@@ -170,7 +173,7 @@ export default function SideNavItem({
           {label}
           {hasChildren && (
             <div className="text-xs text-gray-500 mt-1">
-              {children.map(child => child.name).join(', ')}
+              {subItems.map(child => child.name).join(', ')}
             </div>
           )}
         </div>

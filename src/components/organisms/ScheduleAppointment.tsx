@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaArrowRight } from 'react-icons/fa';
-import Image from 'next/image';
 
 export default function ScheduleAppointment() {
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -14,11 +13,6 @@ export default function ScheduleAppointment() {
     { id: 2, name: 'Community Health Center', address: '456 Oak Ave, Midtown' },
     { id: 3, name: 'Red Cross Blood Drive', address: '789 Pine Rd, Uptown' },
     { id: 4, name: 'University Medical Center', address: '321 College Blvd, Campus' }
-  ];
-
-  const timeSlots = [
-    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'
   ];
 
   const handleSchedule = () => {

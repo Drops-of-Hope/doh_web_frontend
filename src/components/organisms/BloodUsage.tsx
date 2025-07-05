@@ -1,5 +1,4 @@
 import React from 'react';
-import { FaUser, FaHospital, FaClock } from 'react-icons/fa';
 
 interface BloodUsage {
   id: number;
@@ -10,8 +9,6 @@ interface BloodUsage {
   time: string;
   status: 'Completed' | 'In Progress' | 'Preparing';
 }
-
-type BloodType = 'O+' | 'A+' | 'B+' | 'AB+' | 'O-' | 'A-' | 'B-' | 'AB-';
 
 const BloodUsage: React.FC = () => {
   const todaysUsage: BloodUsage[] = [
@@ -66,12 +63,10 @@ const BloodUsage: React.FC = () => {
     }
   };
 
-  const totalUnitsUsed: number = todaysUsage.reduce((sum: number, item: BloodUsage) => sum + item.unitsUsed, 0);
-
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-md font-semibold text-gray-700">Today's Blood Usage</h2>
+        <h2 className="text-md font-semibold text-gray-700">Today Blood Usage</h2>
         <a href="#" className="text-gray-500 hover:text-blue-800 text-sm">
           View All
         </a>

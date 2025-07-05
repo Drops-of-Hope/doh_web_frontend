@@ -7,13 +7,11 @@ import { useNavItems } from "@/hooks/useNavItems";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 export default function SideBar() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   // Function to determine dashboard type from URL path
   const getDashboardType = () => {
@@ -98,9 +96,9 @@ export default function SideBar() {
                           active={item.active}
                           isSidebarExpanded={isSidebarExpanded}
                           onClick={item.onClick}
-                          children={item.children}
                           isExpanded={expandedItems.has(item.name)}
                           onToggleExpanded={() => toggleItemExpansion(item.name)}
+                          subItems={item.children} 
                         />
                       </div>
                     </Fragment>

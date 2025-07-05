@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaEye } from 'react-icons/fa';
-import { SearchBar } from '@/components'
+import { SearchBar } from '@/components';
+import Image from 'next/image';
 
 interface Campaign {
   id: string;
@@ -25,7 +26,7 @@ const otherCampaigns: Campaign[] = [
     title: 'Emergency Blood Drive',
     description: 'Critical shortage of O-negative blood type. Join us in this urgent mission to save lives.',
     organizer: 'City Medical Center',
-    bannerImage: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+    bannerImage: '/assets/banner3.jpeg',
     date: 'July 12, 2025',
     time: '8:00 AM - 6:00 PM',
     location: 'Downtown Medical Center',
@@ -51,7 +52,7 @@ const otherCampaigns: Campaign[] = [
     title: 'Veterans Memorial Blood Drive',
     description: 'Honor our veterans by participating in this special memorial blood drive event.',
     organizer: 'Veterans Association',
-    bannerImage: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+    bannerImage: '/assets/banner2.jpg',
     date: 'July 8, 2025',
     time: '9:00 AM - 4:00 PM',
     location: 'Veterans Memorial Hall',
@@ -78,11 +79,15 @@ const BrowseCampaigns: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {otherCampaigns.map((campaign) => (
           <div key={campaign.id} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-            <img
-              src={campaign.bannerImage}
-              alt={campaign.title}
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src={campaign.bannerImage}
+                alt={campaign.title}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-t-lg"
+              />
+            </div>
             <div className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold text-[#2D3748]">{campaign.title}</h3>

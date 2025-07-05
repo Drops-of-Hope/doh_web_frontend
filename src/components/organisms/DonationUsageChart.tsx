@@ -62,18 +62,6 @@ const DonationUsageChart: React.FC = () => {
     return null;
   };
 
-  const calculateTrend = (data: ChartDataPoint[]): { donations: string; usage: string } => {
-    const donationsChange = data[data.length - 1].donations - data[0].donations;
-    const usageChange = data[data.length - 1].usage - data[0].usage;
-    
-    return {
-      donations: donationsChange >= 0 ? `+${donationsChange}` : `${donationsChange}`,
-      usage: usageChange >= 0 ? `+${usageChange}` : `${usageChange}`
-    };
-  };
-
-  const trends = calculateTrend(chartData);
-
   return (
     <div className="bg-white w-full rounded-lg shadow-md p-4">
       <div className="flex items-center justify-between mb-6">

@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import Image from 'next/image';
 import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaEye, FaEdit } from 'react-icons/fa';
 
 interface Campaign {
@@ -45,11 +48,16 @@ const UpcomingCampaignWithBanner: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {upcomingCampaigns.map((campaign) => (
           <div key={campaign.id} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-            <img
-              src={campaign.bannerImage}
-              alt={campaign.title}
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src={campaign.bannerImage}
+                alt={campaign.title}
+                fill
+                style={{ objectFit: 'cover' }}
+                priority={true} // Optional: helps with LCP for important images
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+            </div>
             <div className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-lg font-semibold text-[#2D3748]">{campaign.title}</h3>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaCalendarAlt, FaMapMarkerAlt, FaHeart, FaEye } from 'react-icons/fa';
+import Image from 'next/image';
 
 interface Campaign {
   id: string;
@@ -59,11 +60,12 @@ const OngoingCampaign: React.FC<OngoingCampaignProps> = ({
           className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
         >
           <div className="flex gap-6">
-            <div className="w-1/4">
-              <img
+            <div className="w-1/4 relative h-48"> 
+              <Image
                 src={campaign.bannerImage}
                 alt={campaign.title}
-                className=""
+                fill
+                className="object-cover rounded-l-lg"
               />
             </div>
             <div className="w-2/3 p-6 flex flex-col items-center justify-center">
