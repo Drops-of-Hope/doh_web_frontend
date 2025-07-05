@@ -40,8 +40,8 @@ export default function ITSupportHeader({
         <div className="flex items-start gap-6 mb-8">
           {/* Profile Picture */}
           <div className="flex-shrink-0">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white text-2xl font-bold">
+            <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-gray-700 text-2xl font-bold">
                 {getInitials(name)}
               </span>
             </div>
