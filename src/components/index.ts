@@ -21,6 +21,7 @@ import LoginActivity from "./organisms/LoginActivity";
 import AuditLogs from "./organisms/AuditLogs";
 import Footer from "./organisms/Footer";
 import DonateCard from "./organisms/DonateCard";
+import CampaignOrganizerHeader from "./organisms/CampaignOrganizerHeader";
 
 export {
     Button,
@@ -45,6 +46,7 @@ export {
     LoginActivity,
     AuditLogs,
     Footer,
-    DonateCard
+    DonateCard,
+    CampaignOrganizerHeader
 }
 
