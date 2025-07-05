@@ -23,7 +23,6 @@ export default function LoginActivity({
       user: 'Nadhiya Admin',
       ipAddress: '192.168.1.23',
       status: 'SUCCESS',
-      description: 'show the login status as a badge'
     },
     {
       id: '2',
@@ -31,7 +30,6 @@ export default function LoginActivity({
       user: 'Nadhiya Admin',
       ipAddress: '192.168.1.23',
       status: 'SUCCESS',
-      description: 'MAKE THE TEXTS BIG AND SMALL ACCORDING TO PREFERENCE'
     },
     {
       id: '3',

@@ -30,6 +30,12 @@ import RequestCampaign from "./organisms/RequestCampaign";
 import OngoingCampaign from "./organisms/OngoingCampaign";
 import UpcomingCampaignWithBanner from "./organisms/UpcomingCampaignWithBanner";
 import BrowseCampaigns from "./organisms/BrowseCampaigns";
+import DonateCard from "./organisms/DonateCard";
+import CampaignOrganizerHeader from "./organisms/CampaignOrganizerHeader";
+import ITSupportHeader from "./organisms/ITSupportHeader";
+import PersonalInformation from "./organisms/PersonalInformation";
+import RecentDonations from "./organisms/RecentDonations";
+import SummarySection from "./organisms/SummarySection";
 
 export {
     Button,
@@ -63,6 +69,12 @@ export {
     RequestCampaign,
     OngoingCampaign,
     UpcomingCampaignWithBanner,
-    BrowseCampaigns
+    BrowseCampaigns,
+    DonateCard,
+    CampaignOrganizerHeader,
+    ITSupportHeader,
+    PersonalInformation,
+    RecentDonations,
+    SummarySection
 }
 
