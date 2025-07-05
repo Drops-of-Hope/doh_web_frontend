@@ -79,7 +79,7 @@ export default function DonorProfilePage() {
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Profile Header Card */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-md overflow-hidden">
           <div className="h-32" style={{ background: '#B3D0E9' }}></div>
           <div className="relative px-8 pb-8">
             <div className="absolute -top-16 left-8">
@@ -97,14 +97,14 @@ export default function DonorProfilePage() {
                   <span>{donorData.email}</span>
                   <span>{donorData.phone}</span>
                 </div>
-                <div className="bg-red-50 text-red-700 px-4 py-2 rounded-full font-bold text-lg inline-block border-2 border-red-200">
+                <div className="bg-red-50 text-red-600 px-3 py-1 rounded-full font-semibold inline-block border-1 border-red-200">
                   Blood Type: {donorData.bloodType}
                 </div>
               </div>
               
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="bg-red-50 text-red-700 px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg hover:bg-red-100 border-2 border-red-200"
+                className="bg-red-50 text-red-700 px-3 py-1 rounded-xl transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg hover:bg-red-100 border-2 border-red-200"
               >
                 <Edit className="w-4 h-4" />
                 Edit Profile

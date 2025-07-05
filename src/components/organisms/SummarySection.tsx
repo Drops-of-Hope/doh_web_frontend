@@ -60,11 +60,12 @@ export default function SummarySection({ donorData, achievements }: SummarySecti
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div 
-            className="bg-gradient-to-r from-red-50 to-pink-50 h-3 rounded-full transition-all duration-500 border border-red-200"
+            className="bg-gradient-to-r from-red-400 to-red-500 h-3 rounded-full transition-all duration-500 border border-red-200"
             style={{ width: `${Math.min(progressPercentage, 100)}%` }}
           ></div>
         </div>
       </div>
+
 
       {/* Achievements */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
