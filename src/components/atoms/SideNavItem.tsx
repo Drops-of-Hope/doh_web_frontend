@@ -1,7 +1,15 @@
 'use client';
+
 import Link from 'next/link';
 import React, { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
+
+interface SubItem {
+  name: string;
+  href: string;
+  icon: React.ReactNode;
+  active: boolean;
+}
 
 interface SideNavItemProps {
   label: string;
@@ -11,6 +19,9 @@ interface SideNavItemProps {
   isSidebarExpanded: boolean;
   position?: 'top' | 'bottom';
   onClick?: () => void;
+  subItems?: SubItem[]; // Renamed from children
+  isExpanded?: boolean;
+  onToggleExpanded?: () => void;
 }
 
 export default function SideNavItem({
@@ -21,11 +32,15 @@ export default function SideNavItem({
   isSidebarExpanded,
   position = 'top',
   onClick,
+  subItems = [],
+  isExpanded = false,
+  onToggleExpanded,
 }: SideNavItemProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const navItemRef = useRef<HTMLDivElement>(null);
   const isBottomPosition = position === 'bottom';
+  const hasChildren = Array.isArray(subItems) && subItems.length > 0;
 
   const handleMouseEnter = () => {
     if (!isSidebarExpanded && navItemRef.current) {
@@ -42,6 +57,9 @@ export default function SideNavItem({
     if (onClick) {
       e.preventDefault();
       onClick();
+    } else if (hasChildren && onToggleExpanded) {
+      e.preventDefault();
+      onToggleExpanded();
     }
   };
 
@@ -55,8 +73,8 @@ export default function SideNavItem({
             ? 'bg-red-100 text-red-600 font-semibold'
             : 'hover:bg-gray-50'
           : active
-          ? 'text-blue-600 font-semibold'
-          : 'hover:bg-gray-50'
+          ? 'text-blue-600 font-semibold bg-gray-100'
+          : 'hover:bg-gray-100'
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setShowTooltip(false)}
@@ -95,7 +113,7 @@ export default function SideNavItem({
 
   return (
     <div className="relative">
-      {onClick ? (
+      {onClick || hasChildren ? (
         <button type="button" className="w-full text-left">
           {navContent}
         </button>
@@ -104,7 +122,45 @@ export default function SideNavItem({
           {navContent}
         </Link>
       )}
-      
+
+      {hasChildren && isSidebarExpanded && isExpanded && (
+        <div className="ml-6 mt-1 space-y-1">
+          {subItems.map((child, index) => (
+            <Link key={index} href={child.href}>
+              <div
+                className={cn(
+                  'group flex items-center px-2 py-1 rounded-md transition-colors cursor-pointer justify-between',
+                  child.active
+                    ? 'bg-blue-50 text-blue-600 font-medium'
+                    : 'hover:bg-gray-100'
+                )}
+              >
+                <span
+                  className={cn(
+                    'text-sm font-normal transition-colors duration-200',
+                    child.active
+                      ? 'text-[#2D3748]'
+                      : 'text-gray-600 group-hover:text-gray-900'
+                  )}
+                >
+                  {child.name}
+                </span>
+                <div
+                  className={cn(
+                    'text-xxs transition-colors duration-200',
+                    child.active
+                      ? 'text-gray-400'
+                      : 'text-gray-300 group-hover:text-gray-400'
+                  )}
+                >
+                  {child.icon}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
       {!isSidebarExpanded && showTooltip && (
         <div
           className="fixed px-2 py-1 bg-white text-gray-700 text-sm rounded-sm shadow-md border border-gray-200 whitespace-nowrap pointer-events-none z-[1000] transition-opacity duration-200"
@@ -115,6 +171,11 @@ export default function SideNavItem({
           }}
         >
           {label}
+          {hasChildren && (
+            <div className="text-xs text-gray-500 mt-1">
+              {subItems.map(child => child.name).join(', ')}
+            </div>
+          )}
         </div>
       )}
     </div>
