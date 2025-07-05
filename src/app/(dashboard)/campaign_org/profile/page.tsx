@@ -46,10 +46,6 @@ export default function CampaignOrganizerProfilePage() {
   return (
     <div className="min-h-[100vh] p-4 pt-0 bg-[#f8f8f8]">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Page Header */}
-        <div className="text-[#2D3748] mb-6">
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
-        </div>
 
         {/* Campaign Organizer Header Component */}
         <CampaignOrganizerHeader

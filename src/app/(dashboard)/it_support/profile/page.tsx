@@ -33,7 +33,7 @@ export default function ITSupportHeader({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-[#f8f8f8] rounded-lg shadow-sm overflow-hidden">
       {/* Profile Content */}
       <div className="p-8">
         {/* Header with Profile Picture, Name and Edit Button */}
