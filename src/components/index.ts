@@ -20,7 +20,22 @@ import ProfileHeader from "./organisms/ProfileHeader";
 import LoginActivity from "./organisms/LoginActivity";
 import AuditLogs from "./organisms/AuditLogs";
 import Footer from "./organisms/Footer";
+import MetricCard from "./molecules/MetricCard";
+import BloodInventoryTable from "./organisms/BloodInventoryTable";
+import BloodUsage from "./organisms/BloodUsage";
+import DonationUsageChart from "./organisms/DonationUsageChart";
+import ScheduleAppointment from "./organisms/ScheduleAppointment";
+import TestTable from "./organisms/TestTable";
+import RequestCampaign from "./organisms/RequestCampaign";
+import OngoingCampaign from "./organisms/OngoingCampaign";
+import UpcomingCampaignWithBanner from "./organisms/UpcomingCampaignWithBanner";
+import BrowseCampaigns from "./organisms/BrowseCampaigns";
 import DonateCard from "./organisms/DonateCard";
+import CampaignOrganizerHeader from "./organisms/CampaignOrganizerHeader";
+import ITSupportHeader from "./organisms/ITSupportHeader";
+import PersonalInformation from "./organisms/PersonalInformation";
+import RecentDonations from "./organisms/RecentDonations";
+import SummarySection from "./organisms/SummarySection";
 
 export {
     Button,
@@ -45,6 +60,21 @@ export {
     LoginActivity,
     AuditLogs,
     Footer,
-    DonateCard
+    MetricCard,
+    BloodInventoryTable,
+    BloodUsage,
+    DonationUsageChart,
+    ScheduleAppointment,
+    TestTable,
+    RequestCampaign,
+    OngoingCampaign,
+    UpcomingCampaignWithBanner,
+    BrowseCampaigns,
+    DonateCard,
+    CampaignOrganizerHeader,
+    ITSupportHeader,
+    PersonalInformation,
+    RecentDonations,
+    SummarySection
 }
 

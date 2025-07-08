@@ -33,7 +33,7 @@ export interface StatisticCardProps {
 
 export interface MetricCardProps {
   icon: React.ReactNode;
-  iconBgColor?: string; 
+  iconBgColor?: string;
   heading: string;
   body: string;
   count: number;
