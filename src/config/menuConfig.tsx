@@ -95,9 +95,9 @@ export const getBloodBankMenu = (pathname: string, handleSignOut: () => void): M
   },
   {
     name: 'Establishments',
-    href: '/blood_bank/medical-establishments',
+    href: '/blood_bank/establishments',
     icon: <FaClinicMedical size={20} />,
-    active: pathname.includes('/blood_bank/medical-establishments'),
+    active: pathname.includes('/blood_bank/establishments'),
     position: 'top',
   },
   {
