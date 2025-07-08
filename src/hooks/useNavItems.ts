@@ -8,7 +8,7 @@ import {
   getHospitalMenu,
   getItSupportMenu,
   getCampaignOrgMenu
-} from '@/config/menuConfig';
+} from '@/config';
 
 export const useNavItems = (dashboardType: DashboardType): MenuItem[] => {
   const pathname = usePathname();
