@@ -1,4 +1,5 @@
 import { MouseEventHandler } from "react";
+import { ReactElement } from 'react';
 
 export interface ButtonProps {
   title: string;
@@ -37,4 +38,21 @@ export interface MetricCardProps {
   heading: string;
   body: string;
   count: number;
+}
+
+export type DashboardType = 'blood_bank' | 'donor' | 'hospital' | 'it_support' | 'campaign_org';
+
+export interface MenuItem {
+  name: string;
+  href?: string;
+  icon: ReactElement;
+  active: boolean;
+  position: 'top' | 'bottom';
+  onClick?: () => void;
+  children?: Array<{
+    name: string;
+    href: string;
+    icon: ReactElement;
+    active: boolean;
+  }>;
 }

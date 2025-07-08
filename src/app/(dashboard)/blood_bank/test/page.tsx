@@ -18,7 +18,7 @@ export default function TestPage() {
         <MetricCard
           iconBgColor="#F8F9FA"
           heading="Tests Done This Week"
-          body="Blood units that failed safety screening"
+          body="Blood units that tested for safety screening"
           count={324}
           icon={<FaClipboardCheck className="w-6 h-6 text-gray-600" />}
         />
