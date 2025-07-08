@@ -4,14 +4,12 @@ import {
   FaCog,
   FaFlask,
   FaBox,
-  FaTruck,
   FaBullhorn,
   FaSignOutAlt,
   FaClinicMedical,
   FaTools,
   FaClipboardList,
   FaTint,
-  FaCalendarCheck, 
 } from "react-icons/fa";
 
 import { MenuItem } from '../../types';
