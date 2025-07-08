@@ -25,16 +25,11 @@ const hospitals: Establishment[] = [
 export default function EstablishmentsPage() {
     const [activeTab, setActiveTab] = useState<'bloodBanks' | 'hospitals'>('bloodBanks');
     const [searchTerm, setSearchTerm] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [establishments, setEstablishments] = useState({
+    const [establishments] = useState({
         bloodBanks: [...bloodBanks],
         hospitals: [...hospitals]
     });
-    const [newEstablishment, setNewEstablishment] = useState({
-        name: '',
-        location: '',
-        type: activeTab
-    });
+
 
     const filteredList = (list: Establishment[]) => {
         return list.filter(item => 
@@ -53,22 +48,6 @@ export default function EstablishmentsPage() {
                 </div>
             </div>
         ));
-        
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const newItem: Establishment = {
-            name: newEstablishment.name,
-            location: newEstablishment.location
-        };
-        
-        setEstablishments(prev => ({
-            ...prev,
-            [newEstablishment.type]: [...prev[newEstablishment.type], newItem]
-        }));
-        
-        setNewEstablishment({ name: '', location: '', type: activeTab });
-        setShowModal(false);
-    };
 
     return (
         <div className="p-6 max-w-7xl mx-auto">
