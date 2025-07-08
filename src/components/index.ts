@@ -36,6 +36,7 @@ import ITSupportHeader from "./organisms/ITSupportHeader";
 import PersonalInformation from "./organisms/PersonalInformation";
 import RecentDonations from "./organisms/RecentDonations";
 import SummarySection from "./organisms/SummarySection";
+import MapComponent from "./organisms/MapComponent";
 
 export {
     Button,
@@ -75,6 +76,7 @@ export {
     ITSupportHeader,
     PersonalInformation,
     RecentDonations,
-    SummarySection
+    SummarySection,
+    MapComponent
 }
 
