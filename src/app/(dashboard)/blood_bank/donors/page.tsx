@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { FaUser, FaCalendarDay, FaHeart, FaFilter } from 'react-icons/fa';
+import { FaUser, FaCalendarDay, FaHeart } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
 import dynamic from 'next/dynamic';
 import { MetricCard, SearchBar } from '@/components';
@@ -20,7 +20,6 @@ export default function BloodDonationDashboard() {
 
   const itemsPerPage = 10;
 
-  // Filter and sort data
   const filteredData = appointmentRequests.filter(item => {
     const bloodTypeMatch = bloodTypeFilter === 'all' || item.bloodGroup === bloodTypeFilter;
     const statusMatch = statusFilter === 'all' || item.status === statusFilter;
@@ -89,24 +88,20 @@ export default function BloodDonationDashboard() {
       {/* Table Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
         <div className="p-8 border-b border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Donation Appointment Requests</h2>
+          <h2 className="text-xl font-bold text-gray-700 mb-6">Donation Appointment Requests</h2>
           
           {/* Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="flex-1 max-w-md">
-              <SearchBar title='Search by name, blood group, location...' />
+              <SearchBar title='Search...' />
             </div>
 
             <div className="flex gap-3 items-center">
-              <div className="flex items-center gap-2 text-gray-600">
-                <FaFilter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filters:</span>
-              </div>
               
               <select
                 value={bloodTypeFilter}
                 onChange={(e) => setBloodTypeFilter(e.target.value)}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
+                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
               >
                 <option value="all">All Blood Types</option>
                 <option value="O+">O+</option>
@@ -120,19 +115,9 @@ export default function BloodDonationDashboard() {
               </select>
 
               <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
-              >
-                <option value="all">All Status</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Pending">Pending</option>
-              </select>
-
-              <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
+                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
               >
                 <option value="date">Sort by Date</option>
                 <option value="name">Sort by Name</option>

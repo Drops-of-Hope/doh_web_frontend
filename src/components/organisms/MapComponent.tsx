@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { 
+  MapContainer as LeafletMapContainer, 
+  TileLayer as LeafletTileLayer, 
+  CircleMarker as LeafletCircleMarker, 
+  Popup as LeafletPopup 
+} from 'react-leaflet';
 
 // Dummy coordinates for Sri Lankan cities (donors locations)
 const donorLocations = [
@@ -21,11 +27,15 @@ const donorLocations = [
   { id: 15, name: "Kalutara", lat: 6.5854, lng: 79.9607, donors: 17 }
 ];
 
+type MapComponents = {
+  MapContainer: typeof LeafletMapContainer;
+  TileLayer: typeof LeafletTileLayer;
+  CircleMarker: typeof LeafletCircleMarker;
+  Popup: typeof LeafletPopup;
+};
+
 export default function MapComponent() {
-  const [MapContainer, setMapContainer] = useState<any>(null);
-  const [TileLayer, setTileLayer] = useState<any>(null);
-  const [CircleMarker, setCircleMarker] = useState<any>(null);
-  const [Popup, setPopup] = useState<any>(null);
+  const [mapComponents, setMapComponents] = useState<MapComponents | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,10 +45,12 @@ export default function MapComponent() {
         import('react-leaflet'),
         import('leaflet/dist/leaflet.css')
       ]).then(([reactLeaflet]) => {
-        setMapContainer(() => reactLeaflet.MapContainer);
-        setTileLayer(() => reactLeaflet.TileLayer);
-        setCircleMarker(() => reactLeaflet.CircleMarker);
-        setPopup(() => reactLeaflet.Popup);
+        setMapComponents({
+          MapContainer: reactLeaflet.MapContainer,
+          TileLayer: reactLeaflet.TileLayer,
+          CircleMarker: reactLeaflet.CircleMarker,
+          Popup: reactLeaflet.Popup
+        });
         setIsLoading(false);
       }).catch((error) => {
         console.error('Failed to load map components:', error);
@@ -48,7 +60,7 @@ export default function MapComponent() {
   }, []);
 
   // Show loading state during SSR and while loading components
-  if (typeof window === 'undefined' || isLoading || !MapContainer) {
+  if (typeof window === 'undefined' || isLoading || !mapComponents) {
     return (
       <div className="h-96 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
         <div className="text-gray-500 text-center">
@@ -58,6 +70,8 @@ export default function MapComponent() {
       </div>
     );
   }
+
+  const { MapContainer, TileLayer, CircleMarker, Popup } = mapComponents;
 
   return (
     <div className="h-96 rounded-xl overflow-hidden shadow-sm border border-gray-200">
