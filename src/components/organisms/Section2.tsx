@@ -119,10 +119,10 @@ export default function HowItWorks() {
             <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-600/20 backdrop-blur-sm"></div>
             <div className="relative z-10">
               <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                It's That Simple to Save Lives
+                It is That Simple to Save Lives
               </h3>
               <p className="text-red-100 mb-6 max-w-2xl mx-auto">
-                Every donation can save up to three lives. Start your journey today and become a hero in someone's story.
+                Every donation can save up to three lives. Start your journey today and become a hero.
               </p>
               <button className="bg-white text-red-600 px-8 py-3 rounded-full font-semibold hover:bg-red-50 transition-all duration-300 hover:scale-105 shadow-lg">
                 Get Started Now
