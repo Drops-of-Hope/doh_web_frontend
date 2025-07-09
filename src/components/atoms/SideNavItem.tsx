@@ -19,7 +19,7 @@ interface SideNavItemProps {
   isSidebarExpanded: boolean;
   position?: 'top' | 'bottom';
   onClick?: () => void;
-  subItems?: SubItem[]; // Renamed from children
+  subItems?: SubItem[]; 
   isExpanded?: boolean;
   onToggleExpanded?: () => void;
 }
