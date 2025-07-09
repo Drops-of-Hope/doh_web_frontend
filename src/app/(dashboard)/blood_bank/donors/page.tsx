@@ -3,19 +3,13 @@
 import { useState } from 'react';
 import { FaUser, FaCalendarDay, FaHeart } from 'react-icons/fa';
 import 'leaflet/dist/leaflet.css';
-import dynamic from 'next/dynamic';
-import { MetricCard, SearchBar } from '@/components';
+import { MetricCard, SearchBar, MapComponent } from '@/components';
 import { appointmentRequests } from './data.js';
-
-const MapComponent = dynamic(() => import('@/components/organisms/MapComponent'), {
-    ssr: false,
-    loading: () => <p>Loading map...</p>,
-});
 
 export default function BloodDonationDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [bloodTypeFilter, setBloodTypeFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date');
 
   const itemsPerPage = 10;
@@ -32,8 +26,6 @@ export default function BloodDonationDashboard() {
         return a.name.localeCompare(b.name);
       case 'bloodGroup':
         return a.bloodGroup.localeCompare(b.bloodGroup);
-      case 'status':
-        return a.status.localeCompare(b.status);
       case 'date':
       default:
         return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -52,7 +44,6 @@ export default function BloodDonationDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      {/* Stats Section */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center sm:items-stretch">
           <div className="flex-1 max-w-sm">
@@ -85,12 +76,10 @@ export default function BloodDonationDashboard() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
         <div className="p-8 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-700 mb-6">Donation Appointment Requests</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-6">Donation Appointment Requests</h2>
           
-          {/* Search and Filters */}
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="flex-1 max-w-md">
               <SearchBar title='Search...' />
@@ -128,7 +117,6 @@ export default function BloodDonationDashboard() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -137,8 +125,6 @@ export default function BloodDonationDashboard() {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Blood Group</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Date</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Time</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Contact</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Location</th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
               </tr>
             </thead>
@@ -153,8 +139,6 @@ export default function BloodDonationDashboard() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600">{request.date}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{request.time}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{request.contact}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{request.location}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(request.status)}`}>
                       {request.status}
@@ -166,7 +150,6 @@ export default function BloodDonationDashboard() {
           </table>
         </div>
 
-        {/* Pagination */}
         <div className="px-8 py-6 border-t border-gray-100 flex justify-between items-center">
           <div className="text-sm text-gray-600">
             Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, sortedData.length)} of {sortedData.length} entries
@@ -211,7 +194,6 @@ export default function BloodDonationDashboard() {
           <h2 className="text-2xl font-bold text-gray-900">Donor Distribution Map</h2>
           <p className="text-gray-600 mt-2">Geographic distribution of registered donors across Sri Lanka</p>
         </div>
-        
         <div className="p-8">
           <MapComponent />
         </div>
