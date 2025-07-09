@@ -14,7 +14,7 @@ export default function Header() {
       return { breadcrumb: "Pages / Home", title: "Home" };
     }
     
-    if (segments[0] === "blood_bank" && segments.length === 1) {
+    if ((segments[0] === "blood_bank" && segments.length === 1) || (segments[0] === "hospital" && segments.length === 1)) {
       return { breadcrumb: "Pages / Home", title: "Home" };
     }
     
