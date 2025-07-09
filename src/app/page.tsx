@@ -1,4 +1,4 @@
-import { NavBar, Hero, Footer } from "@/components";
+import { NavBar, Hero, Footer, Section2 } from "@/components";
 
 export default async function Home() {
   
@@ -6,8 +6,8 @@ export default async function Home() {
     <main>
       <NavBar />
       <Hero />
-      <div id="section-1" className="h-[100vh] flex flex-col items-center justify-center">
-        next section to test the hero button scrollable function
+      <div id="section-1" className="flex flex-col items-center justify-center">
+        <Section2/>
       </div>
       <Footer />
 

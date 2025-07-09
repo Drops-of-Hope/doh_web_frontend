@@ -37,6 +37,7 @@ import PersonalInformation from "./organisms/PersonalInformation";
 import RecentDonations from "./organisms/RecentDonations";
 import SummarySection from "./organisms/SummarySection";
 import MapComponent from "./organisms/MapComponent";
+import Section2 from "./organisms/Section2";
 
 export {
     Button,
@@ -77,6 +78,7 @@ export {
     PersonalInformation,
     RecentDonations,
     SummarySection,
-    MapComponent
+    MapComponent,
+    Section2
 }
 
