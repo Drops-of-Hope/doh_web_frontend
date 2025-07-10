@@ -37,7 +37,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-white relative overflow-hidden border-t-30 border-gray-200">
+    <section className="bg-white relative overflow-hidden border-t-30 border-gray-200 w-full">
 
     <div className='border-t-16 border-gray-100'>
       {/* Background Elements */}
