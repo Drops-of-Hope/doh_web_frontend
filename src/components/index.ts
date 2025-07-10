@@ -38,6 +38,7 @@ import RecentDonations from "./organisms/RecentDonations";
 import SummarySection from "./organisms/SummarySection";
 import MapComponent from "./organisms/MapComponent";
 import CampaignRequestsCard from "./organisms/CampaignRequestCard";
+import Section2 from "./organisms/Section2";
 
 export {
     Button,
@@ -79,6 +80,7 @@ export {
     RecentDonations,
     SummarySection,
     MapComponent,
-    CampaignRequestsCard
+    CampaignRequestsCard,
+    Section2
 }
 
