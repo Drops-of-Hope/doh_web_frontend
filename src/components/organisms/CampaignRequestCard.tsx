@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { FaTrophy, FaUsers, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaTrophy, FaUsers, FaMapMarkerAlt, FaTint } from 'react-icons/fa';
 
 interface Campaign {
   id: string;
@@ -40,15 +40,6 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
     }
   };
 
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency) {
-      case 'High': return 'text-orange-600 bg-orange-50';
-      case 'Medium': return 'text-yellow-600 bg-yellow-50';
-      case 'Low': return 'text-green-600 bg-green-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-4 w-full">
       <div className="flex justify-between items-center mb-6">
@@ -64,7 +55,6 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
               <>
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2">
-                    <FaTrophy className="text-blue-500" />
                     <span className="font-medium text-gray-800">{campaign.campaignTitle}</span>
                   </div>
                   <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
@@ -76,8 +66,10 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
                     <div className='text-blue-600'>
                       <span className="font-medium">Date:</span> {campaign.date}
                     </div>
-                    <div className="text-green-600">
-                      <span className="font-medium">Units Collected:</span> {campaign.unitsCollected}
+                    <div className="flex items-center gap-1 text-red-600 bg-red-50 px-3 py-1 rounded-full">
+                      <FaTint className="text-red-500" />
+                      <span className="font-medium">Units Collected:</span> 
+                      <span className="font-bold text-red-700">{campaign.unitsCollected}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -87,7 +79,7 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
                   <div className="flex justify-between items-center mt-3 pt-2 border-t border-gray-100">
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <span><FaUsers className="inline mr-1" />Expected: {campaign.expectedDonors}</span>
-                      <span><FaUsers className="inline mr-1 text-green-400" />Actual: {campaign.actualDonors}</span>
+                      <span><FaUsers className="inline mr-1 text-red-400" />Actual: {campaign.actualDonors}</span>
                     </div>
                     <div className="text-xs text-gray-500">
                       <span className="font-medium">Organizer:</span> {campaign.organizerName}
@@ -109,11 +101,6 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
                       <div className='text-blue-600'>
                         <span className="font-medium">Date:</span> {campaign.date}
                       </div>
-                      {campaign.urgency && (
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${getUrgencyColor(campaign.urgency)}`}>
-                          {campaign.urgency}
-                        </div>
-                      )}
                     </div>
                     <div className="flex items-center gap-1">
                       <FaMapMarkerAlt className="text-gray-400" />
@@ -124,7 +111,7 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
                       <span>Expected Donors: {campaign.expectedDonors}</span>
                     </div>
                     {campaign.bookedSlots && (
-                      <div className="flex items-center gap-2 mt-2">
+                      <div className="flex items-center gap-4 mt-2 w-1/3 p-2">
                         <span className="text-xs text-gray-500">{campaign.bookedSlots}/{campaign.expectedDonors} slots filled</span>
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
