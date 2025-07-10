@@ -43,6 +43,10 @@
     background-image: linear-gradient(to top, rgba(179, 208, 233, 1.2), transparent);
   }
 
+  .bg-gradient-blue-primary-2 {
+    background-image: linear-gradient(to top, rgba(179, 208, 233, 0.3), transparent);
+  }
+
   .text-white-primary {
     color: var(--white-primary);
   }
