@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { FaTrophy, FaUsers, FaMapMarkerAlt, FaTint } from 'react-icons/fa';
+import { FaUsers, FaMapMarkerAlt, FaTint } from 'react-icons/fa';
 
 interface Campaign {
   id: string;
