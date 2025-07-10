@@ -1,15 +1,7 @@
 import {
   FaHome,
   FaUser,
-  FaCog,
-  FaBullhorn,
   FaSignOutAlt,
-  FaClipboardList,
-  FaHeart,
-  FaCalendarAlt,
-  FaHistory,
-  FaAward,
-  FaHeartbeat,
 } from "react-icons/fa";
 
 import { MenuItem } from '../../types';
