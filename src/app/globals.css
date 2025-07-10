@@ -35,6 +35,10 @@
     background-image: linear-gradient(to bottom right, #f0f9ff, var(--blue-primary), var(--blue-primary));
   }
 
+  .bg-gradient-blue-primary-mirror {
+  background-image: linear-gradient(to top left, #f0f9ff, var(--blue-primary), var(--blue-primary));
+}
+
   .bg-gradient-blue-primary-120 {
     background-image: linear-gradient(to top, rgba(179, 208, 233, 1.2), transparent);
   }

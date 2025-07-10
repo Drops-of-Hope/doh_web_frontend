@@ -48,9 +48,9 @@ export const getBloodBankMenu = (pathname: string, handleSignOut: () => void): M
       },
       {
         name: 'Blood Requests',
-        href: '/blood_bank/blood-requests',
+        href: '/blood_bank/requests',
         icon: <FaClipboardList size={18} />,
-        active: pathname.includes('/blood_bank/blood-requests'),
+        active: pathname.includes('/blood_bank/requests'),
       }
     ],
   },
