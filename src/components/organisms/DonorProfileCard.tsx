@@ -1,4 +1,4 @@
-import { FaPhone, FaMapMarkerAlt, FaIdCard, FaBirthdayCake, FaWeight, FaRulerVertical, FaHeart, FaCheckCircle } from 'react-icons/fa';
+import { FaHeart, FaCheckCircle } from 'react-icons/fa';
 
 interface DonorDetails {
   id: string;
@@ -51,7 +51,7 @@ export default function DonorProfileCard({ donorData }: DonorProfileCardProps) {
             </span>
           </div>
         </div>
-        
+
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{donorData.name}</h2>
           <div className="flex flex-wrap gap-3 mb-4">
@@ -68,49 +68,43 @@ export default function DonorProfileCard({ donorData }: DonorProfileCardProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
-          
-          <div className="flex items-center gap-3">
-            <FaPhone className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">{donorData.phone}</span>
+
+          <div className="text-gray-600">
+            <span className="font-medium">Phone:</span> {donorData.phone}
           </div>
-          
-          <div className="flex items-center gap-3">
-            <FaBirthdayCake className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">{donorData.age} years old</span>
+
+          <div className="text-gray-600">
+            <span className="font-medium">Age:</span> {donorData.age} years old
           </div>
-          
-          <div className="flex items-center gap-3">
-            <FaIdCard className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">{donorData.nicNumber}</span>
+
+          <div className="text-gray-600">
+            <span className="font-medium">NIC Number:</span> {donorData.nicNumber}
           </div>
-          
-          <div className="flex items-center gap-3">
-            <FaMapMarkerAlt className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">{donorData.address}</span>
+
+          <div className="text-gray-600">
+            <span className="font-medium">Address:</span> {donorData.address}
           </div>
         </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Medical Information</h3>
-          
-          <div className="flex items-center gap-3">
-            <FaWeight className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">{donorData.weight} kg</span>
+
+          <div className="text-gray-600">
+            <span className="font-medium">Weight:</span> {donorData.weight} kg
           </div>
-          
-          <div className="flex items-center gap-3">
-            <FaRulerVertical className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">{donorData.height} cm</span>
+
+          <div className="text-gray-600">
+            <span className="font-medium">Height:</span> {donorData.height} cm
           </div>
-          
-          <div className="flex items-center gap-3">
-            <FaHeart className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-900">Last Donation: {donorData.lastDonation}</span>
+
+          <div className="flex items-center gap-2 text-gray-900">
+            <FaHeart className="w-5 h-5 text-red-400" />
+            <span><span className="font-medium">Last Donation:</span> {donorData.lastDonation}</span>
           </div>
-          
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-2 text-gray-900">
             <FaCheckCircle className="w-5 h-5 text-green-600" />
-            <span className="text-gray-900">Eligible for Donation</span>
+            <span><span className="font-medium">Eligibility:</span> Eligible for Donation</span>
           </div>
         </div>
       </div>
