@@ -14,7 +14,7 @@ interface RecentDonationsProps {
 
 export default function RecentDonations({ donationHistory, formatDate }: RecentDonationsProps) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-xl shadow-md p-6 transition-shadow">
       <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#B3D0E9' }}>
           <Calendar className="w-4 h-4 text-gray-800" />
@@ -24,7 +24,7 @@ export default function RecentDonations({ donationHistory, formatDate }: RecentD
       <div className="space-y-4">
         {donationHistory.map((donation) => (
           <div key={donation.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-            <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#B3D0E9' }}></div>
+            <div className="w-3 h-3 rounded-full flex-shrink-0 bg-gradient-to-r from-red-400 to-red-500"></div>
             <div className="flex-1">
               <div className="font-medium text-gray-800">{donation.type}</div>
               <div className="text-sm text-gray-600">{donation.location}</div>

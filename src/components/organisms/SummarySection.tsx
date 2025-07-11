@@ -45,7 +45,7 @@ export default function SummarySection({ donorData, achievements }: SummarySecti
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-xl shadow-md p-6 transition-shadow">
       <h3 className="text-xl font-bold text-gray-800 mb-6">Donation Progress & Achievements</h3>
       
       {/* Progress Bar */}

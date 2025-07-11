@@ -21,7 +21,7 @@ interface PersonalInformationProps {
 
 export default function PersonalInformation({ donorData, isEditing }: PersonalInformationProps) {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-xl shadow-md p-6 transition-shadow">
       <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
         <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#B3D0E9' }}>
           <MapPin className="w-4 h-4 text-gray-800" />
