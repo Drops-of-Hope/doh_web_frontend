@@ -75,24 +75,24 @@ export default function DonorProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-[#f8f8f8] p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Profile Header Card */}
-        <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-          <div className="h-32" style={{ background: '#B3D0E9' }}></div>
-          <div className="relative px-8 pb-8">
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="h-28" style={{ background: '#B3D0E9' }}></div>
+          <div className="relative px-8 pb-4">
             <div className="absolute -top-16 left-8">
-              <div className="w-32 h-32 rounded-full flex items-center justify-center shadow-xl border-4 border-white" style={{ background: '#B3D0E9' }}>
-                <span className="text-gray-800 text-4xl font-bold">
+              <div className="w-24 h-24 rounded-full flex items-center justify-center shadow-xl border-4 border-white" style={{ background: '#B3D0E9' }}>
+                <span className="text-gray-800 text-3xl font-bold">
                   {getInitials(donorData.name)}
                 </span>
               </div>
             </div>
             
-            <div className="pt-20 flex justify-between items-start">
+            <div className="pt-10 flex justify-between items-start">
               <div className="flex-1">
-                <h2 className="text-3xl font-bold text-gray-800 mb-2">{donorData.name}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{donorData.name}</h2>
                 <div className="flex items-center gap-4 text-gray-600 mb-4">
                   <span>{donorData.email}</span>
                   <span>{donorData.phone}</span>
@@ -115,15 +115,15 @@ export default function DonorProfilePage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#B3D0E9' }}>
-              <Droplets className="w-6 h-6 text-gray-800" />
+          <div className="bg-white rounded-xl shadow-md p-6 text-center transition-shadow">
+            <div className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 bg-gradient-to-r from-red-400 to-red-500">
+              <Droplets className="w-6 h-6 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-1">{donorData.totalDonations}</h3>
             <p className="text-gray-600">Total Donations</p>
           </div>
           
-          <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Heart className="w-6 h-6 text-white" />
             </div>
@@ -131,7 +131,7 @@ export default function DonorProfilePage() {
             <p className="text-gray-600">Lives Saved</p>
           </div>
           
-          <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Clock className="w-6 h-6 text-white" />
             </div>
@@ -139,7 +139,7 @@ export default function DonorProfilePage() {
             <p className="text-gray-600">Next Eligible</p>
           </div>
           
-          <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+          <div className="bg-white rounded-xl shadow-md p-6 text-center transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Award className="w-6 h-6 text-white" />
             </div>

@@ -135,7 +135,7 @@ export default function HomePage() {
         </div>
       </div>
       <div className="flex gap-4">
-        <div className="mt-4 w-1/2 bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <div className="w-1/2 bg-white rounded-lg shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-[#2D3748]">Upcoming Appointment</h2>
           </div>
@@ -173,7 +173,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <div className="mt-4 w-1/2">
+        <div className="w-1/2">
             <UpcomingCampaigns maxRows={1} showCreateButton={false} />
         </div>
       </div>

@@ -37,11 +37,11 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-white relative overflow-hidden border-t-30 border-gray-200 w-full">
+    <section className="bg-white relative overflow-hidden w-full">
 
-    <div className='border-t-16 border-gray-100'>
+    <div className=''>
       {/* Background Elements */}
-      <div className='p-14'>
+      <div className='p-16'>
 
               <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
