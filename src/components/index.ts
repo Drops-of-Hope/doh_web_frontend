@@ -39,6 +39,9 @@ import SummarySection from "./organisms/SummarySection";
 import MapComponent from "./organisms/MapComponent";
 import CampaignRequestsCard from "./organisms/CampaignRequestCard";
 import Section2 from "./organisms/Section2";
+import AppointmentRequestsTable from "./organisms/AppointmentRequests";
+import BackButton from "./atoms/BackButton";
+import DonorProfileCard from "./organisms/DonorProfileCard";
 
 export {
     Button,
@@ -81,6 +84,9 @@ export {
     SummarySection,
     MapComponent,
     CampaignRequestsCard,
-    Section2
+    Section2,
+    AppointmentRequestsTable,
+    BackButton,
+    DonorProfileCard
 }
 

@@ -8,7 +8,7 @@ export const appointmentRequests = [
     time: "10:00 AM",
     contact: "+94 77 123 4567",
     location: "Colombo",
-    status: "Confirmed",
+    status: "Pending",
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ export const appointmentRequests = [
     time: "02:00 PM",
     contact: "+94 75 345 6789",
     location: "Galle",
-    status: "Confirmed",
+    status: "Pending",
   },
   {
     id: 4,
@@ -48,7 +48,7 @@ export const appointmentRequests = [
     time: "03:30 PM",
     contact: "+94 72 567 8901",
     location: "Negombo",
-    status: "Confirmed",
+    status: "Pending",
   },
   {
     id: 6,
@@ -68,7 +68,7 @@ export const appointmentRequests = [
     time: "01:00 PM",
     contact: "+94 77 789 0123",
     location: "Jaffna",
-    status: "Confirmed",
+    status: "Pending",
   },
   {
     id: 8,
@@ -88,7 +88,7 @@ export const appointmentRequests = [
     time: "04:00 PM",
     contact: "+94 75 901 2345",
     location: "Kurunegala",
-    status: "Confirmed",
+    status: "Pending",
   },
   {
     id: 10,
@@ -108,7 +108,7 @@ export const appointmentRequests = [
     time: "02:30 PM",
     contact: "+94 72 123 4567",
     location: "Badulla",
-    status: "Confirmed",
+    status: "Pending",
   },
   {
     id: 12,
