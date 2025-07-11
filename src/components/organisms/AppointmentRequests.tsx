@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { SearchBar } from '@/components';
 import { appointmentRequests } from '@/constants/DonationAppointments'
 
+
 export default function AppointmentRequestsTable() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -42,7 +43,7 @@ export default function AppointmentRequestsTable() {
       : 'bg-amber-100 text-amber-700 border border-amber-200';
   };
 
-  const handleRowClick = (request: any) => {
+  const handleRowClick = () => {
     router.push('/blood_bank/donors/appointment');
   };
 
@@ -104,7 +105,7 @@ export default function AppointmentRequestsTable() {
               <tr 
                 key={request.id} 
                 className="border-b border-gray-50 hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
-                onClick={() => handleRowClick(request)}
+                onClick={handleRowClick}
               >
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{request.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-900">
