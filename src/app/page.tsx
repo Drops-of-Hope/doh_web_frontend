@@ -1,4 +1,4 @@
-import { NavBar, Hero, Footer, Section2 } from "@/components";
+import { NavBar, Hero, Footer, Section2, Banner } from "@/components";
 
 export default async function Home() {
   
@@ -9,6 +9,7 @@ export default async function Home() {
       <div id="section-1" className="flex flex-col items-center justify-center">
         <Section2/>
       </div>
+      <Banner />
       <Footer />
 
     </main>
