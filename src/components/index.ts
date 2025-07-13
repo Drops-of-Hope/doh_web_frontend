@@ -91,10 +91,9 @@ export {
     Section2,
     AppointmentRequestsTable,
     BackButton,
-    DonorProfileCard,
     Banner,
     PreScreeningFormDisplay,
-    QuestionDisplay
+    QuestionDisplay,
     DonorProfileCard,
     DonorCard,
     BloodBankCard,
