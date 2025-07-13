@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 interface BloodUnit {
@@ -13,36 +14,37 @@ interface BloodUnit {
 }
 
 export default function TestTable() {
+  const router = useRouter();
 
-const bloodUnitsData: BloodUnit[] = [
-  { id: 'BU001', donorId: 'D12345', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU002', donorId: 'D12346', bloodType: 'A-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU003', donorId: 'D12347', bloodType: 'B+', status: 'Completed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
-  { id: 'BU004', donorId: 'D12348', bloodType: 'AB-', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU005', donorId: 'D12349', bloodType: 'O-', status: 'Failed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
-  { id: 'BU006', donorId: 'D12350', bloodType: 'A+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU007', donorId: 'D12351', bloodType: 'B-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU008', donorId: 'D12352', bloodType: 'AB+', status: 'Completed', testDate: '2024-01-13', collectionDate: '2024-01-12' },
-  { id: 'BU009', donorId: 'D12353', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU010', donorId: 'D12354', bloodType: 'A-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU011', donorId: 'D12355', bloodType: 'B+', status: 'Completed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
-  { id: 'BU012', donorId: 'D12356', bloodType: 'AB-', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU013', donorId: 'D12357', bloodType: 'O-', status: 'Failed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
-  { id: 'BU014', donorId: 'D12358', bloodType: 'A+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU015', donorId: 'D12359', bloodType: 'B-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU016', donorId: 'D12360', bloodType: 'AB+', status: 'Completed', testDate: '2024-01-13', collectionDate: '2024-01-12' },
-  { id: 'BU017', donorId: 'D12361', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU018', donorId: 'D12362', bloodType: 'A-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU019', donorId: 'D12363', bloodType: 'B+', status: 'Completed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
-  { id: 'BU020', donorId: 'D12364', bloodType: 'AB-', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU021', donorId: 'D12365', bloodType: 'O-', status: 'Failed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
-  { id: 'BU022', donorId: 'D12366', bloodType: 'A+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU023', donorId: 'D12367', bloodType: 'B-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-  { id: 'BU024', donorId: 'D12368', bloodType: 'AB+', status: 'Completed', testDate: '2024-01-13', collectionDate: '2024-01-12' },
-  { id: 'BU025', donorId: 'D12369', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
-];
+  const bloodUnitsData: BloodUnit[] = [
+    { id: 'BU001', donorId: 'D12345', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU002', donorId: 'D12346', bloodType: 'A-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU003', donorId: 'D12347', bloodType: 'B+', status: 'Completed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
+    { id: 'BU004', donorId: 'D12348', bloodType: 'AB-', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU005', donorId: 'D12349', bloodType: 'O-', status: 'Failed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
+    { id: 'BU006', donorId: 'D12350', bloodType: 'A+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU007', donorId: 'D12351', bloodType: 'B-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU008', donorId: 'D12352', bloodType: 'AB+', status: 'Completed', testDate: '2024-01-13', collectionDate: '2024-01-12' },
+    { id: 'BU009', donorId: 'D12353', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU010', donorId: 'D12354', bloodType: 'A-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU011', donorId: 'D12355', bloodType: 'B+', status: 'Completed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
+    { id: 'BU012', donorId: 'D12356', bloodType: 'AB-', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU013', donorId: 'D12357', bloodType: 'O-', status: 'Failed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
+    { id: 'BU014', donorId: 'D12358', bloodType: 'A+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU015', donorId: 'D12359', bloodType: 'B-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU016', donorId: 'D12360', bloodType: 'AB+', status: 'Completed', testDate: '2024-01-13', collectionDate: '2024-01-12' },
+    { id: 'BU017', donorId: 'D12361', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU018', donorId: 'D12362', bloodType: 'A-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU019', donorId: 'D12363', bloodType: 'B+', status: 'Completed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
+    { id: 'BU020', donorId: 'D12364', bloodType: 'AB-', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU021', donorId: 'D12365', bloodType: 'O-', status: 'Failed', testDate: '2024-01-14', collectionDate: '2024-01-13' },
+    { id: 'BU022', donorId: 'D12366', bloodType: 'A+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU023', donorId: 'D12367', bloodType: 'B-', status: 'In Progress', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+    { id: 'BU024', donorId: 'D12368', bloodType: 'AB+', status: 'Completed', testDate: '2024-01-13', collectionDate: '2024-01-12' },
+    { id: 'BU025', donorId: 'D12369', bloodType: 'O+', status: 'Pending', testDate: '2024-01-15', collectionDate: '2024-01-14' },
+  ];
 
-const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
   
   // Calculate pagination
@@ -57,6 +59,11 @@ const [currentPage, setCurrentPage] = useState<number>(1);
   
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
+
+  // Function to handle row click
+  const handleRowClick = (bloodUnit: BloodUnit) => {
+    router.push('./test/blood_test');
   };
 
   // Function to get blood type badge color
@@ -105,7 +112,11 @@ const [currentPage, setCurrentPage] = useState<number>(1);
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {currentData.map((item: BloodUnit) => (
-              <tr key={item.id} className="hover:bg-gray-50">
+              <tr 
+                key={item.id} 
+                onClick={() => handleRowClick(item)}
+                className="hover:bg-gray-50 cursor-pointer transition-colors duration-150"
+              >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
                   {item.id}
                 </td>
