@@ -42,6 +42,9 @@ import Section2 from "./organisms/Section2";
 import AppointmentRequestsTable from "./organisms/AppointmentRequests";
 import BackButton from "./atoms/BackButton";
 import DonorProfileCard from "./organisms/DonorProfileCard";
+import Banner from "./organisms/Banner";
+import PreScreeningFormDisplay from "./organisms/PreScreeningForm";
+import QuestionDisplay from "./molecules/QuestionDisplay";
 import { DonorCard, BloodBankCard, HospitalCard} from "./molecules/UserCard";
 
 export {
@@ -88,6 +91,10 @@ export {
     Section2,
     AppointmentRequestsTable,
     BackButton,
+    DonorProfileCard,
+    Banner,
+    PreScreeningFormDisplay,
+    QuestionDisplay
     DonorProfileCard,
     DonorCard,
     BloodBankCard,
