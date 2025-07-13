@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormData, PreScreeningFormDisplayProps } from '../../../types';
+import { PreScreeningFormDisplayProps } from '../../../types';
 import { QuestionDisplay } from '@/components'
 
 const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formData }) => {

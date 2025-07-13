@@ -95,13 +95,7 @@ export default function Appointment() {
       day: 'numeric'
     });
   };
-
-  const getStatusColor = (status: string) => {
-    return status === 'Confirmed' 
-      ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-      : 'bg-amber-100 text-amber-700 border border-amber-200';
-  };
-
+  
   return (
     <div className="min-h-[100vh] p-4 pt-2 bg-[#f8f8f8]">
       <div className="">
