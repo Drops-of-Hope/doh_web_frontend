@@ -46,6 +46,9 @@ import Banner from "./organisms/Banner";
 import PreScreeningFormDisplay from "./organisms/PreScreeningForm";
 import QuestionDisplay from "./molecules/QuestionDisplay";
 import { DonorCard, BloodBankCard, HospitalCard} from "./molecules/UserCard";
+import MedicalOfficerEvaluation from "./organisms/MedicalEvaluation";
+import DonorFitnessAssessment from "./molecules/DonorFitness";
+import AddBloodUnit from "./organisms/AddBloodUnit";
 
 export {
     Button,
@@ -97,6 +100,9 @@ export {
     DonorProfileCard,
     DonorCard,
     BloodBankCard,
-    HospitalCard
+    HospitalCard,
+    MedicalOfficerEvaluation,
+    DonorFitnessAssessment,
+    AddBloodUnit
 }
 
