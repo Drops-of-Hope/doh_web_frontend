@@ -42,7 +42,9 @@ import Section2 from "./organisms/Section2";
 import AppointmentRequestsTable from "./organisms/AppointmentRequests";
 import BackButton from "./atoms/BackButton";
 import DonorProfileCard from "./organisms/DonorProfileCard";
-import Banner from "./organisms/Banner"
+import Banner from "./organisms/Banner";
+import PreScreeningFormDisplay from "./organisms/PreScreeningForm";
+import QuestionDisplay from "./molecules/QuestionDisplay";
 
 export {
     Button,
@@ -89,6 +91,8 @@ export {
     AppointmentRequestsTable,
     BackButton,
     DonorProfileCard,
-    Banner
+    Banner,
+    PreScreeningFormDisplay,
+    QuestionDisplay
 }
 

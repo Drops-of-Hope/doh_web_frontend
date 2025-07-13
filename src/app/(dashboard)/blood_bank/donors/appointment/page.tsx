@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import { FaQrcode, FaCalendarDay, FaClock, FaCheckCircle } from 'react-icons/fa';
+import { FaQrcode, FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
 import { RecentDonations, BackButton, DonorProfileCard } from '@/components';
+import { useRouter } from 'next/navigation';
 
 interface DonorDetails {
   id: string;
@@ -36,6 +37,7 @@ interface DonationHistory {
 }
 
 export default function Appointment() {
+  const router = useRouter();
   const [showQRScanner, setShowQRScanner] = useState<boolean>(false);
   const [scanResult, setScanResult] = useState<string>('');
 
@@ -79,6 +81,13 @@ export default function Appointment() {
     }, 2000);
   };
 
+  const handleViewForm = () => {
+
+    // For Next.js with router:
+    router.push('/blood_bank/donors/appointment/form');
+
+  };
+
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -104,50 +113,52 @@ export default function Appointment() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex gap-6">
           {/* Donor Profile Card */}
-          <div className="lg:col-span-2">
+          <div className="w-2/3 min-h-[50vh]">
             <DonorProfileCard donorData={donorData} />
           </div>
 
           {/* Appointment Details & QR Scanner */}
-          <div className="space-y-6">
+          <div className="space-y-6 w-1/3 min-h-[50vh]">
             {/* QR Scanner Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Mark Donor Attendance</h3>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-[100%]">
+              <h3 className="text-lg font-semibold text-gray-900 mb-8">Mark Donor Attendance</h3>
               
               <button
                 onClick={handleQRScan}
                 disabled={showQRScanner}
-                className="w-full bg-blue-500 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors duration-200 flex items-center justify-center gap-3"
+                className="w-full bg-blue-500 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
               >
-                <FaQrcode className="w-6 h-6" />
+                <FaQrcode className="w-4 h-4" />
                 {showQRScanner ? 'Scanning...' : 'Scan QR Code'}
               </button>
 
               {showQRScanner && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
                   </div>
-                  <p className="text-center text-blue-700 mt-2 text-sm">Scanning QR Code...</p>
+                  <p className="text-center text-blue-700 mt-1 text-sm">Scanning QR Code...</p>
                 </div>
               )}
 
               {scanResult && (
-                <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center gap-2">
-                    <FaCheckCircle className="w-5 h-5 text-green-600" />
+                <div className="mt-2 p-2 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center gap-1">
+                    <FaCheckCircle className="w-4 h-4 text-green-600" />
                     <span className="text-green-700 font-semibold">Verified</span>
                   </div>
-                  <p className="text-green-600 text-sm mt-1">Donor identity confirmed</p>
+                  <button
+                    onClick={handleViewForm}
+                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-1 transition-colors duration-200 hover:underline"
+                  >
+                    View Form
+                    <FaExternalLinkAlt className="w-3 h-3" />
+                  </button>
                 </div>
               )}
-            </div>
-
-            {/* Appointment Details Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Appointment Details</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-8">Appointment Details</h3>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -159,14 +170,9 @@ export default function Appointment() {
                   <FaClock className="w-5 h-5 text-gray-400" />
                   <span className="text-gray-900">{appointmentData.time}</span>
                 </div>
-                
-                <div className="flex items-center gap-3">
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(appointmentData.status)}`}>
-                    {appointmentData.status}
-                  </span>
-                </div>
               </div>
             </div>
+
           </div>
         </div>
         
