@@ -3,16 +3,8 @@ import {
   FaUser,
   FaCog,
   FaSignOutAlt,
-  FaExclamationCircle,
-  FaClipboardList,
   FaUsers,
-  FaChartBar,
-  FaDatabase,
-  FaShieldAlt,
-  FaTicketAlt,
-  FaWrench,
-  FaClipboard,
-  FaTasks,
+  FaDatabase
 } from "react-icons/fa";
 
 import { MenuItem } from '../../types';
