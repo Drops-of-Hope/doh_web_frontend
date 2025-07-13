@@ -92,3 +92,19 @@ export interface FormData {
 export interface PreScreeningFormDisplayProps {
   formData: FormData;
 }
+
+export interface EvaluationData {
+  donorFitness: 'fit' | 'unfit' | '';
+  fitnessReason: string;
+  
+  weight: string;
+  
+  systolicBP: string;
+  diastolicBP: string;
+  pulseRate: string;
+  temperature: string;
+}
+
+export interface ValidationErrors {
+  [key: string]: string;
+}
