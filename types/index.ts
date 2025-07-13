@@ -56,3 +56,39 @@ export interface MenuItem {
     active: boolean;
   }>;
 }
+
+export interface FormData {
+  experiencedAilment: string;
+  ailmentDescription?: string;
+  medicallyAdvised: string;
+  readInformationLeaflet: string;
+  feelingWellToday: string;
+  hasDiseasesConditions: string;
+  selectedDiseases: string[];
+  takingMedication: string;
+  undergoneSurgery: string;
+  surgeryDescription?: string;
+  heavyWorkAfterDonation: string;
+  isPregnantOrBreastfeeding: string;
+  childbirthOrAbortion: string;
+  hadJaundiceHepatitis: string;
+  jaundiceHepatitisDetails?: string;
+  hadTuberculosisTyphoid: string;
+  tuberculosisTyphoidDetails?: string;
+  receivedVaccinations: string;
+  vaccinationDetails?: string;
+  hadTattooOrPiercing: string;
+  tattooOrPiercingDetails?: string;
+  beenImprisoned: string;
+  imprisonmentDetails?: string;
+  travelledAbroad: string;
+  travelDetails?: string;
+  receivedBloodProducts: string;
+  bloodProductsDetails?: string;
+  hadMalaria: string;
+  malariaDetails?: string;
+}
+
+export interface PreScreeningFormDisplayProps {
+  formData: FormData;
+}
