@@ -61,8 +61,7 @@ export default function TestTable() {
     setCurrentPage(prev => Math.min(prev + 1, totalPages));
   };
 
-  // Function to handle row click
-  const handleRowClick = (bloodUnit: BloodUnit) => {
+  const handleRowClick = () => {
     router.push('./test/blood_test');
   };
 
@@ -114,7 +113,7 @@ export default function TestTable() {
             {currentData.map((item: BloodUnit) => (
               <tr 
                 key={item.id} 
-                onClick={() => handleRowClick(item)}
+                onClick={() => handleRowClick()}
                 className="hover:bg-gray-50 cursor-pointer transition-colors duration-150"
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">

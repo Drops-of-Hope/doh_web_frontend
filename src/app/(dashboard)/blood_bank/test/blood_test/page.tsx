@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { BackButton, BloodUnitInfo, TestResultsToBeCompleted } from '@/components';
 import { TestResult, BloodUnit } from '../../../../../../types';
 
 export default function BloodUnitTestingPage() {
-  const router = useRouter();
   
   const [bloodUnit, setBloodUnit] = useState<BloodUnit>({
     id: 'BU-2024-001234',
@@ -18,7 +16,7 @@ export default function BloodUnitTestingPage() {
     status: 'pending'
   });
 
-  const [tests, setTests] = useState<TestResult[]>([
+  const [tests] = useState<TestResult[]>([
     {
       id: 'blood-group',
       name: 'Blood Group Typing (ABO, Rh)',
