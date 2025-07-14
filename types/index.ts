@@ -56,3 +56,11 @@ export interface MenuItem {
     active: boolean;
   }>;
 }
+
+export interface TestimonialsProps {
+  name: string;
+  role: string;
+  message: string;
+  image: string;
+  rating: number;
+}

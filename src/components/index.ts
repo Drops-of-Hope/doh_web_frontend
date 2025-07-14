@@ -42,6 +42,7 @@ import Section2 from "./organisms/Section2";
 import AppointmentRequestsTable from "./organisms/AppointmentRequests";
 import BackButton from "./atoms/BackButton";
 import DonorProfileCard from "./organisms/DonorProfileCard";
+import TestimonialsSection from "./organisms/TestimonialsSection";
 
 export {
     Button,
@@ -87,6 +88,7 @@ export {
     Section2,
     AppointmentRequestsTable,
     BackButton,
-    DonorProfileCard
+    DonorProfileCard,
+    TestimonialsSection
 }
 
