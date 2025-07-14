@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface ForwardGrouping {
   antiA: string;
@@ -69,10 +69,6 @@ const BloodGroupingResultsPage: React.FC = () => {
   };
 
   const isFormComplete = Object.values(forwardGrouping).every(Boolean);
-
-  const handleSave = () => {
-    console.log("Saving results", forwardGrouping);
-  };
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-4">
