@@ -49,6 +49,8 @@ import { DonorCard, BloodBankCard, HospitalCard} from "./molecules/UserCard";
 import MedicalOfficerEvaluation from "./organisms/MedicalEvaluation";
 import DonorFitnessAssessment from "./molecules/DonorFitness";
 import AddBloodUnit from "./organisms/AddBloodUnit";
+import TestCard from "./organisms/TestCard";
+import { TestBadge, BloodUnitInfo, TestResultsToBeCompleted} from "./organisms/BloodUnitComponents"
 
 export {
     Button,
@@ -103,6 +105,10 @@ export {
     HospitalCard,
     MedicalOfficerEvaluation,
     DonorFitnessAssessment,
-    AddBloodUnit
+    AddBloodUnit,
+    TestCard,
+    TestBadge,
+    TestResultsToBeCompleted,
+    BloodUnitInfo
 }
 

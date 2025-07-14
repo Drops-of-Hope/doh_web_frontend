@@ -108,3 +108,21 @@ export interface EvaluationData {
 export interface ValidationErrors {
   [key: string]: string;
 }
+
+export interface TestResult {
+  id: string;
+  name: string;
+  isCompulsory: boolean;
+  status: 'pending' | 'pass' | 'fail';
+  result?: string;
+}
+
+export interface BloodUnit {
+  id: string;
+  bloodGroup: string;
+  donationLocation: string;
+  donationDate: string;
+  componentType: string;
+  volume: string;
+  status: 'pending' | 'pass' | 'fail';
+}

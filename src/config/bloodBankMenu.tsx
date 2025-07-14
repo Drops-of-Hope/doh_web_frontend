@@ -28,7 +28,7 @@ export const getBloodBankMenu = (pathname: string, handleSignOut: () => void): M
     icon: <FaTools size={20} />,
     active:
       pathname.includes('/inventory') ||
-      pathname.includes('/blood-tests') ||
+      pathname.includes('/blood_bank/test') ||
       pathname.includes('/blood_bank/requests') ||
       pathname.includes('/transits') ||
       pathname.includes('/appointments'),
