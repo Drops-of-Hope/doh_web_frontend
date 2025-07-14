@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import { BackButton, BloodUnitInfo, TestResultsToBeCompleted } from '@/components';
+import { useRouter } from 'next/navigation';
 import { TestResult, BloodUnit } from '../../../../../../types';
 
 export default function BloodUnitTestingPage() {
+
+  const router = useRouter();
   
   const [bloodUnit, setBloodUnit] = useState<BloodUnit>({
     id: 'BU-2024-001234',
@@ -52,19 +55,17 @@ export default function BloodUnitTestingPage() {
       name: 'Hemoglobin Level Check',
       isCompulsory: false,
       status: 'pending'
-    },
-    {
-      id: 'visual-quality',
-      name: 'Visual Blood Quality Check',
-      isCompulsory: false,
-      status: 'pending'
     }
   ]);
 
   const handleTestCardClick = (testId: string) => {
-    // Navigate to test detail page
-    // router.push(`/test/${testId}`);
-    console.log(`Navigating to test detail page for test: ${testId}`);
+
+    if (testId === 'blood-group') {
+      router.push('/blood_bank/test/blood_test/blood_type');
+    } else {
+      // Handle other test types
+      console.log('error');
+    }
   };
 
   const handleFinalizeStatus = (finalStatus: 'pass' | 'fail') => {
