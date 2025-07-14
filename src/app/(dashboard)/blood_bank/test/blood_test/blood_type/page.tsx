@@ -1,0 +1,154 @@
+"use client";
+
+import { useState } from "react";
+import { Save, Check } from "lucide-react";
+
+interface ForwardGrouping {
+  antiA: string;
+  antiB: string;
+  antiD: string;
+  normalSaline: string;
+}
+
+interface ResultInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  options?: string[];
+  colorTheme?: "blue" | "yellow" | "gray";
+}
+
+const ResultInput: React.FC<ResultInputProps> = ({
+  value,
+  onChange,
+  options = ["Agglutination", "No Agglutination"],
+  colorTheme,
+}) => {
+  const getColorClasses = (
+    theme?: "blue" | "yellow" | "gray"
+  ): string => {
+    switch (theme) {
+      case "blue":
+        return "focus:ring-blue-500 focus:border-blue-500 border-blue-200";
+      case "yellow":
+        return "focus:ring-yellow-500 focus:border-yellow-500 border-yellow-200";
+      case "gray":
+      default:
+        return "focus:ring-gray-500 focus:border-gray-500 border-gray-300";
+    }
+  };
+
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`w-full p-2 border rounded-md focus:ring-2 focus:border-transparent ${getColorClasses(
+        colorTheme
+      )}`}
+    >
+      <option value="">Select...</option>
+      {options.map((option) => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+
+const BloodGroupingResultsPage: React.FC = () => {
+  const [forwardGrouping, setForwardGrouping] = useState<ForwardGrouping>({
+    antiA: "",
+    antiB: "",
+    antiD: "",
+    normalSaline: "",
+  });
+
+  const handleChange = (field: keyof ForwardGrouping, value: string) => {
+    setForwardGrouping((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const isFormComplete = Object.values(forwardGrouping).every(Boolean);
+
+  const handleSave = () => {
+    console.log("Saving results", forwardGrouping);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f8f8f8] p-4">
+      <div className="">
+        {/* Form Card */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 mt-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            ABO Blood Grouping Test
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Anti‑A */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <label className="block text-sm font-medium text-blue-700 mb-2 flex items-center gap-2">
+                <span className="w-3 h-3 bg-blue-500 rounded-full" /> Anti‑A
+              </label>
+              <ResultInput
+                value={forwardGrouping.antiA}
+                onChange={(val) => handleChange("antiA", val)}
+                colorTheme="blue"
+              />
+            </div>
+
+            {/* Anti‑B */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <label className="block text-sm font-medium text-yellow-700 mb-2 flex items-center gap-2">
+                <span className="w-3 h-3 bg-yellow-500 rounded-full" /> Anti‑B
+              </label>
+              <ResultInput
+                value={forwardGrouping.antiB}
+                onChange={(val) => handleChange("antiB", val)}
+                colorTheme="yellow"
+              />
+            </div>
+
+            {/* Anti‑D */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <span className="w-3 h-3 bg-gray-500 rounded-full" /> Anti‑D
+              </label>
+              <ResultInput
+                value={forwardGrouping.antiD}
+                onChange={(val) => handleChange("antiD", val)}
+                colorTheme="gray"
+              />
+            </div>
+
+            {/* Normal Saline */}
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <span className="w-3 h-3 bg-gray-300 rounded-full" /> Normal Saline
+              </label>
+              <ResultInput
+                value={forwardGrouping.normalSaline}
+                onChange={(val) => handleChange("normalSaline", val)}
+                colorTheme="gray"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex justify-end gap-4 mb-6">
+
+          {isFormComplete && (
+            <button
+              onClick={() => console.log("Finalizing results")}
+              className="flex items-center gap-2 px-6 py-3 bg-green-50 text-green-600 border border-green-600 rounded-lg font-medium transition-colors"
+            >
+              <Check size={18} /> Finalize & Submit
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BloodGroupingResultsPage;
