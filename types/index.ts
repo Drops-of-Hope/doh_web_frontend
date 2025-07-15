@@ -134,3 +134,15 @@ export interface TestimonialsProps {
   image: string;
   rating: number;
 }
+
+export interface BloodRequestFormData {
+  bloodType: string;
+  unitsRequired: string;
+  urgencyLevel: string;
+  reasonForRequest: string;
+  specificPatientNeed: string;
+  requestedDeliveryTime: string;
+  requestFrom: string;
+  contactNumber: string;
+  additionalNotes: string;
+}
