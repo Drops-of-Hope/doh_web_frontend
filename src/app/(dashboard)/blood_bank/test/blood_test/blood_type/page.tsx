@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { BloodTypeResult } from "@/components";
 
 interface ForwardGrouping {
   antiA: string;
@@ -55,8 +57,8 @@ const ResultInput: React.FC<ResultInputProps> = ({
   );
 };
 
-
 const BloodGroupingResultsPage: React.FC = () => {
+  const router = useRouter();
   const [forwardGrouping, setForwardGrouping] = useState<ForwardGrouping>({
     antiA: "",
     antiB: "",
@@ -70,53 +72,67 @@ const BloodGroupingResultsPage: React.FC = () => {
 
   const isFormComplete = Object.values(forwardGrouping).every(Boolean);
 
+  // Blood type determination logic
+  const determineBloodType = (): { abo: string; rh: string; full: string } | null => {
+    if (!isFormComplete) return null;
+
+    const { antiA, antiB, antiD, normalSaline } = forwardGrouping;
+
+    if (normalSaline === "Agglutination") {
+      return { abo: "Invalid", rh: "Invalid", full: "Invalid Test" };
+    }
+
+    let abo = "";
+    if (antiA === "Agglutination" && antiB === "Agglutination") {
+      abo = "AB";
+    } else if (antiA === "Agglutination" && antiB === "No Agglutination") {
+      abo = "A";
+    } else if (antiA === "No Agglutination" && antiB === "Agglutination") {
+      abo = "B";
+    } else if (antiA === "No Agglutination" && antiB === "No Agglutination") {
+      abo = "O";
+    }
+
+    const rh = antiD === "Agglutination" ? "Positive" : "Negative";
+    const rhSymbol = antiD === "Agglutination" ? "+" : "-";
+
+    return {
+      abo,
+      rh,
+      full: `${abo}${rhSymbol}`,
+    };
+  };
+
+  const bloodType = determineBloodType();
+
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-4">
-      <div className="">
-        {/* Form Card */}
+      <div>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 mt-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            ABO Blood Grouping Test
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">ABO Blood Grouping Test</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Anti‑A */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-blue-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-blue-500 rounded-full" /> Anti‑A
               </label>
-              <ResultInput
-                value={forwardGrouping.antiA}
-                onChange={(val) => handleChange("antiA", val)}
-                colorTheme="blue"
-              />
+              <ResultInput value={forwardGrouping.antiA} onChange={(val) => handleChange("antiA", val)} colorTheme="blue" />
             </div>
 
-            {/* Anti‑B */}
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-yellow-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-yellow-500 rounded-full" /> Anti‑B
               </label>
-              <ResultInput
-                value={forwardGrouping.antiB}
-                onChange={(val) => handleChange("antiB", val)}
-                colorTheme="yellow"
-              />
+              <ResultInput value={forwardGrouping.antiB} onChange={(val) => handleChange("antiB", val)} colorTheme="yellow" />
             </div>
 
-            {/* Anti‑D */}
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-gray-500 rounded-full" /> Anti‑D
               </label>
-              <ResultInput
-                value={forwardGrouping.antiD}
-                onChange={(val) => handleChange("antiD", val)}
-                colorTheme="gray"
-              />
+              <ResultInput value={forwardGrouping.antiD} onChange={(val) => handleChange("antiD", val)} colorTheme="gray" />
             </div>
 
-            {/* Normal Saline */}
             <div className="bg-white border border-gray-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-gray-300 rounded-full" /> Normal Saline
@@ -130,13 +146,15 @@ const BloodGroupingResultsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex justify-end gap-4 mb-6">
+        <BloodTypeResult forwardGrouping={forwardGrouping} bloodType={bloodType} />
 
+        <div className="flex justify-end gap-4 mb-6">
           {isFormComplete && (
             <button
-              onClick={() => console.log("Finalizing results")}
-              className="flex items-center gap-2 px-6 py-3 bg-green-50 text-green-600 border border-green-600 rounded-lg font-medium transition-colors"
+              onClick={() => {
+                router.push("/blood_bank/test/blood_test");
+              }}
+              className="flex items-center gap-2 px-6 py-3 bg-green-50 text-green-600 border border-green-600 rounded-lg font-medium transition-colors hover:bg-green-100"
             >
               <Check size={18} /> Finalize & Submit
             </button>

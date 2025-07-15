@@ -99,7 +99,6 @@ export default function Appointment() {
   return (
     <div className="min-h-[100vh] p-4 pt-2 bg-[#f8f8f8]">
       <div className="">
-        {/* Back Button */}
         <div className="mb-6">
           <BackButton 
             fallbackUrl="/blood_bank/donors/appointment"
