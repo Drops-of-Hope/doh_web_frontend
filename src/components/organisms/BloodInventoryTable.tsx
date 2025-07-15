@@ -1,4 +1,6 @@
+"use client";
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 interface BloodGroupData {
   id: string;
@@ -15,7 +17,11 @@ interface StockStatus {
   color: string;
 }
 
+
 export default function BloodInventoryTable(): React.JSX.Element {
+
+  const router = useRouter();
+
   const bloodGroupData: BloodGroupData[] = [
     { id: 'BG-001', bloodGroup: 'O+', availableUnits: 156, expiredUnits: 2, lastRestocked: 'May 15, 2025', lastUpdated: 'Today' },
     { id: 'BG-002', bloodGroup: 'A+', availableUnits: 89, expiredUnits: 1, lastRestocked: 'May 12, 2025', lastUpdated: 'Yesterday' },
@@ -36,6 +42,10 @@ export default function BloodInventoryTable(): React.JSX.Element {
     return { status: 'normal', label: 'Normal', color: 'bg-green-100 text-green-800 border-green-200' };
   };
 
+  const handleRowClick = () => {
+    router.push('/blood_bank/inventory/blood_group');
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
@@ -53,7 +63,9 @@ export default function BloodInventoryTable(): React.JSX.Element {
             {bloodGroupData.map((item) => {
               const stockStatus = getStockStatus(item.availableUnits);
               return (
-                <tr key={item.id} className="hover:bg-gray-50">
+                <tr key={item.id} 
+                onClick={handleRowClick}
+                className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
                     {item.bloodGroup}
                   </td>

@@ -4,6 +4,7 @@ import { FaBoxes, FaExclamationTriangle, FaTimesCircle, FaClock, FaFileExport } 
 import { MetricCard, BloodInventoryTable, PieChartWithLegend, BloodUsage, DonationUsageChart } from '@/components';
 
 export default function InventoryPage() {
+
   const bloodTypeData = [
     { name: 'O+', value: 45 },
     { name: 'A+', value: 38 },

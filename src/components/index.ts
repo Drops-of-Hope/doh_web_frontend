@@ -50,7 +50,10 @@ import MedicalOfficerEvaluation from "./organisms/MedicalEvaluation";
 import DonorFitnessAssessment from "./molecules/DonorFitness";
 import AddBloodUnit from "./organisms/AddBloodUnit";
 import TestCard from "./organisms/TestCard";
-import { TestBadge, BloodUnitInfo, TestResultsToBeCompleted} from "./organisms/BloodUnitComponents"
+import { TestBadge, BloodUnitInfo, TestResultsToBeCompleted} from "./organisms/BloodUnitComponents";
+import BloodBagDisplay from "./organisms/BloodBagDisplay";
+import CompatibilityInfo from "./organisms/CompatibilityInfo";
+import BloodTypeResult from "./organisms/BloodTypeResult";
 
 export {
     Button,
@@ -109,6 +112,9 @@ export {
     TestCard,
     TestBadge,
     TestResultsToBeCompleted,
-    BloodUnitInfo
+    BloodUnitInfo,
+    BloodBagDisplay,
+    CompatibilityInfo,
+    BloodTypeResult
 }
 

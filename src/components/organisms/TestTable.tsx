@@ -47,7 +47,6 @@ export default function TestTable() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
   
-  // Calculate pagination
   const totalPages = Math.ceil(bloodUnitsData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
