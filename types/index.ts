@@ -126,3 +126,11 @@ export interface BloodUnit {
   volume: string;
   status: 'pending' | 'pass' | 'fail';
 }
+
+export interface TestimonialsProps {
+  name: string;
+  role: string;
+  message: string;
+  image: string;
+  rating: number;
+}
