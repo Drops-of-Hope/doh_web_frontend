@@ -54,6 +54,7 @@ import { TestBadge, BloodUnitInfo, TestResultsToBeCompleted} from "./organisms/B
 import BloodBagDisplay from "./organisms/BloodBagDisplay";
 import CompatibilityInfo from "./organisms/CompatibilityInfo";
 import BloodTypeResult from "./organisms/BloodTypeResult";
+import TestimonialsSection from "./organisms/TestimonialsSection";
 
 export {
     Button,
@@ -115,6 +116,7 @@ export {
     BloodUnitInfo,
     BloodBagDisplay,
     CompatibilityInfo,
-    BloodTypeResult
+    BloodTypeResult,
+    TestimonialsSection
 }
 
