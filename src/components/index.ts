@@ -55,6 +55,9 @@ import BloodBagDisplay from "./organisms/BloodBagDisplay";
 import CompatibilityInfo from "./organisms/CompatibilityInfo";
 import BloodTypeResult from "./organisms/BloodTypeResult";
 import TestimonialsSection from "./organisms/TestimonialsSection";
+import BloodTypeRequestsSection from "./organisms/BloodTypeSection";
+import { RequestFormSections } from "./organisms/RequestFormSection";
+import RequestFormUI from "./templates/RequestFormUI";
 
 export {
     Button,
@@ -117,6 +120,9 @@ export {
     BloodBagDisplay,
     CompatibilityInfo,
     BloodTypeResult,
-    TestimonialsSection
+    TestimonialsSection,
+    BloodTypeRequestsSection,
+    RequestFormSections,
+    RequestFormUI
 }
 

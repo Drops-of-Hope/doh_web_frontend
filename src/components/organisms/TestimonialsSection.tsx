@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import Image from 'next/image';
 
 const TestimonialsSection = () => {
   const testimonials = [
@@ -71,10 +72,12 @@ const TestimonialsSection = () => {
                 >
                   <div className="flex-1 mt-4">
                     <Quote className="text-blue-500 w-10 h-10 mb-3 mx-auto" />
-                    <img
+                    <Image
                       src={t.image}
                       alt={t.name}
-                      className="w-20 h-20 rounded-full object-cover mx-auto mb-4"
+                      width={80}
+                      height={80}
+                      className="rounded-full object-cover mx-auto mb-4"
                     />
                     <h3 className="font-semibold text-lg truncate">{t.name}</h3>
                     <p className="text-sm text-gray-500 mb-2 truncate">{t.role}</p>

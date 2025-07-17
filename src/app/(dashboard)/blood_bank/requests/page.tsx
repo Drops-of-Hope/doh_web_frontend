@@ -3,14 +3,16 @@
 import React, { useState } from 'react';
 import { Heart, ArrowUp, ArrowDown, Clock, Plus } from 'lucide-react';
 import { MetricCard, Button } from '@/components';
+import { useRouter } from 'next/navigation';
 
 type TabType = 'incoming' | 'outgoing';
 
 export default function RequestPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('incoming');
 
   const handleNewRequest = (): void => {
-    console.log("New request button clicked");
+    router.push('/blood_bank/requests/request_form');
   };
 
   const handleTabChange = (tab: TabType): void => {
