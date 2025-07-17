@@ -55,6 +55,8 @@ import BloodBagDisplay from "./organisms/BloodBagDisplay";
 import CompatibilityInfo from "./organisms/CompatibilityInfo";
 import BloodTypeResult from "./organisms/BloodTypeResult";
 import TestimonialsSection from "./organisms/TestimonialsSection";
+import BloodTypeSection from "./organisms/BloodTypeSection";
+import UrgencySection from "./organisms/UrgencySection";
 
 export {
     Button,
@@ -117,6 +119,8 @@ export {
     BloodBagDisplay,
     CompatibilityInfo,
     BloodTypeResult,
-    TestimonialsSection
+    TestimonialsSection,
+    BloodTypeSection,
+    UrgencySection
 }
 

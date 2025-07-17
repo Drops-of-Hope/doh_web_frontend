@@ -2,6 +2,7 @@
 import React from 'react';
 import { Droplets, AlertTriangle, Calendar, Package, TrendingDown, Users } from 'lucide-react';
 import { BackButton, CompatibilityInfo } from '@/components';
+import { useRouter } from 'next/navigation';
 
 interface StockStatus {
   status: 'critical' | 'low' | 'normal';
@@ -44,6 +45,7 @@ interface BloodGroupData {
 }
 
 export default function BloodGroupDetails(): React.JSX.Element {
+  const router = useRouter();
 
   const bloodGroupData: BloodGroupData = {
      id: 'BG-005',
@@ -96,12 +98,12 @@ export default function BloodGroupDetails(): React.JSX.Element {
             </div>
             <button 
               className="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+              onClick={() => router.push('/blood_bank/requests/request_form')}
             >
               Request Blood
             </button>
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
@@ -112,7 +114,6 @@ export default function BloodGroupDetails(): React.JSX.Element {
               <Package className="h-8 w-8 text-blue-500" />
             </div>
           </div>
-          
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -124,7 +125,6 @@ export default function BloodGroupDetails(): React.JSX.Element {
               <AlertTriangle className="h-8 w-8 text-red-500" />
             </div>
           </div>
-          
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -134,7 +134,6 @@ export default function BloodGroupDetails(): React.JSX.Element {
               <TrendingDown className="h-8 w-8 text-red-500" />
             </div>
           </div>
-          
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -145,7 +144,6 @@ export default function BloodGroupDetails(): React.JSX.Element {
             </div>
           </div>
         </div>
-
         <div className="flex flex-col gap-3">
           <div className='flex gap-2'>
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 w-2/3">
@@ -178,7 +176,6 @@ export default function BloodGroupDetails(): React.JSX.Element {
               canReceiveFrom={bloodGroupData.additionalInfo.canReceiveFrom}
             />
           </div>
-
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Expiration Dates</h2>
               <div className="space-y-3">
