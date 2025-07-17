@@ -56,7 +56,6 @@ import CompatibilityInfo from "./organisms/CompatibilityInfo";
 import BloodTypeResult from "./organisms/BloodTypeResult";
 import TestimonialsSection from "./organisms/TestimonialsSection";
 import BloodTypeRequestsSection from "./organisms/BloodTypeSection";
-import UrgencySection from "./organisms/UrgencySection";
 import { RequestFormSections } from "./organisms/RequestFormSection";
 import RequestFormUI from "./templates/RequestFormUI";
 
@@ -123,7 +122,6 @@ export {
     BloodTypeResult,
     TestimonialsSection,
     BloodTypeRequestsSection,
-    UrgencySection,
     RequestFormSections,
     RequestFormUI
 }

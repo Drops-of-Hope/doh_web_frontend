@@ -1,5 +1,5 @@
 import React from 'react';
-import { BloodRequestFormData, FormErrors, BloodTypeRequest, EnhancedBloodRequestFormData, RequestFormSectionsProps } from '../../../types';
+import { RequestFormSectionsProps } from '../../../types';
 import { FaClock, FaExclamationTriangle, FaMapMarkerAlt } from 'react-icons/fa';
 import { Clock, AlertCircle } from 'lucide-react';
 
