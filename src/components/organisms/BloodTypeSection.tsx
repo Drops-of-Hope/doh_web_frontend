@@ -1,7 +1,5 @@
-"use client";
-
 import React from 'react';
-import { FaPlus, FaTrash, FaTint } from 'react-icons/fa';
+import { FaTint, FaPlus, FaTrash } from 'react-icons/fa';
 
 interface BloodTypeRequest {
   id: string;
@@ -9,68 +7,29 @@ interface BloodTypeRequest {
   unitsRequired: string;
 }
 
-interface Props {
-  formData: {
-    bloodTypeRequests: BloodTypeRequest[];
-  };
-  setFormData: (updater: (prev: any) => any) => void;
-  errors: any;
-  setErrors: (updater: (prev: any) => any) => void;
+interface FormErrors {
+  bloodTypeRequests?: { [key: string]: { bloodType?: string; unitsRequired?: string } };
 }
 
-const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+interface BloodTypeRequestsSectionProps {
+  bloodTypeRequests: BloodTypeRequest[];
+  errors: FormErrors;
+  onBloodTypeRequestChange: (id: string, field: 'bloodType' | 'unitsRequired', value: string) => void;
+  onAddBloodTypeRequest: () => void;
+  onRemoveBloodTypeRequest: (id: string) => void;
+}
 
-const BloodTypeSection: React.FC<Props> = ({ formData, setFormData, errors, setErrors }) => {
-  const handleBloodTypeRequestChange = (id: string, field: 'bloodType' | 'unitsRequired', value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      bloodTypeRequests: prev.bloodTypeRequests.map((request: BloodTypeRequest) =>
-        request.id === id ? { ...request, [field]: value } : request
-      )
-    }));
-
-    if (errors.bloodTypeRequests?.[id]?.[field]) {
-      setErrors(prev => ({
-        ...prev,
-        bloodTypeRequests: {
-          ...(prev.bloodTypeRequests || {}),
-          [id]: {
-            ...(prev.bloodTypeRequests?.[id] || {}),
-            [field]: undefined
-          }
-        }
-      }));
-    }
-  };
-
-  const addBloodTypeRequest = () => {
-    const newId = Date.now().toString();
-    setFormData(prev => ({
-      ...prev,
-      bloodTypeRequests: [...prev.bloodTypeRequests, { id: newId, bloodType: '', unitsRequired: '' }]
-    }));
-  };
-
-  const removeBloodTypeRequest = (id: string) => {
-    if (formData.bloodTypeRequests.length > 1) {
-      setFormData(prev => ({
-        ...prev,
-        bloodTypeRequests: prev.bloodTypeRequests.filter((request: BloodTypeRequest) => request.id !== id)
-      }));
-
-      if (errors.bloodTypeRequests?.[id]) {
-        const newBloodTypeErrors = { ...(errors.bloodTypeRequests || {}) };
-        delete newBloodTypeErrors[id];
-        setErrors(prev => ({
-          ...prev,
-          bloodTypeRequests: newBloodTypeErrors
-        }));
-      }
-    }
-  };
+const BloodTypeRequestsSection: React.FC<BloodTypeRequestsSectionProps> = ({
+  bloodTypeRequests,
+  errors,
+  onBloodTypeRequestChange,
+  onAddBloodTypeRequest,
+  onRemoveBloodTypeRequest
+}) => {
+  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
   const getTotalUnits = () => {
-    return formData.bloodTypeRequests.reduce((total, request) => {
+    return bloodTypeRequests.reduce((total, request) => {
       return total + (parseInt(request.unitsRequired) || 0);
     }, 0);
   };
@@ -86,23 +45,23 @@ const BloodTypeSection: React.FC<Props> = ({ formData, setFormData, errors, setE
           Total Units: <span className="font-semibold text-gray-800">{getTotalUnits()}</span>
         </div>
       </div>
-
+      
       <div className="space-y-4">
-        {formData.bloodTypeRequests.map((request, index) => (
+        {bloodTypeRequests.map((request, index) => (
           <div key={request.id} className="border border-gray-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-medium text-gray-700">Blood Type Request #{index + 1}</h3>
-              {formData.bloodTypeRequests.length > 1 && (
+              {bloodTypeRequests.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => removeBloodTypeRequest(request.id)}
+                  onClick={() => onRemoveBloodTypeRequest(request.id)}
                   className="text-red-500 hover:text-red-700 p-1"
                 >
                   <FaTrash className="w-4 h-4" />
                 </button>
               )}
             </div>
-
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -110,7 +69,7 @@ const BloodTypeSection: React.FC<Props> = ({ formData, setFormData, errors, setE
                 </label>
                 <select
                   value={request.bloodType}
-                  onChange={(e) => handleBloodTypeRequestChange(request.id, 'bloodType', e.target.value)}
+                  onChange={(e) => onBloodTypeRequestChange(request.id, 'bloodType', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 ${
                     errors.bloodTypeRequests?.[request.id]?.bloodType ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -135,7 +94,7 @@ const BloodTypeSection: React.FC<Props> = ({ formData, setFormData, errors, setE
                   type="number"
                   min="1"
                   value={request.unitsRequired}
-                  onChange={(e) => handleBloodTypeRequestChange(request.id, 'unitsRequired', e.target.value)}
+                  onChange={(e) => onBloodTypeRequestChange(request.id, 'unitsRequired', e.target.value)}
                   placeholder="e.g., 2"
                   className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-600 ${
                     errors.bloodTypeRequests?.[request.id]?.unitsRequired ? 'border-red-500' : 'border-gray-300'
@@ -150,10 +109,10 @@ const BloodTypeSection: React.FC<Props> = ({ formData, setFormData, errors, setE
             </div>
           </div>
         ))}
-
+        
         <button
           type="button"
-          onClick={addBloodTypeRequest}
+          onClick={onAddBloodTypeRequest}
           className="w-1/3 border-1 border-gray-300 rounded-lg p-2 text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors flex items-center justify-center gap-2"
         >
           <FaPlus className="w-4 h-4" />
@@ -164,4 +123,4 @@ const BloodTypeSection: React.FC<Props> = ({ formData, setFormData, errors, setE
   );
 };
 
-export default BloodTypeSection;
+export default BloodTypeRequestsSection;
