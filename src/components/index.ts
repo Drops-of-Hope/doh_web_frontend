@@ -58,6 +58,7 @@ import TestimonialsSection from "./organisms/TestimonialsSection";
 import BloodTypeRequestsSection from "./organisms/BloodTypeSection";
 import UrgencySection from "./organisms/UrgencySection";
 import { RequestFormSections } from "./organisms/RequestFormSection";
+import RequestFormUI from "./templates/RequestFormUI";
 
 export {
     Button,
@@ -123,6 +124,7 @@ export {
     TestimonialsSection,
     BloodTypeRequestsSection,
     UrgencySection,
-    RequestFormSections
+    RequestFormSections,
+    RequestFormUI
 }
 

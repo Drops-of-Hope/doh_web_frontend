@@ -1,51 +1,8 @@
 import React from 'react';
-import { BloodRequestFormData } from '../../../types';
+import { BloodRequestFormData, FormErrors, BloodTypeRequest, EnhancedBloodRequestFormData, RequestFormSectionsProps } from '../../../types';
 import { FaClock, FaExclamationTriangle, FaMapMarkerAlt } from 'react-icons/fa';
 import { Clock, AlertCircle } from 'lucide-react';
 
-// Types and Interfaces
-export interface BloodTypeRequest {
-  id: string;
-  bloodType: string;
-  unitsRequired: string;
-}
-
-export interface EnhancedBloodRequestFormData extends Omit<BloodRequestFormData, 'bloodType' | 'unitsRequired'> {
-  bloodTypeRequests: BloodTypeRequest[];
-  notifyDonors: boolean;
-}
-
-export interface FormErrors {
-  urgencyLevel?: string;
-  reasonForRequest?: string;
-  requestedDeliveryTime?: string;
-  requestFrom?: string;
-  contactNumber?: string;
-  specificPatientNeed?: string;
-  additionalNotes?: string;
-  bloodTypeRequests?: { [key: string]: { bloodType?: string; unitsRequired?: string } };
-}
-
-// Constants
-export const urgencyLevels = [
-  { value: 'routine', label: 'Routine', color: 'text-green-600 bg-green-50' },
-  { value: 'emergency', label: 'Emergency', color: 'text-red-600 bg-red-50' }
-];
-
-export const reasonsForRequest = [
-  { value: 'low_inventory', label: 'Low Inventory' },
-  { value: 'emergency', label: 'Emergency' },
-  { value: 'specific_patient', label: 'Specific Patient Need' }
-];
-
-export const nearbyBloodBanks = [
-  { value: 'city_general', label: 'City General Hospital Blood Bank', location: 'Downtown District' },
-  { value: 'national_hospital', label: 'National Hospital Blood Bank', location: 'Borella' },
-  { value: 'private_hospital', label: 'Private Hospital Blood Bank', location: 'Nugegoda' },
-  { value: 'teaching_hospital', label: 'Teaching Hospital Blood Bank', location: 'Colombo 08' }
-];
-
-// Helper Functions
 const getUrgencyIcon = (urgency: string) => {
   switch (urgency) {
     case 'routine': return <Clock className="w-4 h-4" />;
@@ -55,17 +12,6 @@ const getUrgencyIcon = (urgency: string) => {
   }
 };
 
-// Props Interface
-interface RequestFormSectionsProps {
-  formData: EnhancedBloodRequestFormData;
-  errors: FormErrors;
-  onInputChange: (field: keyof EnhancedBloodRequestFormData, value: string | boolean) => void;
-  urgencyLevels: typeof urgencyLevels;
-  reasonsForRequest: typeof reasonsForRequest;
-  nearbyBloodBanks: typeof nearbyBloodBanks;
-}
-
-// Main Component
 export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
   formData,
   errors,
@@ -76,7 +22,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
 }) => {
   return (
     <>
-      {/* Urgency Level */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <AlertCircle className="text-orange-600" />
@@ -115,7 +60,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         {errors.urgencyLevel && <p className="mt-2 text-sm text-red-600">{errors.urgencyLevel}</p>}
       </div>
 
-      {/* Reason for Request */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           Reason for Request
@@ -161,7 +105,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         </div>
       </div>
 
-      {/* Delivery Time */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <Clock className="text-purple-600" />
@@ -184,7 +127,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         </div>
       </div>
 
-      {/* Request From */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           Request From
@@ -219,7 +161,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
             {errors.requestFrom && <p className="mt-2 text-sm text-red-600">{errors.requestFrom}</p>}
           </div>
 
-          {/* Donor Notification Checkbox */}
           <div className="pt-2 border-t border-gray-200">
             <label className="flex items-center gap-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
               <input
@@ -241,7 +182,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         </div>
       </div>
 
-      {/* Additional Notes */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
           Additional Notes

@@ -1,20 +1,14 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Button, BackButton, BloodTypeRequestsSection, RequestFormSections } from '@/components';
-import { BloodRequestFormData } from '../../../../../../types';
-import { FaTint } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { 
-  EnhancedBloodRequestFormData, 
-  FormErrors, 
-  BloodTypeRequest,
-  urgencyLevels,
-  reasonsForRequest,
-  nearbyBloodBanks
+import { RequestFormUI } from '@/components';
+import {
+  EnhancedBloodRequestFormData,
+  FormErrors
 } from '../../../../../../types';
 
-export default function RequestForm() {
+export default function RequestFormContainer() {
   const router = useRouter();
 
   const [formData, setFormData] = useState<EnhancedBloodRequestFormData>({
@@ -34,17 +28,10 @@ export default function RequestForm() {
 
   const handleInputChange = (field: keyof EnhancedBloodRequestFormData, value: string | boolean) => {
     if (field === 'bloodTypeRequests') return;
-
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => ({ ...prev, [field]: value }));
 
     if (errors[field as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: undefined
-      }));
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -86,12 +73,9 @@ export default function RequestForm() {
       }));
 
       if (errors.bloodTypeRequests?.[id]) {
-        const newBloodTypeErrors = { ...(errors.bloodTypeRequests || {}) };
-        delete newBloodTypeErrors[id];
-        setErrors(prev => ({
-          ...prev,
-          bloodTypeRequests: newBloodTypeErrors
-        }));
+        const newErrors = { ...(errors.bloodTypeRequests || {}) };
+        delete newErrors[id];
+        setErrors(prev => ({ ...prev, bloodTypeRequests: newErrors }));
       }
     }
   };
@@ -165,73 +149,16 @@ export default function RequestForm() {
   };
 
   return (
-    <div className="min-h-[100vh] p-4 bg-[#f8f8f8]">
-      <div className="">
-        {/* Header */}
-        <div className="mb-6">
-          <BackButton 
-            fallbackUrl="/blood_bank/requests/request_form"
-            className="hover:shadow-md"
-          />
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                <FaTint className="w-5 h-5 text-red-600" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-800">Blood Request Form</h1>
-                <p className="text-gray-600">Submit a new blood request</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Blood Type and Units - Using the separate component */}
-          <BloodTypeRequestsSection
-            bloodTypeRequests={formData.bloodTypeRequests}
-            errors={errors}
-            onBloodTypeRequestChange={handleBloodTypeRequestChange}
-            onAddBloodTypeRequest={addBloodTypeRequest}
-            onRemoveBloodTypeRequest={removeBloodTypeRequest}
-          />
-
-          {/* Form Sections */}
-          <RequestFormSections
-            formData={formData}
-            errors={errors}
-            onInputChange={handleInputChange}
-            urgencyLevels={urgencyLevels}
-            reasonsForRequest={reasonsForRequest}
-            nearbyBloodBanks={nearbyBloodBanks}
-          />
-
-          {/* Submit Button */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              
-              <Button
-                title={isSubmitting ? "Submitting..." : "Submit Request"}
-                containerStyles={`${
-                  isSubmitting ? 'bg-gray-400' : 'bg-[#FB7373] hover:bg-red-400'
-                } text-white font-medium rounded-lg transition-colors duration-200`}
-                handleClick={handleSubmit}
-                leftIcon={isSubmitting ? undefined : <FaTint className="w-4 h-4" />}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+    <RequestFormUI
+      formData={formData}
+      errors={errors}
+      isSubmitting={isSubmitting}
+      onInputChange={handleInputChange}
+      onBloodTypeRequestChange={handleBloodTypeRequestChange}
+      onAddBloodTypeRequest={addBloodTypeRequest}
+      onRemoveBloodTypeRequest={removeBloodTypeRequest}
+      onSubmit={handleSubmit}
+      router={router}
+    />
   );
 }
