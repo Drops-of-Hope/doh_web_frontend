@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Calendar, Phone, Building, Clock, AlertCircle } from 'lucide-react';
 import { AvailabilityChecker, ActionButtons, RejectionSection, BackButton } from '@/components';
 
@@ -54,16 +53,11 @@ const mockRequestData: BloodRequest = {
 };
 
 export default function RequestDetailsPage() {
-  const router = useRouter();
   const [showAvailability, setShowAvailability] = useState(false);
   const [availabilityData, setAvailabilityData] = useState<AvailabilityData | null>(null);
   const [requestStatus, setRequestStatus] = useState<RequestStatus>('pending');
   const [hasCheckedAvailability, setHasCheckedAvailability] = useState(false);
   const [showRejectionSection, setShowRejectionSection] = useState(false);
-
-  const handleBackClick = () => {
-    router.push('/blood_bank/requests');
-  };
 
   const handleCheckAvailability = async () => {
     // Mock availability check

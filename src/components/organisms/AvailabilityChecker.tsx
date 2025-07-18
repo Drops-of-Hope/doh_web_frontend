@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, XCircle, Clock, X, Search } from 'lucide-react';
+import { CheckCircle, XCircle, X } from 'lucide-react';
 
 interface AvailabilityData {
   available: boolean;

@@ -43,9 +43,6 @@ interface ActionButtonsProps {
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
   requestStatus,
   onCheckAvailability,
-  onAccept,
-  onReject,
-  hasCheckedAvailability
 }) => {
   return (
     <>
