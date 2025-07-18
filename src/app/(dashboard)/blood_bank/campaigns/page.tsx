@@ -90,10 +90,10 @@ export default function CampaignPage() {
         <MetricCard heading="Total Campaign Donors" body="From recent campaigns" count={2847} icon={<FaUsers className="text-white" />} iconBgColor="#27AE60" />
       </div>
       <div className="flex justify-end mt-6">
-        <button className="bg-[#FB7373] hover:bg-red-400 text-white font-medium rounded-lg px-4 py-2 font-normal transition-colors duration-200">Create Campaign</button>
+        <button className="bg-[#FB7373] hover:bg-red-400 text-white font-medium rounded-lg px-4 py-2 transition-colors duration-200">Create Campaign</button>
       </div>
       <div className='flex flex-col gap-4'>
-        <CampaignRequestsCard title="Campaign Requests from Organizers" campaigns={campaignRequests} />
+        <CampaignRequestsCard title="Campaign Requests from Organizers" campaigns={campaignRequests} enableNavigation />
         <CampaignRequestsCard title="Upcoming Campaigns" campaigns={upcomingCampaigns} />
         <CampaignRequestsCard title="Campaign History" campaigns={campaignHistory} showHistoryFormat />
       </div>
