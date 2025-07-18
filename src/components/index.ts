@@ -58,6 +58,9 @@ import TestimonialsSection from "./organisms/TestimonialsSection";
 import BloodTypeRequestsSection from "./organisms/BloodTypeSection";
 import { RequestFormSections } from "./organisms/RequestFormSection";
 import RequestFormUI from "./templates/RequestFormUI";
+import CampaignDetailsLayout from "./organisms/CampaignDetailsLayout";
+import CampaignAvailabilityActions from "./organisms/CampaignAvailabilityActions";
+
 import {AvailabilityChecker} from "./organisms/AvailabilityChecker";
 import {ActionButtons} from "./organisms/ActionButtons";
 import { RejectionSection } from "./organisms/RejectionSection";
@@ -125,6 +128,9 @@ export {
     TestimonialsSection,
     BloodTypeRequestsSection,
     RequestFormSections,
+    RequestFormUI,
+    CampaignDetailsLayout,
+    CampaignAvailabilityActions
     RequestFormUI,
     AvailabilityChecker,
     ActionButtons, 
