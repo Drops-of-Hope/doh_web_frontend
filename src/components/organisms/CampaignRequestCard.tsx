@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FaUsers, FaMapMarkerAlt, FaTint, FaChevronRight } from 'react-icons/fa';
+import { FaUsers, FaMapMarkerAlt, FaTint } from 'react-icons/fa';
 
 interface Campaign {
   id: string;
