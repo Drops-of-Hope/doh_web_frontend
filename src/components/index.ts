@@ -60,10 +60,10 @@ import { RequestFormSections } from "./organisms/RequestFormSection";
 import RequestFormUI from "./templates/RequestFormUI";
 import CampaignDetailsLayout from "./organisms/CampaignDetailsLayout";
 import CampaignAvailabilityActions from "./organisms/CampaignAvailabilityActions";
-
 import {AvailabilityChecker} from "./organisms/AvailabilityChecker";
 import {ActionButtons} from "./organisms/ActionButtons";
 import { RejectionSection } from "./organisms/RejectionSection";
+
 export {
     Button,
     NavBar,
@@ -130,8 +130,7 @@ export {
     RequestFormSections,
     RequestFormUI,
     CampaignDetailsLayout,
-    CampaignAvailabilityActions
-    RequestFormUI,
+    CampaignAvailabilityActions,
     AvailabilityChecker,
     ActionButtons, 
     RejectionSection
