@@ -121,9 +121,7 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
                       <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
                         {campaign.status}
                       </div>
-                      {enableNavigation && campaign.status === 'Pending' && (
-                        <FaChevronRight className="text-blue-500 text-sm" />
-                      )}
+                      
                     </div>
                   </div>
                   <div className="flex flex-col text-sm text-gray-600 space-y-2">

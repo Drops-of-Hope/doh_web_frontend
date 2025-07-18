@@ -53,7 +53,15 @@ export default function CampaignDetailsLayout({
                 {campaignRequest.urgency} Priority
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-4">
+          </div>
+          <div className="text-sm text-gray-500">
+            <p>Request ID: <span className="font-medium">{campaignRequest.id}</span></p>
+            <p>Submitted: <span className="font-medium">{campaignRequest.requestTime}</span></p>
+          </div>
+          
+        </div>
+        <div className="text-gray-600">{campaignRequest.description}</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-4">
               <div className="flex items-center gap-4 text-gray-600">
                 <FaCalendarAlt className="text-gray-500 text-sm" />
                 <div>
@@ -76,13 +84,6 @@ export default function CampaignDetailsLayout({
                 </div>
               </div>
             </div>
-          </div>
-          <div className="text-sm text-gray-500">
-            <p>Request ID: <span className="font-medium">{campaignRequest.id}</span></p>
-            <p>Submitted: <span className="font-medium">{campaignRequest.requestTime}</span></p>
-          </div>
-        </div>
-        <p className="text-gray-600">{campaignRequest.description}</p>
       </div>
 
       {/* Organizer Info - 1/3 */}
