@@ -1,18 +1,20 @@
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaPhone, FaClock, FaExclamationTriangle, FaCheck, FaTimes, FaSearch } from 'react-icons/fa';
+import {
+  FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaClock, FaExclamationTriangle,
+  FaCheck, FaTimes, FaSearch
+} from 'react-icons/fa';
 import { BackButton, Button } from '@/components';
 
 export default function CampaignRequestDetails() {
   const router = useRouter();
-  
+
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
 
-  // Hardcoded data matching the first campaign request
   const campaignRequest = {
     id: '#CR001',
     organizerName: 'Red Cross Society',
@@ -35,8 +37,6 @@ export default function CampaignRequestDetails() {
 
   const handleAvailabilityCheck = () => {
     setIsCheckingAvailability(true);
-    
-    // Simulate API call
     setTimeout(() => {
       setIsCheckingAvailability(false);
       setAvailabilityChecked(true);
@@ -44,7 +44,6 @@ export default function CampaignRequestDetails() {
   };
 
   const handleAccept = () => {
-    // Handle campaign acceptance
     console.log('Campaign accepted:', campaignRequest.id);
     alert('Campaign request has been accepted successfully!');
     router.push('/blood_bank/campaigns');
@@ -55,8 +54,6 @@ export default function CampaignRequestDetails() {
       alert('Please provide a reason for rejection');
       return;
     }
-    
-    // Handle campaign rejection
     console.log('Campaign rejected:', campaignRequest.id, 'Reason:', rejectReason);
     setShowRejectModal(false);
     alert('Campaign request has been rejected.');
@@ -81,178 +78,176 @@ export default function CampaignRequestDetails() {
     }
   };
 
-  return (
-    <div className="min-h-[100vh] p-4 bg-[#f8f8f8]">
-      <div className="mb-6">
-        <BackButton fallbackUrl="/blood_bank/campaigns" className="hover:shadow-md" />
-      </div>
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
 
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800 mb-2">{campaignRequest.campaignTitle}</h1>
-              <div className="flex items-center gap-4">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(campaignRequest.status)}`}>
-                  {campaignRequest.status}
-                </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getUrgencyColor(campaignRequest.urgency)}`}>
-                  <FaExclamationTriangle className="inline mr-1" />
-                  {campaignRequest.urgency} Priority
-                </span>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="mb-6">
+          <BackButton fallbackUrl="/blood_bank/campaigns/requests" className="hover:shadow-md" />
+        </div>
+
+        {/* Combined Campaign and Organizer Info */}
+        <div className="flex flex-col lg:flex-row gap-6 mb-6">
+          {/* Campaign Info - 2/3 */}
+          <div className="w-full lg:w-2/3 space-y-4 bg-white rounded-lg shadow-sm p-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold text-gray-800 mb-3">{campaignRequest.campaignTitle}</h1>
+                <div className="flex flex-wrap items-center gap-3 mb-8">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(campaignRequest.status)}`}>
+                    {campaignRequest.status}
+                  </span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getUrgencyColor(campaignRequest.urgency)}`}>
+                    <FaExclamationTriangle className="inline mr-1" />
+                    {campaignRequest.urgency} Priority
+                  </span>
+                </div>
+                
+                {/* Date, Time, and Location */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaCalendarAlt className="text-gray-500 text-sm" />
+                    <div>
+                      <p className="text-xs font-medium text-gray-500">Date</p>
+                      <p className="text-sm font-semibold">{formatDate(campaignRequest.date)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaClock className="text-gray-500 text-sm" />
+                    <div>
+                      <p className="text-xs font-medium text-gray-500">Time</p>
+                      <p className="text-sm font-semibold">{campaignRequest.startTime} - {campaignRequest.endTime}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaMapMarkerAlt className="text-gray-500 text-sm" />
+                    <div>
+                      <p className="text-xs font-medium text-gray-500">Location</p>
+                      <p className="text-sm font-semibold">{campaignRequest.location}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-500">
+                <p>Request ID: <span className="font-medium">{campaignRequest.id}</span></p>
+                <p>Submitted: <span className="font-medium">{campaignRequest.requestTime}</span></p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-500">Request ID</p>
-              <p className="font-mono text-lg font-semibold">{campaignRequest.id}</p>
-            </div>
+            <p className="text-gray-600">{campaignRequest.description}</p>
           </div>
-          
-          <p className="text-gray-600 mb-4">{campaignRequest.description}</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-2 text-gray-600">
-              <FaCalendarAlt className="text-blue-500" />
-              <div>
-                <p className="text-sm font-medium">Date</p>
-                <p>{campaignRequest.date}</p>
+
+          {/* Organizer Info - 1/3 */}
+          <div className="w-full lg:w-1/3 space-y-4 bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-800">Organizer Information</h2>
+            <div className="space-y-3">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-500">Organization</p>
+                <p className="font-semibold text-gray-800">{campaignRequest.organizerName}</p>
               </div>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <FaClock className="text-green-500" />
-              <div>
-                <p className="text-sm font-medium">Time</p>
-                <p>{campaignRequest.startTime} - {campaignRequest.endTime}</p>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-500">Contact Number</p>
+                <p className="font-semibold text-gray-800">{campaignRequest.contactNumber}</p>
               </div>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <FaMapMarkerAlt className="text-red-500" />
-              <div>
-                <p className="text-sm font-medium">Location</p>
-                <p>{campaignRequest.location}</p>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm font-medium text-gray-500">Email</p>
+                <p className="font-semibold text-gray-800">{campaignRequest.organizerEmail}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Campaign Details */}
+        {/* Main Content Grid */}
+        <div className="flex flex-col gap-3">
+          {/* Left Column - Campaign Requirements */}
           <div className="space-y-6">
-            {/* Organizer Information */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Organizer Information</h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <FaUsers className="text-blue-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Organization</p>
-                    <p className="font-medium">{campaignRequest.organizerName}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaPhone className="text-green-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Contact Number</p>
-                    <p className="font-medium">{campaignRequest.contactNumber}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaCalendarAlt className="text-purple-500" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Request Submitted</p>
-                    <p className="font-medium">{campaignRequest.requestTime}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Campaign Requirements */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Campaign Requirements</h2>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500 mb-2">Expected Donors</p>
-                  <div className="flex items-center gap-2">
-                    <FaUsers className="text-blue-500" />
-                    <span className="text-lg font-semibold">{campaignRequest.expectedDonors}</span>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Campaign Requirements</h2>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FaUsers className="text-blue-500 text-lg" />
+                      <p className="text-sm font-medium text-blue-700">Expected Donors</p>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-800">{campaignRequest.expectedDonors}</p>
                   </div>
-                </div>
-                
-                <div>
-                  <p className="text-sm font-medium text-gray-500 mb-2">Blood Types Needed</p>
-                  <div className="flex flex-wrap gap-2">
-                    {campaignRequest.bloodTypesNeeded.map((type) => (
-                      <span key={type} className="px-2 py-1 bg-red-50 text-red-600 text-sm font-medium rounded-md border border-red-200">
-                        {type}
-                      </span>
-                    ))}
+                  <div className="p-4 bg-red-50 rounded-lg">
+                    <p className="text-sm font-medium text-red-700 mb-2">Blood Types Needed</p>
+                    <div className="flex flex-wrap gap-1">
+                      {campaignRequest.bloodTypesNeeded.map((type) => (
+                        <span key={type} className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded">
+                          {type}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-2">Required Facilities</p>
-                  <ul className="space-y-1">
+                  <p className="text-sm font-medium text-gray-700 mb-3">Required Facilities</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {campaignRequest.facilities.map((facility, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                        <FaCheck className="text-green-500 text-xs" />
-                        {facility}
-                      </li>
+                      <div key={index} className="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
+                        <FaCheck className="text-green-500 text-sm" />
+                        <span className="text-sm text-gray-700">{facility}</span>
+                      </div>
                     ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <p className="text-sm font-medium text-gray-500 mb-2">Additional Notes</p>
-                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">{campaignRequest.notes}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Availability Check & Actions */}
+          {/* Right Column - Availability & Actions */}
           <div className="space-y-6">
             {/* Availability Check */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4">Availability Check</h2>
-              
+            <div className="bg-white rounded-lg shadow-sm p-4 flex justify-between">
+
               {!isCheckingAvailability && !availabilityChecked ? (
-                <div className="text-center py-6">
-                  <FaSearch className="text-4xl text-gray-300 mx-auto mb-4" />
+                <div className="text-center py-2 flex justify-between w-full">
                   <p className="text-gray-500 mb-4">Check availability for the requested date and time</p>
                   <Button
                     title="Check Availability"
-                    containerStyles="bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg"
+                    containerStyles="w-1/4 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
                     handleClick={handleAvailabilityCheck}
                     leftIcon={<FaSearch />}
                   />
                 </div>
               ) : isCheckingAvailability ? (
-                <div className="text-center py-6">
+                <div className="text-center py-6 w-full">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
                   <p className="text-gray-500">Checking availability...</p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-green-600">
-                    <FaCheck className="text-lg" />
+                  <div className="flex items-center gap-2 text-green-600 mb-4">
                     <span className="font-medium">Date & Time Available</span>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-green-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-green-700">Staff Available</p>
-                      <p className="text-lg font-semibold text-green-800">8 members</p>
-                    </div>
-                    <div className="bg-green-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-green-700">Equipment</p>
-                      <p className="text-lg font-semibold text-green-800">Available</p>
-                    </div>
-                  </div>
 
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <p className="text-sm font-medium text-blue-700">Mobile Unit</p>
-                    <p className="text-sm text-blue-600">Unit #3 available for deployment</p>
+                  <div className="space-y-3 flex gap-6">
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700">Staff Available</p>
+                      <p className="text-sm font-semibold text-gray-800">8 members</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700">Equipment Status</p>
+                      <p className="text-sm font-semibold text-gray-800">Available</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm font-medium text-gray-700">Mobile Unit</p>
+                      <p className="text-sm text-gray-600">Unit #3 available for deployment</p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -260,21 +255,21 @@ export default function CampaignRequestDetails() {
 
             {/* Action Buttons */}
             {availabilityChecked && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Actions</h2>
-                <div className="space-y-3">
+              <div className="p-6">
+                <div className="flex gap-4">
                   <Button
-                    title="Accept Campaign Request"
-                    containerStyles="w-full bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg"
-                    handleClick={handleAccept}
-                    leftIcon={<FaCheck />}
-                  />
-                  <Button
-                    title="Reject Campaign Request"
-                    containerStyles="w-full bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg"
+                    title="Reject Campaign"
+                    containerStyles="w-1/5 bg-red-50 text-red-500 border border-red-500 hover:bg-red-100 font-medium py-1 px-2 rounded-lg"
                     handleClick={() => setShowRejectModal(true)}
                     leftIcon={<FaTimes />}
                   />
+                  <Button
+                    title="Accept Campaign"
+                    containerStyles="w-1/5 bg-green-50 text-green-600 border border-green-600 hover:bg-green-100 font-medium py-1 px-2 rounded-lg"
+                    handleClick={handleAccept}
+                    leftIcon={<FaCheck />}
+                  />
+
                 </div>
               </div>
             )}
@@ -284,7 +279,7 @@ export default function CampaignRequestDetails() {
 
       {/* Reject Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Reject Campaign Request</h3>
             <p className="text-gray-600 mb-4">Please provide a reason for rejecting this campaign request:</p>
