@@ -58,6 +58,8 @@ import TestimonialsSection from "./organisms/TestimonialsSection";
 import BloodTypeRequestsSection from "./organisms/BloodTypeSection";
 import { RequestFormSections } from "./organisms/RequestFormSection";
 import RequestFormUI from "./templates/RequestFormUI";
+import CampaignDetailsLayout from "./organisms/CampaignDetailsLayout";
+import CampaignAvailabilityActions from "./organisms/CampaignAvailabilityActions";
 
 export {
     Button,
@@ -123,6 +125,8 @@ export {
     TestimonialsSection,
     BloodTypeRequestsSection,
     RequestFormSections,
-    RequestFormUI
+    RequestFormUI,
+    CampaignDetailsLayout,
+    CampaignAvailabilityActions
 }
 
