@@ -100,7 +100,9 @@ export default function RequestPage() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Incoming Requests</h3>
               <div className="space-y-4">
-                <div className="p-4 border border-gray-200 rounded-lg">
+                <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-100"
+                onClick={() => router.push('/blood_bank/requests/request_details')}
+                >
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium">City Hospital</h4>
                     <span className="text-sm text-gray-500">2 hours ago</span>

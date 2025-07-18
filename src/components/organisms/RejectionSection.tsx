@@ -1,7 +1,6 @@
 "use client"
 import React, { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-
 // Button component
 interface ButtonProps {
   title: string;
@@ -25,7 +24,6 @@ const Button: React.FC<ButtonProps> = ({
   </button>
 );
 
-// Types
 interface RejectionSectionProps {
   onReject: (reason: string) => void;
 }
@@ -61,7 +59,7 @@ export const RejectionSection: React.FC<RejectionSectionProps> = ({ onReject }) 
   const isSubmitDisabled = !selectedReason || (selectedReason === 'Other' && !rejectionReason.trim());
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-red-500">
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       <div className="flex items-center gap-3 mb-6">
         <AlertTriangle className="w-6 h-6 text-red-500" />
         <h3 className="text-xl font-semibold text-gray-900">Reject Request</h3>
@@ -70,7 +68,7 @@ export const RejectionSection: React.FC<RejectionSectionProps> = ({ onReject }) 
       {/* Warning Message */}
       <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-6">
         <p className="text-sm text-red-800">
-          Please provide a reason for rejecting this blood request. This will help improve our service and inform the requesting hospital.
+          Please provide a reason for rejecting this blood request.
         </p>
       </div>
 
@@ -120,7 +118,7 @@ export const RejectionSection: React.FC<RejectionSectionProps> = ({ onReject }) 
           containerStyles={`rounded-lg font-medium transition-colors px-6 py-3 ${
             isSubmitDisabled
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-red-500 hover:bg-red-700 text-white'
+              : 'bg-red-50 hover:bg-red-100 text-red-500 border border-red-500'
           }`}
           handleClick={handleReject}
           disabled={isSubmitDisabled}

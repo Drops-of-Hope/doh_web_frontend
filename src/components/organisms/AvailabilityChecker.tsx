@@ -54,10 +54,11 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
 }) => {
   if (!availabilityData) return null;
 
-  const { available, currentStock, requestedQuantity, bloodType, estimatedDeliveryTime } = availabilityData;
+  const { currentStock, requestedQuantity, bloodType } = availabilityData;
+  const available = true;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl">
         <div className="p-6">
           {/* Header */}
@@ -117,32 +118,19 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
             </div>
           </div>
 
-          {/* Estimated Delivery Time */}
-          {available && (
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-blue-600" />
-                <div>
-                  <p className="font-semibold text-blue-800">Estimated Delivery Time</p>
-                  <p className="text-sm text-blue-600">{estimatedDeliveryTime}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Action Buttons - Only show if request is still pending */}
           {requestStatus === 'pending' && (
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 title="Accept Request"
-                containerStyles="bg-green-500 hover:bg-green-700 text-white rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
+                containerStyles="bg-green-50 hover:bg-green-100 text-green-600 border border-green-600 rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
                 handleClick={onAccept}
                 leftIcon={<CheckCircle className="w-5 h-5" />}
                 iconSpacing="gap-2"
               />
               <Button
                 title="Reject Request"
-                containerStyles="bg-red-500 hover:bg-red-700 text-white rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
+                containerStyles="bg-red-50 hover:bg-red-100 text-red-600 border border-red-600 rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
                 handleClick={onReject}
                 leftIcon={<XCircle className="w-5 h-5" />}
                 iconSpacing="gap-2"
