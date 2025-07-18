@@ -63,6 +63,7 @@ import CampaignAvailabilityActions from "./organisms/CampaignAvailabilityActions
 import {AvailabilityChecker} from "./organisms/AvailabilityChecker";
 import {ActionButtons} from "./organisms/ActionButtons";
 import { RejectionSection } from "./organisms/RejectionSection";
+import { RequestDetailsCard } from "./organisms/RequestDetailsCard";
 
 export {
     Button,
@@ -133,6 +134,7 @@ export {
     CampaignAvailabilityActions,
     AvailabilityChecker,
     ActionButtons, 
-    RejectionSection
+    RejectionSection,
+    RequestDetailsCard
 }
 
