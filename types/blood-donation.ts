@@ -162,3 +162,12 @@ export interface BloodTypeRequestsSectionProps {
   onAddBloodTypeRequest: () => void;
   onRemoveBloodTypeRequest: (id: string) => void;
 }
+
+// Blood Sample Transit Props
+export interface TransitInfo {
+  from: string;
+  to: string;
+  estimatedDelivery: string;
+  bloodGroup: string;
+  units: number;
+}
