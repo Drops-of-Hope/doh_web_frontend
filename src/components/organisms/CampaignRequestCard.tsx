@@ -39,6 +39,10 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
     if (enableNavigation && status === 'Pending') {
       router.push('/blood_bank/campaigns/requests');
     }
+    // Navigate to ongoing campaign details for ongoing campaigns
+    if (enableNavigation && status === 'Ongoing') {
+      router.push(`/blood_bank/campaigns/Ongoing?id=${campaignId}`);
+    }
   };
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -47,6 +51,7 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
       case 'Rejected': return 'text-red-600 bg-red-50';
       case 'Completed': return 'text-blue-600 bg-blue-50';
       case 'Scheduled': return 'text-purple-600 bg-purple-50';
+      case 'Ongoing': return 'text-green-600 bg-green-50';
       default: return 'text-gray-600 bg-gray-50';
     }
   };
@@ -69,12 +74,12 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
           <div 
             key={campaign.id} 
             className={`border border-gray-200 rounded-lg p-4 transition-colors ${
-              enableNavigation && campaign.status === 'Pending'
+              enableNavigation && (campaign.status === 'Pending' || campaign.status === 'Ongoing')
                 ? 'hover:bg-blue-50 hover:border-blue-300 cursor-pointer hover:shadow-md' 
                 : 'hover:bg-gray-50'
             }`}
             onClick={() => handleCampaignClick(campaign.id, campaign.status)}
-            title={enableNavigation && campaign.status === 'Pending' ? 'Click to view details and manage request' : ''}
+            title={enableNavigation && (campaign.status === 'Pending' || campaign.status === 'Ongoing') ? 'Click to view details' : ''}
           >
             {showHistoryFormat ? (
               <>
@@ -121,7 +126,7 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
                       <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
                         {campaign.status}
                       </div>
-                      {enableNavigation && campaign.status === 'Pending' && (
+                      {enableNavigation && (campaign.status === 'Pending' || campaign.status === 'Ongoing') && (
                         <FaChevronRight className="text-blue-500 text-sm" />
                       )}
                     </div>

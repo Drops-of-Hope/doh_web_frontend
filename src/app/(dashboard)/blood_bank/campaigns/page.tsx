@@ -1,9 +1,11 @@
 "use client";
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { MetricCard, CampaignRequestsCard } from '@/components';
-import { FaExclamationTriangle, FaClock, FaTrophy, FaUsers } from 'react-icons/fa';
+import { FaExclamationTriangle, FaClock, FaTrophy, FaUsers, FaHeart } from 'react-icons/fa';
 
 export default function CampaignPage() {
+  const router = useRouter();
   const campaignRequests = [
     {
       id: '#CR001',
@@ -81,18 +83,46 @@ export default function CampaignPage() {
     }
   ];
 
+  const ongoingCampaigns = [
+    {
+      id: '#OC001',
+      organizerName: 'Red Cross Society',
+      campaignTitle: 'Emergency Blood Drive - City Hospital',
+      date: '2025-07-10 to 2025-07-20',
+      location: 'City Hospital, Downtown',
+      expectedDonors: 150,
+      contactNumber: '+94 77 123 4567',
+      requestTime: 'Active since Jul 10',
+      status: 'Ongoing',
+      urgency: 'High'
+    },
+    {
+      id: '#OC002',
+      organizerName: 'Tech Solutions Ltd',
+      campaignTitle: 'Corporate Wellness Blood Drive',
+      date: '2025-07-15 to 2025-07-25',
+      location: 'World Trade Center, Colombo',
+      expectedDonors: 200,
+      contactNumber: '+94 77 456 7890',
+      requestTime: 'Active since Jul 15',
+      status: 'Ongoing',
+      urgency: 'Medium'
+    }
+  ];
+
   return (
     <div className="min-h-[100vh] p-4 pt-0 bg-[#f8f8f8]">
       <div className="flex justify-center gap-6 mt-4">
         <MetricCard heading="Campaign Requests" body="Pending organizer requests" count={8} icon={<FaExclamationTriangle className="text-white" />} iconBgColor="#FB7373" />
+        <MetricCard heading="Ongoing Campaigns" body="Currently active campaigns" count={2} icon={<FaHeart className="text-white" />} iconBgColor="#10B981" />
         <MetricCard heading="Upcoming Campaigns" body="Scheduled this month" count={12} icon={<FaClock className="text-white" />} iconBgColor="#4A90E2" />
         <MetricCard heading="Total Campaigns Held" body="All time campaigns" count={147} icon={<FaTrophy className="text-white" />} iconBgColor="#9B59B6" />
-        <MetricCard heading="Total Campaign Donors" body="From recent campaigns" count={2847} icon={<FaUsers className="text-white" />} iconBgColor="#27AE60" />
       </div>
-      <div className="flex justify-end mt-6">
+      <div className="flex justify-end gap-3 mt-6">
         <button className="bg-[#FB7373] hover:bg-red-400 text-white font-medium rounded-lg px-4 py-2 transition-colors duration-200">Create Campaign</button>
       </div>
       <div className='flex flex-col gap-4'>
+        <CampaignRequestsCard title="Ongoing Campaigns" campaigns={ongoingCampaigns} enableNavigation />
         <CampaignRequestsCard title="Campaign Requests from Organizers" campaigns={campaignRequests} enableNavigation />
         <CampaignRequestsCard title="Upcoming Campaigns" campaigns={upcomingCampaigns} />
         <CampaignRequestsCard title="Campaign History" campaigns={campaignHistory} showHistoryFormat />
