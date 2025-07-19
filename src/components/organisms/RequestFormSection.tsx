@@ -21,45 +21,32 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
   nearbyBloodBanks
 }) => {
   return (
-    <>
+    <div className='space-y-6'>
+      {/* Basic Urgency Level Section */}
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <AlertCircle className="text-orange-600" />
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">
           Urgency Level
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-3">
           {urgencyLevels.map(level => (
-            <label key={level.value} className="cursor-pointer">
+            <label key={level.value} className="block">
               <input
                 type="radio"
                 name="urgencyLevel"
                 value={level.value}
                 checked={formData.urgencyLevel === level.value}
                 onChange={(e) => onInputChange('urgencyLevel', e.target.value)}
-                className="sr-only"
+                className="mr-2"
               />
-              <div className={`border-2 rounded-lg p-4 transition-all ${
-                formData.urgencyLevel === level.value
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-300 hover:border-gray-400'
-              }`}>
-                <div className="flex items-center gap-3">
-                  {getUrgencyIcon(level.value)}
-                  <div>
-                    <div className="font-medium text-gray-800">{level.label}</div>
-                    <div className={`text-sm px-2 py-1 rounded ${level.color} inline-block mt-1`}>
-                      {level.label}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <span className="text-gray-800">{level.label}</span>
             </label>
           ))}
         </div>
         {errors.urgencyLevel && <p className="mt-2 text-sm text-red-600">{errors.urgencyLevel}</p>}
       </div>
 
+      {/* Original Reason for Request Section */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           Reason for Request
@@ -105,6 +92,7 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         </div>
       </div>
 
+      {/* Original Delivery Time Section */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           <Clock className="text-purple-600" />
@@ -127,6 +115,7 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         </div>
       </div>
 
+      {/* Original Request From Section */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
           Request From
@@ -182,6 +171,7 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         </div>
       </div>
 
+      {/* Original Additional Notes Section */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">
           Additional Notes
@@ -195,6 +185,6 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-600"
         />
       </div>
-    </>
+    </div>
   );
 };
