@@ -36,7 +36,7 @@ export default function RequestFormUI({
   router
 }: RequestFormUIProps) {
   return (
-    <div className="min-h-[100vh] p-4 bg-[#f8f8f8]">
+    <div className="min-h-[100vh] p-4">
       <div className="">
         <div className="mb-6">
           <BackButton fallbackUrl="/blood_bank/requests/request_form" className="hover:shadow-md" />

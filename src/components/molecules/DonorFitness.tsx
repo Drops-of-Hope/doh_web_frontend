@@ -31,18 +31,7 @@ const DonorFitnessAssessment: React.FC<DonorFitnessAssessmentProps> = ({
             Donor Fitness Status *
           </label>
           <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => onInputChange('donorFitness', 'fit')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors ${
-                isFit 
-                  ? 'border-green-600 bg-green-50 text-green-700' 
-                  : 'border-gray-300 hover:border-green-600'
-              }`}
-            >
-              <Check size={20} />
-              Fit for Donation
-            </button>
+
             <button
               type="button"
               onClick={() => onInputChange('donorFitness', 'unfit')}
@@ -54,6 +43,18 @@ const DonorFitnessAssessment: React.FC<DonorFitnessAssessmentProps> = ({
             >
               <X size={20} />
               Unfit for Donation
+            </button>
+                        <button
+              type="button"
+              onClick={() => onInputChange('donorFitness', 'fit')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors ${
+                isFit 
+                  ? 'border-green-600 bg-green-50 text-green-700' 
+                  : 'border-gray-300 hover:border-green-600'
+              }`}
+            >
+              <Check size={20} />
+              Fit for Donation
             </button>
           </div>
           {errors.donorFitness && <p className="text-red-600 text-sm mt-1">{errors.donorFitness}</p>}

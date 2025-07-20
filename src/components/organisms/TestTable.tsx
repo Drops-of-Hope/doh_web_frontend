@@ -122,7 +122,7 @@ export default function TestTable() {
                   {item.donorId}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getBloodTypeBadgeColor(item.bloodType)}`}>
+                  <span className={`items-center w-12 text-center inline-block px-2.5 py-0.5 rounded-full text-xs font-medium border ${getBloodTypeBadgeColor(item.bloodType)}`}>
                     {item.bloodType}
                   </span>
                 </td>

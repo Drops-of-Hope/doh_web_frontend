@@ -64,6 +64,7 @@ import {AvailabilityChecker} from "./organisms/AvailabilityChecker";
 import {ActionButtons} from "./organisms/ActionButtons";
 import { RejectionSection } from "./organisms/RejectionSection";
 import { RequestDetailsCard } from "./organisms/RequestDetailsCard";
+import PreScreeningComparisonPanel from "./organisms/ComparisionPanel";
 
 export {
     Button,
@@ -135,6 +136,7 @@ export {
     AvailabilityChecker,
     ActionButtons, 
     RejectionSection,
-    RequestDetailsCard
+    RequestDetailsCard,
+    PreScreeningComparisonPanel
 }
 
