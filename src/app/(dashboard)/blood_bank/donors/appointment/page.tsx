@@ -41,7 +41,6 @@ export default function Appointment() {
   const [showQRScanner, setShowQRScanner] = useState<boolean>(false);
   const [scanResult, setScanResult] = useState<string>('');
 
-  // Mock data - in real app, this would come from props or API
   const donorData: DonorDetails = {
     id: "D001",
     name: "Kasun Perera",
@@ -74,7 +73,6 @@ export default function Appointment() {
 
   const handleQRScan = () => {
     setShowQRScanner(true);
-    // Mock QR scan result
     setTimeout(() => {
       setScanResult("QR_CODE_VERIFIED_D001");
       setShowQRScanner(false);
@@ -82,10 +80,7 @@ export default function Appointment() {
   };
 
   const handleViewForm = () => {
-
-    // For Next.js with router:
     router.push('/blood_bank/donors/appointment/form');
-
   };
 
   const formatDate = (dateString: string): string => {
@@ -107,14 +102,13 @@ export default function Appointment() {
         </div>
 
         <div className="flex gap-6">
-          {/* Donor Profile Card */}
+
           <div className="w-2/3 min-h-[50vh]">
             <DonorProfileCard donorData={donorData} />
           </div>
 
-          {/* Appointment Details & QR Scanner */}
           <div className="space-y-6 w-1/3 min-h-[50vh]">
-            {/* QR Scanner Card */}
+
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-[100%]">
               <h3 className="text-lg font-semibold text-gray-900 mb-8">Mark Donor Attendance</h3>
               
@@ -142,15 +136,17 @@ export default function Appointment() {
                     <FaCheckCircle className="w-4 h-4 text-green-600" />
                     <span className="text-green-700 font-semibold">Verified</span>
                   </div>
-                  <button
-                    onClick={handleViewForm}
-                    className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-1 transition-colors duration-200 hover:underline"
-                  >
-                    View Form
-                    <FaExternalLinkAlt className="w-3 h-3" />
-                  </button>
                 </div>
               )}
+              
+              <button
+                onClick={handleViewForm}
+                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-4 transition-colors duration-200 hover:underline"
+              >
+                View Form
+                <FaExternalLinkAlt className="w-3 h-3" />
+              </button>
+
               <h3 className="text-lg font-semibold text-gray-900 mb-4 mt-8">Appointment Details</h3>
               
               <div className="space-y-4">

@@ -163,6 +163,37 @@ export interface BloodTypeRequestsSectionProps {
   onRemoveBloodTypeRequest: (id: string) => void;
 }
 
+
+export interface ContactDetails {
+  phone: string;
+  email: string;
+}
+
+export interface BloodRequest {
+  id: string;
+  patientName: string;
+  bloodGroup: string;
+  quantity: number;
+  requestedDate: string;
+  deadline: string;
+  hospital: string;
+  contactDetails: ContactDetails;
+  priority: 'High' | 'Medium' | 'Low';
+  requestTime: string;
+  reason: string;
+}
+
+export interface AvailabilityData {
+  available: boolean;
+  currentStock: number;
+  requestedQuantity: number;
+  bloodType: string;
+  estimatedDeliveryTime: string;
+}
+
+export type RequestStatus = 'pending' | 'accepted' | 'rejected';
+
+
 // Blood Sample Transit Props
 export interface TransitInfo {
   from: string;

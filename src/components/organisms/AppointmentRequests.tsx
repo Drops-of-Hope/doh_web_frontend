@@ -43,6 +43,29 @@ export default function AppointmentRequestsTable() {
       : 'bg-amber-100 text-amber-700 border border-amber-200';
   };
 
+  const getBloodGroupColor = (bloodGroup: string) => {
+    switch (bloodGroup) {
+      case 'O+':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'O-':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'A+':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'A-':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'B+':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'B-':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'AB+':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'AB-':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
   const handleRowClick = () => {
     router.push('/blood_bank/donors/appointment');
   };
@@ -109,7 +132,7 @@ export default function AppointmentRequestsTable() {
               >
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">{request.name}</td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold border border-red-200">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border w-12 text-center inline-block ${getBloodGroupColor(request.bloodGroup)}`}>
                     {request.bloodGroup}
                   </span>
                 </td>

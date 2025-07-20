@@ -27,6 +27,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/donor/:path*',
+    '/blood_bank/:path*',
   ],
 };
 
