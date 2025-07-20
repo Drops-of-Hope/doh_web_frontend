@@ -123,18 +123,18 @@ const MedicalOfficerEvaluation: React.FC = () => {
               </h2>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  className="flex items-center justify-center gap-3 px-6 py-3 bg-green-50 text-green-600 hover:bg-green-100 font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                >
-                  <UserCheck size={24} />
-                  Accept Donor
-                </button>
                 
                 <button
                   className="flex items-center justify-center gap-3 px-8 py-4 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
                 >
                   <UserX size={24} />
                   Reject Donor
+                </button>
+                                <button
+                  className="flex items-center justify-center gap-3 px-6 py-3 bg-green-50 text-green-600 hover:bg-green-100 font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                >
+                  <UserCheck size={24} />
+                  Accept Donor
                 </button>
               </div>
             </div>
