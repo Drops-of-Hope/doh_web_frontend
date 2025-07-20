@@ -73,7 +73,7 @@ export default function BloodInventoryTable(): React.JSX.Element {
                     {item.availableUnits}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border ${stockStatus.color}`}>
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full border w-20 justify-center ${stockStatus.color}`}>
                       {stockStatus.label}
                     </span>
                   </td>
