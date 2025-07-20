@@ -1,16 +1,7 @@
 import React from 'react';
 import { RequestFormSectionsProps } from '../../../types';
-import { FaClock, FaExclamationTriangle, FaMapMarkerAlt } from 'react-icons/fa';
-import { Clock, AlertCircle } from 'lucide-react';
-
-const getUrgencyIcon = (urgency: string) => {
-  switch (urgency) {
-    case 'routine': return <Clock className="w-4 h-4" />;
-    case 'urgent': return <FaClock className="w-4 h-4" />;
-    case 'emergency': return <FaExclamationTriangle className="w-4 h-4" />;
-    default: return null;
-  }
-};
+import { FaMapMarkerAlt } from 'react-icons/fa';
+import { Clock } from 'lucide-react';
 
 export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
   formData,
