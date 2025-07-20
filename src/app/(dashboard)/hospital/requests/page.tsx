@@ -130,7 +130,7 @@ export default function RequestPage() {
               <div className="space-y-4">
                 <div className="p-4 border border-gray-200 rounded-lg">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">Donor Network A</h4>
+                    <h4 className="font-medium ">Donor Network A</h4>
                     <span className="text-sm text-gray-500">1 hour ago</span>
                   </div>
                   <p className="text-sm text-gray-600 mb-2">Blood Type: B+ | Quantity: 3 units</p>
