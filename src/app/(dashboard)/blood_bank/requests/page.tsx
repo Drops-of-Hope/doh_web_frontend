@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Heart, ArrowUp, ArrowDown, Clock, Plus } from 'lucide-react';
+import { Heart, ArrowUp, ArrowDown, Clock, Plus, Truck } from 'lucide-react';
 import { MetricCard, Button } from '@/components';
 import { useRouter } from 'next/navigation';
 
@@ -13,6 +13,10 @@ export default function RequestPage() {
 
   const handleNewRequest = (): void => {
     router.push('/blood_bank/requests/request_form');
+  };
+
+  const handleManageTransits = (): void => {
+    router.push('/blood_bank/requests/transit');
   };
 
   const handleTabChange = (tab: TabType): void => {
@@ -55,7 +59,14 @@ export default function RequestPage() {
         />
       </div>
       
-      <div className="flex justify-end mb-6">
+      <div className="flex justify-end mb-6 gap-3">
+        <Button
+          title="Manage Transits"
+          containerStyles="bg-blue-50 hover:bg-blye-100 text-blue-500 border border-blue-500 rounded-lg font-medium transition-colors"
+          handleClick={handleManageTransits}
+          leftIcon={<Truck className="w-5 h-5" />}
+          iconSpacing="gap-2"
+        />
         <Button
           title="New Request"
           containerStyles="bg-blue-500 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
