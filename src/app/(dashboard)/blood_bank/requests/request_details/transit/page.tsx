@@ -122,14 +122,14 @@ export default function TransitFormPage() {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="">
         {/* Header */}
         <div className="mb-8">
           <BackButton
             fallbackUrl="/blood_bank/requests/request_details"
             className="mb-4 hover:shadow-md transition-shadow"
           />
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+          <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-200">
             <h1 className="text-2xl font-bold text-gray-800 mb-2">
               Transit Arrangement
             </h1>
@@ -140,12 +140,12 @@ export default function TransitFormPage() {
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-          <div className="bg-gradient-to-r from-red-500 to-red-600 p-6">
-            <h2 className="text-xl font-semibold text-white mb-1">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-1">
               Transportation Details
             </h2>
-            <p className="text-red-100 text-sm">
+            <p className="text-red-500 text-sm">
               All fields marked with * are required
             </p>
           </div>
@@ -364,7 +364,7 @@ export default function TransitFormPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <span className="flex items-center">
