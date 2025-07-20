@@ -154,7 +154,6 @@ export interface RequestFormSectionsProps {
   nearbyBloodBanks: BloodBank[];
 }
 
-// Blood Type Requests Section Props
 export interface BloodTypeRequestsSectionProps {
   bloodTypeRequests: BloodTypeRequest[];
   errors: FormErrors;
@@ -162,7 +161,6 @@ export interface BloodTypeRequestsSectionProps {
   onAddBloodTypeRequest: () => void;
   onRemoveBloodTypeRequest: (id: string) => void;
 }
-
 
 export interface ContactDetails {
   phone: string;
@@ -193,8 +191,6 @@ export interface AvailabilityData {
 
 export type RequestStatus = 'pending' | 'accepted' | 'rejected';
 
-
-// Blood Sample Transit Props
 export interface TransitInfo {
   from: string;
   to: string;
