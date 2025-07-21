@@ -68,7 +68,7 @@ export default function AddBloodUnit() {
             name="bloodUnitCode"
             value={formData.bloodUnitCode}
             onChange={handleInputChange}
-            className={`w-1/3 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-1/3 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 ${
               errors.bloodUnitCode ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Enter blood unit code (e.g., BU001234)"
@@ -90,7 +90,7 @@ export default function AddBloodUnit() {
               name="startTime"
               value={formData.startTime}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-400 ${
                 errors.startTime ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -109,7 +109,7 @@ export default function AddBloodUnit() {
               name="endTime"
               value={formData.endTime}
               onChange={handleInputChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-400 ${
                 errors.endTime ? 'border-red-500' : 'border-gray-300'
               }`}
             />
@@ -131,7 +131,7 @@ export default function AddBloodUnit() {
             onChange={handleInputChange}
             min="1"
             step="1"
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400 ${
               errors.volumeCollected ? 'border-red-500' : 'border-gray-300'
             }`}
             placeholder="Enter volume in ml (e.g., 450)"
@@ -150,7 +150,7 @@ export default function AddBloodUnit() {
             name="bloodBagType"
             value={formData.bloodBagType}
             onChange={handleInputChange}
-            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-400 ${
               errors.bloodBagType ? 'border-red-500' : 'border-gray-300'
             }`}
           >

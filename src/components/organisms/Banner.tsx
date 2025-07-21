@@ -11,7 +11,7 @@ interface AppDownloadBannerProps {
 
 export default function AppDownloadBanner({ className = '' }: AppDownloadBannerProps) {
   return (
-    <section className={`relative overflow-hidden bg-gradient-to-br from-blue-50 to-white py-16 px-4 mb-4${className}`}>
+    <section className={`relative overflow-hidden bg-gradient-to-br from-blue-50 to-white py-16 px-4 ${className}`}>
 
       
       <div className="container mx-auto max-w-6xl relative z-10">

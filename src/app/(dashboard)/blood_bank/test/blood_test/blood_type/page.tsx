@@ -30,12 +30,12 @@ const ResultInput: React.FC<ResultInputProps> = ({
   ): string => {
     switch (theme) {
       case "blue":
-        return "focus:ring-blue-500 focus:border-blue-500 border-blue-200";
+        return "focus:ring-blue-500 focus:border-blue-500 border-blue-200 text-gray-600";
       case "yellow":
-        return "focus:ring-yellow-500 focus:border-yellow-500 border-yellow-200";
+        return "focus:ring-yellow-500 focus:border-yellow-500 border-yellow-200 text-gray-600";
       case "gray":
       default:
-        return "focus:ring-gray-500 focus:border-gray-500 border-gray-300";
+        return "focus:ring-gray-500 focus:border-gray-500 border-gray-300 text-gray-600";
     }
   };
 

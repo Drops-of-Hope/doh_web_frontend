@@ -42,25 +42,25 @@ const BloodTypeResult: React.FC<BloodTypeResultProps> = ({ forwardGrouping, bloo
             <div className="bg-white rounded-lg p-4 border border-green-200">
               <h4 className="font-semibold text-green-800 mb-2">Test Results Summary</h4>
               <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-500">
                   <span>Anti-A:</span>
                   <span className={forwardGrouping.antiA === "Agglutination" ? "text-red-600" : "text-green-600"}>
                     {forwardGrouping.antiA}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-500">
                   <span>Anti-B:</span>
                   <span className={forwardGrouping.antiB === "Agglutination" ? "text-red-600" : "text-green-600"}>
                     {forwardGrouping.antiB}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-500">
                   <span>Anti-D:</span>
                   <span className={forwardGrouping.antiD === "Agglutination" ? "text-red-600" : "text-green-600"}>
                     {forwardGrouping.antiD}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-gray-500">
                   <span>Normal Saline:</span>
                   <span className={forwardGrouping.normalSaline === "No Agglutination" ? "text-green-600" : "text-red-600"}>
                     {forwardGrouping.normalSaline}

@@ -30,8 +30,8 @@ const transitData: TransitInfo[] = [
     bloodGroup: "A-",
     units: 2,
     isPrivateHospital: true,
-    processingFeePerUnit: 75,
-    processingFee: 150, // 2 units × $75
+    processingFeePerUnit: 1000,
+    processingFee: 2000, // 2 units × $75
   },
   {
     from: "Western Blood Bank",
@@ -40,8 +40,8 @@ const transitData: TransitInfo[] = [
     bloodGroup: "B+",
     units: 6,
     isPrivateHospital: true,
-    processingFeePerUnit: 75,
-    processingFee: 450, // 6 units × $75
+    processingFeePerUnit: 1000,
+    processingFee: 4000, // 6 units × $75
   },
 ];
 
@@ -54,7 +54,7 @@ export default function TransitPage() {
           <div
             key={index}
             className={`bg-white shadow-md rounded-2xl p-6 border ${
-              item.isPrivateHospital ? 'border-orange-200 bg-gradient-to-br from-white to-orange-50' : 'border-gray-200'
+              item.isPrivateHospital ? 'border-blue-200 bg-white' : 'border-gray-200'
             } flex flex-col justify-between h-full`}
           >
             <div className="flex justify-between mb-4 w-full items-center">

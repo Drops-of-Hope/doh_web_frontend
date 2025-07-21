@@ -3,7 +3,7 @@ import { NavBar, Hero, Footer, Section2, Banner, TestimonialsSection } from "@/c
 export default async function Home() {
   
   return (  
-    <main>
+    <main className="">
       <NavBar />
       <Hero />
       <div id="section-1" className="flex flex-col items-center justify-center">
