@@ -167,7 +167,7 @@ export default function TransitFormPage() {
                     name="driverName"
                     value={formData.driverName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors placeholder:text-gray-400 ${
                       errors.driverName
                         ? "border-red-300 bg-red-50"
                         : "border-gray-300"
@@ -190,7 +190,7 @@ export default function TransitFormPage() {
                     name="driverPhone"
                     value={formData.driverPhone}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors placeholder:text-gray-400 ${
                       errors.driverPhone
                         ? "border-red-300 bg-red-50"
                         : "border-gray-300"
@@ -222,7 +222,7 @@ export default function TransitFormPage() {
                     name="vehicleNumber"
                     value={formData.vehicleNumber}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 placeholder:text-gray-400 focus:ring-red-500 focus:border-red-500 transition-colors ${
                       errors.vehicleNumber
                         ? "border-red-300 bg-red-50"
                         : "border-gray-300"
@@ -244,7 +244,7 @@ export default function TransitFormPage() {
                     name="vehicleType"
                     value={formData.vehicleType}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
                   >
                     <option value="ambulance">Ambulance</option>
                     <option value="refrigerated_van">Refrigerated Van</option>
@@ -271,7 +271,7 @@ export default function TransitFormPage() {
                     name="estimatedDeparture"
                     value={formData.estimatedDeparture}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 text-gray-400 focus:ring-red-500 focus:border-red-500 transition-colors ${
                       errors.estimatedDeparture
                         ? "border-red-300 bg-red-50"
                         : "border-gray-300"
@@ -293,7 +293,7 @@ export default function TransitFormPage() {
                     name="estimatedArrival"
                     value={formData.estimatedArrival}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 text-gray-400 focus:ring-red-500 focus:border-red-500 transition-colors ${
                       errors.estimatedArrival
                         ? "border-red-300 bg-red-50"
                         : "border-gray-300"
@@ -323,7 +323,7 @@ export default function TransitFormPage() {
                   name="emergencyContact"
                   value={formData.emergencyContact}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 placeholder:text-gray-400 focus:ring-red-500 focus:border-red-500 transition-colors ${
                     errors.emergencyContact
                       ? "border-red-300 bg-red-50"
                       : "border-gray-300"
@@ -353,7 +353,7 @@ export default function TransitFormPage() {
                   value={formData.notes}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 placeholder:text-gray-400 focus:ring-red-500 focus:border-red-500 transition-colors"
                   placeholder="Any special instructions or notes for the transport..."
                 />
               </div>

@@ -35,7 +35,7 @@ const DonorFitnessAssessment: React.FC<DonorFitnessAssessmentProps> = ({
             <button
               type="button"
               onClick={() => onInputChange('donorFitness', 'unfit')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors text-gray-500 ${
                 isUnfit 
                   ? 'border-red-500 bg-red-50 text-red-700' 
                   : 'border-gray-300 hover:border-red-400'
@@ -47,7 +47,7 @@ const DonorFitnessAssessment: React.FC<DonorFitnessAssessmentProps> = ({
                         <button
               type="button"
               onClick={() => onInputChange('donorFitness', 'fit')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 transition-colors text-gray-500 ${
                 isFit 
                   ? 'border-green-600 bg-green-50 text-green-700' 
                   : 'border-gray-300 hover:border-green-600'
@@ -68,7 +68,7 @@ const DonorFitnessAssessment: React.FC<DonorFitnessAssessmentProps> = ({
             <textarea
               value={evaluationData.fitnessReason}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onInputChange('fitnessReason', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-gray-400"
               rows={3}
               placeholder="Please provide detailed reason for declaring donor unfit..."
             />

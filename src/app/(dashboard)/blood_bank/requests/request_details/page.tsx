@@ -142,7 +142,7 @@ export default function RequestDetailsPage() {
 
       {/* Transit Status Section */}
       {requestStatus === "accepted" && (
-        <div className="my-4 p-4 bg-blue-50 border border-blue-200 rounded">
+        <div className="my-4 p-4 bg-blue-50 border border-blue-200 rounded text-gray-600">
           <span className="font-semibold">Transit Status: </span>
           {transitStatus === "not_started" && "Not started"}
           {transitStatus === "ongoing" && "Ongoing"}

@@ -106,7 +106,7 @@ export default function RequestPage() {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <div className="p-6 text-gray-600">
           {activeTab === 'incoming' ? (
             <div>
               <h3 className="text-lg font-semibold mb-4">Incoming Requests</h3>

@@ -64,7 +64,7 @@ const MedicalOfficerEvaluation: React.FC = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2 ">
                     Weight (kg) *
                   </label>
                   <input
@@ -72,7 +72,7 @@ const MedicalOfficerEvaluation: React.FC = () => {
                     step="0.1"
                     value={evaluationData.weight}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('weight', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
                     placeholder="e.g., 65.5"
                   />
                   {errors.weight && <p className="text-red-600 text-sm mt-1">{errors.weight}</p>}
@@ -95,7 +95,7 @@ const MedicalOfficerEvaluation: React.FC = () => {
                     type="number"
                     value={evaluationData.systolicBP}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('systolicBP', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
                     placeholder="e.g., 120"
                   />
                   {errors.systolicBP && <p className="text-red-600 text-sm mt-1">{errors.systolicBP}</p>}
@@ -109,7 +109,7 @@ const MedicalOfficerEvaluation: React.FC = () => {
                     type="number"
                     value={evaluationData.pulseRate}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('pulseRate', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
                     placeholder="e.g., 72"
                   />
                   {errors.pulseRate && <p className="text-red-600 text-sm mt-1">{errors.pulseRate}</p>}

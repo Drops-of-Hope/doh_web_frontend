@@ -51,7 +51,7 @@ export default function TestPage() {
 
             <div className="flex items-center gap-2">
               <select
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400"
               >
                 <option value="all">All Blood Types</option>
                 <option value="O+">O+</option>
@@ -68,7 +68,7 @@ export default function TestPage() {
             {/* Sort Options */}
             <div className="flex items-center gap-2">
               <select
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400"
               >
                 <option value="id">Sort by ID</option>
                 <option value="bloodType">Sort by Blood Type</option>

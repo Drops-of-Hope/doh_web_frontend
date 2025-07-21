@@ -10,7 +10,7 @@ import { Logo } from "@/components";
 
 export default function Footer() {
   return (
-    <div className="w-full">
+    <div className="w-full bg-white">
       <section className="bg-gradient-to-r from-[#B3D0E9] to-[#DDE3E9] text-center py-12 px-2">
         <h2 className="text-5xl font-bold mb-4">
         <span className="bg-gradient-to-r from-[#FFFFFF] to-[#55A2E0] bg-clip-text text-transparent font-Roboto">
