@@ -38,7 +38,8 @@ export default function AuthCallbackPage() {
     }, [status, session, router]);
 
     return (
-        <div className="flex items-center justify-center h-screen text-red-600 text-lg">
+        <div className="flex flex-col items-center justify-center h-screen text-red-600 text-lg bg-white">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mb-4"></div>
             Redirecting you to your dashboard...
         </div>
     );
