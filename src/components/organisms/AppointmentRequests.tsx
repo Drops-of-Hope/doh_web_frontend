@@ -2,86 +2,84 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { SearchBar } from '@/components';
-import { appointmentRequests } from '@/constants/DonationAppointments'
-
+import { SearchBar, AppointmentTableRow } from '@/components';
+import { appointmentRequests } from '@/constants/DonationAppointments';
+import {
+  formatDisplayDate,
+  sortAppointments
+} from '@/lib/appointmentUtils';
 
 export default function AppointmentRequestsTable() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [bloodTypeFilter, setBloodTypeFilter] = useState<string>('all');
   const [statusFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('date');
+  const [sortBy] = useState<string>('date');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const today = new Date().toISOString().split('T')[0];
+  const [selectedDate, setSelectedDate] = useState<string>(today);
 
   const itemsPerPage = 10;
 
   const filteredData = appointmentRequests.filter(item => {
     const bloodTypeMatch = bloodTypeFilter === 'all' || item.bloodGroup === bloodTypeFilter;
     const statusMatch = statusFilter === 'all' || item.status === statusFilter;
-    return bloodTypeMatch && statusMatch;
+    const itemDate = new Date(item.date).toISOString().split('T')[0];
+    const dateMatch = itemDate === selectedDate;
+
+    const searchMatch = searchQuery === '' ||
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.bloodGroup.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.status.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return bloodTypeMatch && statusMatch && dateMatch && searchMatch;
   });
 
-  const sortedData = [...filteredData].sort((a, b) => {
-    switch (sortBy) {
-      case 'name':
-        return a.name.localeCompare(b.name);
-      case 'bloodGroup':
-        return a.bloodGroup.localeCompare(b.bloodGroup);
-      case 'date':
-      default:
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-    }
-  });
+  const sortedData = sortAppointments(filteredData, sortBy);
 
   const totalPages = Math.ceil(sortedData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedData.slice(startIndex, startIndex + itemsPerPage);
 
-  const getStatusColor = (status: string) => {
-    return status === 'Confirmed' 
-      ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
-      : 'bg-amber-100 text-amber-700 border border-amber-200';
-  };
-
-  const getBloodGroupColor = (bloodGroup: string) => {
-    switch (bloodGroup) {
-      case 'O+':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'O-':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'A+':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'A-':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'B+':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'B-':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'AB+':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'AB-':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
   const handleRowClick = () => {
     router.push('/blood_bank/donors/appointment');
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDate(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
       <div className="p-8 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-800 mb-6">Donation Appointment Requests</h2>
-        
+
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           <div className="flex-1 max-w-md">
-            <SearchBar title='Search...' />
+            <SearchBar
+              title='Search...'
+              onSearch={handleSearch}
+              value={searchQuery}
+            />
           </div>
 
-          <div className="flex gap-3 items-center">
-            
+          <div className="flex gap-3 items-center flex-wrap">
+            <div className="flex flex-col">
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={handleDateChange}
+                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
+              />
+            </div>
+
             <select
               value={bloodTypeFilter}
               onChange={(e) => setBloodTypeFilter(e.target.value)}
@@ -97,18 +95,20 @@ export default function AppointmentRequestsTable() {
               <option value="AB+">AB+</option>
               <option value="AB-">AB-</option>
             </select>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
-            >
-              <option value="date">Sort by Date</option>
-              <option value="name">Sort by Name</option>
-              <option value="bloodGroup">Sort by Blood Group</option>
-              <option value="status">Sort by Status</option>
-            </select>
           </div>
+        </div>
+
+        <div className="mt-4 text-sm text-gray-600">
+          {selectedDate === today ? (
+            <span className="font-medium text-blue-600">Showing today's appointments</span>
+          ) : (
+            <span>Showing appointments for {formatDisplayDate(selectedDate)}</span>
+          )}
+          {filteredData.length === 0 && (
+            <span className="ml-2 text-amber-600">
+              - {searchQuery ? 'No matching results found' : 'No appointments found for this date'}
+            </span>
+          )}
         </div>
       </div>
 
@@ -124,68 +124,75 @@ export default function AppointmentRequestsTable() {
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map((request) => (
-              <tr 
-                key={request.id} 
-                className="border-b border-gray-50 hover:bg-gray-100 transition-colors duration-150 cursor-pointer"
-                onClick={handleRowClick}
-              >
-                <td className="px-6 py-4 text-sm font-medium text-gray-900">{request.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-900">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border w-12 text-center inline-block ${getBloodGroupColor(request.bloodGroup)}`}>
-                    {request.bloodGroup}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-600">{request.date}</td>
-                <td className="px-6 py-4 text-sm text-gray-600">{request.time}</td>
-                <td className="px-6 py-4 text-sm text-gray-900">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(request.status)}`}>
-                    {request.status}
-                  </span>
+            {paginatedData.length > 0 ? (
+              paginatedData.map((request) => (
+                <AppointmentTableRow
+                  key={request.id}
+                  request={request}
+                  onClick={handleRowClick}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                  <div className="flex flex-col items-center">
+                    <svg className="w-12 h-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-lg font-medium text-gray-900 mb-1">
+                      {searchQuery ? 'No matching results' : 'No appointments found'}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {searchQuery
+                        ? `No appointments match "${searchQuery}" for ${selectedDate === today ? 'today' : formatDisplayDate(selectedDate)}`
+                        : `No appointments scheduled for ${selectedDate === today ? 'today' : formatDisplayDate(selectedDate)}`}
+                    </p>
+                  </div>
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      <div className="px-8 py-6 border-t border-gray-100 flex justify-between items-center">
-        <div className="text-sm text-gray-600">
-          Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, sortedData.length)} of {sortedData.length} entries
-        </div>
-        
-        <div className="flex gap-2">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors duration-150 text-sm font-medium"
-          >
-            Previous
-          </button>
-          
-          {[...Array(totalPages)].map((_, index) => (
+      {paginatedData.length > 0 && (
+        <div className="px-8 py-6 border-t border-gray-100 flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, sortedData.length)} of {sortedData.length} entries
+          </div>
+
+          <div className="flex gap-2">
             <button
-              key={index}
-              onClick={() => setCurrentPage(index + 1)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
-                currentPage === index + 1
-                  ? 'bg-blue-500 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors duration-150 text-sm font-medium"
             >
-              {index + 1}
+              Previous
             </button>
-          ))}
-          
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors duration-150 text-sm font-medium"
-          >
-            Next
-          </button>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ${
+                  currentPage === index + 1
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors duration-150 text-sm font-medium"
+            >
+              Next
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

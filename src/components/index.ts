@@ -65,6 +65,7 @@ import {ActionButtons} from "./organisms/ActionButtons";
 import { RejectionSection } from "./organisms/RejectionSection";
 import { RequestDetailsCard } from "./organisms/RequestDetailsCard";
 import PreScreeningComparisonPanel from "./organisms/ComparisionPanel";
+import AppointmentTableRow from "./molecules/AppointmentTableRow";
 
 export {
     Button,
@@ -137,6 +138,7 @@ export {
     ActionButtons, 
     RejectionSection,
     RequestDetailsCard,
-    PreScreeningComparisonPanel
+    PreScreeningComparisonPanel,
+    AppointmentTableRow
 }
 
