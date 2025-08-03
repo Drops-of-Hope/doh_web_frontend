@@ -1,55 +1,81 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { useGetSlotsByMedicalEstablishmentQuery } from '@/store/api/slotsApi'; 
 
 interface Slot {
-  id: number;
-  from: string;
-  to: string;
-  donorName: string;
-  bloodType: string;
+  id: string;
+  startTime: string;
+  endTime: string;
+  tokenNumber: number;
+  isAvailable: boolean;
+  medicalEstablishmentId: string;
 }
 
+// Define the API response type
+interface SlotsResponse {
+  slots?: Slot[];
+}
+
+// Helper function to calculate duration between two times
+const calculateDuration = (start: string, end: string): number => {
+  const startDate = new Date(`1970-01-01T${start}`);
+  const endDate = new Date(`1970-01-01T${end}`);
+  return Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
+};
+
 export default function DonationSlotsPage() {
+  const medicalEstablishmentId = '3d24eb85-1b4b-4055-8f94-a712fa4ff1d2';
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [duration, setDuration] = useState("");
   const [restTime, setRestTime] = useState("");
-  const [slots, setSlots] = useState<Slot[]>([]);
 
-  const generateTokens = () => {
-    // Dummy token generation for demonstration
-    const dummySlots: Slot[] = [
-      {
-        id: 1,
-        from: "10:00 AM",
-        to: "10:20 AM",
-        donorName: "John Doe",
-        bloodType: "A+",
-      },
-      {
-        id: 2,
-        from: "10:30 AM",
-        to: "10:50 AM",
-        donorName: "Jane Smith",
-        bloodType: "B-",
-      },
-    ];
-    setSlots(dummySlots);
-  };
+  const { data } = useGetSlotsByMedicalEstablishmentQuery(medicalEstablishmentId, {
+    skip: !medicalEstablishmentId,
+  });
 
-  const cancelToken = (id: number) => {
-    setSlots((prev) => prev.filter((slot) => slot.id !== id));
-  };
+  // Memoize slots calculation to prevent dependency changes
+  const slots = useMemo(() => {
+    if (!data) return [];
+    return Array.isArray(data) ? data : (data as SlotsResponse).slots || [];
+  }, [data]);
+
+  // Effect to populate form fields when slots exist
+  useEffect(() => {
+    if (slots && slots.length > 0) {
+      // Sort slots by token number to get proper order
+      const sortedSlots = [...slots].sort((a, b) => a.tokenNumber - b.tokenNumber);
+      
+      // Start time: first token's start time
+      const firstToken = sortedSlots[0];
+      setStartTime(firstToken.startTime);
+      
+      // End time: last token's end time
+      const lastToken = sortedSlots[sortedSlots.length - 1];
+      setEndTime(lastToken.endTime);
+      
+      // Duration: duration of the first token
+      const firstTokenDuration = calculateDuration(firstToken.startTime, firstToken.endTime);
+      setDuration(firstTokenDuration.toString());
+      
+      // Rest time: difference between start time of 2nd token and end time of 1st token
+      if (sortedSlots.length >= 2) {
+        const secondToken = sortedSlots[1];
+        const restMinutes = calculateDuration(firstToken.endTime, secondToken.startTime);
+        setRestTime(restMinutes.toString());
+      } else {
+        setRestTime("0");
+      }
+    }
+  }, [slots]);
 
   return (
-    <div className="p-6">
+    <div className="min-h-[100vh] p-4 pt-2 bg-[#f8f8f8]">
 
       {/* Input Section in a Box */}
-      <div className="bg-white shadow-md rounded-xl p-6 mb-6">
-        
+      <div className="bg-white shadow-sm rounded-xl p-6 mb-6">
     
-        {/* Row 1: Start Time and End Time */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 mb-1">
@@ -111,7 +137,7 @@ export default function DonationSlotsPage() {
 
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition mt-5"
-          onClick={generateTokens}
+          onClick={() => {}}
         >
           Generate Tokens
         </button>
@@ -119,28 +145,22 @@ export default function DonationSlotsPage() {
 
       {/* Tokens Section */}
       <div className="grid gap-4">
-        {slots.map((slot, index) => (
+        {slots.map((slot: Slot) => (
           <div
             key={slot.id}
-            className="bg-white shadow-md rounded-xl p-4 flex justify-between items-start"
+            className="bg-white shadow-sm rounded-xl p-4 flex justify-between items-start"
           >
             <div>
               <h3 className="font-semibold text-gray-800 mb-1">
-                Token #{index + 1}
+                Token #{slot.tokenNumber}
               </h3>
               <p className="text-sm text-gray-700">
-                <span className="font-medium">From:</span> {slot.from}{" "}
-                <span className="ml-4 font-medium">To:</span> {slot.to}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Donor Name:</span> {slot.donorName}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Blood Type:</span> {slot.bloodType}
+                <span className="font-medium">From:</span> {slot.startTime}{" "}
+                <span className="ml-4 font-medium">To:</span> {slot.endTime}
               </p>
             </div>
             <button
-              onClick={() => cancelToken(slot.id)}
+              onClick={() => {}}
               className="text-red-600 hover:text-red-800 text-lg font-bold"
               title="Cancel Token"
             >
