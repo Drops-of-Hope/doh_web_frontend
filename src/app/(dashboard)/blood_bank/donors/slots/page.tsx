@@ -44,10 +44,9 @@ export default function DonationSlotsPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-black">Appointment Slots</h1>
 
       {/* Input Section in a Box */}
-      <div className="bg-white shadow-md rounded-xl p-6 mb-6 border">
+      <div className="bg-white shadow-md rounded-xl p-6 mb-6">
         
     
         {/* Row 1: Start Time and End Time */}
@@ -60,7 +59,7 @@ export default function DonationSlotsPage() {
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="border p-2 rounded-lg w-3/4 text-gray-700"
+              className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="startTime"
             />
           </div>
@@ -73,7 +72,7 @@ export default function DonationSlotsPage() {
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="border p-2 rounded-lg w-3/4 text-gray-700"
+              className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="endTime"
             />
           </div>
@@ -90,7 +89,7 @@ export default function DonationSlotsPage() {
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               placeholder="In minutes"
-              className="border p-2 rounded-lg w-3/4 text-gray-700"
+              className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="duration"
             />
           </div>
@@ -104,7 +103,7 @@ export default function DonationSlotsPage() {
               value={restTime}
               onChange={(e) => setRestTime(e.target.value)}
               placeholder="In minutes"
-              className="border p-2 rounded-lg w-3/4 text-gray-700"
+              className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="restTime"
             />
           </div>
@@ -123,7 +122,7 @@ export default function DonationSlotsPage() {
         {slots.map((slot, index) => (
           <div
             key={slot.id}
-            className="bg-white shadow-md rounded-xl p-4 flex justify-between items-start border"
+            className="bg-white shadow-md rounded-xl p-4 flex justify-between items-start"
           >
             <div>
               <h3 className="font-semibold text-gray-800 mb-1">
