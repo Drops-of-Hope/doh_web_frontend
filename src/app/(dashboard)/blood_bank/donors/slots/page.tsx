@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useGetSlotsByMedicalEstablishmentQuery } from '@/store/api/slotsApi'; 
 
 interface Slot {
@@ -10,6 +10,11 @@ interface Slot {
   tokenNumber: number;
   isAvailable: boolean;
   medicalEstablishmentId: string;
+}
+
+// Define the API response type
+interface SlotsResponse {
+  slots?: Slot[];
 }
 
 // Helper function to calculate duration between two times
@@ -26,11 +31,15 @@ export default function DonationSlotsPage() {
   const [duration, setDuration] = useState("");
   const [restTime, setRestTime] = useState("");
 
-  const { data, isLoading, error } = useGetSlotsByMedicalEstablishmentQuery(medicalEstablishmentId, {
+  const { data } = useGetSlotsByMedicalEstablishmentQuery(medicalEstablishmentId, {
     skip: !medicalEstablishmentId,
   });
 
-  const slots = Array.isArray(data) ? data : (data as any)?.slots || [];
+  // Memoize slots calculation to prevent dependency changes
+  const slots = useMemo(() => {
+    if (!data) return [];
+    return Array.isArray(data) ? data : (data as SlotsResponse).slots || [];
+  }, [data]);
 
   // Effect to populate form fields when slots exist
   useEffect(() => {
