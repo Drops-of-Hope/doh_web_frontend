@@ -9,44 +9,68 @@ export default function Header() {
   const getPageInfo = (path: string) => {
     const segments = path.split('/').filter(Boolean);
     
-    // Handle different route patterns
+    // Handle root/home routes
     if (segments.length === 0) {
       return { breadcrumb: "Pages / Home", title: "Home" };
     }
     
-    if ((segments[0] === "blood_bank" && segments.length === 1) || (segments[0] === "hospital" && segments.length === 1)) {
+    if ((segments[0] === "blood_bank" && segments.length === 1) || 
+        (segments[0] === "hospital" && segments.length === 1)) {
       return { breadcrumb: "Pages / Home", title: "Home" };
     }
     
+    // Handle dashboard routes
     if (segments[0] === "dashboard") {
       if (segments.length === 1) {
         return { breadcrumb: "Pages / Dashboard", title: "Dashboard" };
       }
       
-      // Handle nested dashboard routes
-      const section = segments[1];
-      const subsection = segments[2];
+      // Build breadcrumb for nested dashboard routes
+      const breadcrumbParts = ["Pages", "Dashboard"];
+      let currentTitle = "Dashboard";
       
-      if (section === "blood_bank") {
-        if (!subsection) {
-          return { breadcrumb: "Pages / Blood Bank", title: "Blood Bank" };
+      // Process each segment after dashboard, skip "blood_bank"
+      for (let i = 1; i < segments.length; i++) {
+        const segment = segments[i];
+        
+        // Skip "blood_bank" segment
+        if (segment === "blood_bank") {
+          continue;
         }
         
-        const formattedSubsection = subsection.charAt(0).toUpperCase() + subsection.slice(1);
-        return { 
-          breadcrumb: `Pages / Blood Bank / ${formattedSubsection}`, 
-          title: formattedSubsection 
-        };
+        const formattedSegment = segment.replace(/_/g, ' ')
+          .replace(/\b\w/g, l => l.toUpperCase());
+        
+        breadcrumbParts.push(formattedSegment);
+        currentTitle = formattedSegment;
       }
       
-      // Handle other sections
-      const formattedSection = section.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      return { breadcrumb: `Pages / ${formattedSection}`, title: formattedSection };
+      const breadcrumb = breadcrumbParts.join(' / ');
+      return { breadcrumb, title: currentTitle };
     }
     
-    // Default fallback
-    const title = segments[segments.length - 1].replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    return { breadcrumb: `Pages / ${title}`, title };
+    // Handle other nested routes (like donor -> appointment -> form)
+    const breadcrumbParts = ["Pages"];
+    let currentTitle = "Home";
+    
+    // Process each segment, skip "blood_bank"
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+      
+      // Skip "blood_bank" segment
+      if (segment === "blood_bank") {
+        continue;
+      }
+      
+      const formattedSegment = segment.replace(/_/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase());
+      
+      breadcrumbParts.push(formattedSegment);
+      currentTitle = formattedSegment;
+    }
+    
+    const breadcrumb = breadcrumbParts.join(' / ');
+    return { breadcrumb, title: currentTitle };
   };
 
   const { breadcrumb, title } = getPageInfo(pathname);
@@ -56,7 +80,9 @@ export default function Header() {
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <div className="text-sm text-gray-500">
-            <span dangerouslySetInnerHTML={{ __html: breadcrumb.replace(/\/([^/]+)$/, '/ <span class="text-blue-600">$1</span>') }} />
+            <span dangerouslySetInnerHTML={{ 
+              __html: breadcrumb.replace(/\/([^/]+)$/, '/ <span class="text-blue-600">$1</span>') 
+            }} />
           </div>
           <h1 className="text-lg font-semibold text-gray-800">{title}</h1>
         </div>

@@ -1,8 +1,13 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { ProfileHeader, LoginActivity, AuditLogs } from "@/components";
 
 export default function ProfilePage() {
+  const { data: session } = useSession();
+  const userEmail = session?.user?.email || "bloodbank@gmail.com"; 
+
+
   const handleEdit = () => {
     console.log('Edit profile clicked');
   };
@@ -64,7 +69,7 @@ export default function ProfilePage() {
         {/* Profile Header Component */}
         <ProfileHeader
           name="Central Blood Bank Narahenpita"
-          email="bloodbank@gmail.com"
+          email={userEmail} 
           address="No. 55, Blah Blah road, Blah 05"
           region="Narahenpita"
           phoneNumber="011-485-9485"
