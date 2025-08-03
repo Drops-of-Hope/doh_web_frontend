@@ -3,3 +3,5 @@ export * from './ui-components';
 
 // Re-export all blood donation types
 export * from './blood-donation';
+
+export * from './appointment';
