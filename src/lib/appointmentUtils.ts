@@ -1,3 +1,15 @@
+// Define the Appointment interface
+export interface Appointment {
+  id: number;
+  name: string;
+  bloodGroup: string;
+  date: string;
+  time: string;
+  contact: string;
+  location: string;
+  status: string;
+}
+
 export const getStatusColor = (status: string) => {
   return status === 'Confirmed'
     ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
@@ -33,7 +45,7 @@ export const formatDisplayDate = (dateString: string) => {
   });
 };
 
-export const sortAppointments = (data: any[], sortBy: string) => {
+export const sortAppointments = (data: Appointment[], sortBy: string): Appointment[] => {
   return [...data].sort((a, b) => {
     switch (sortBy) {
       case 'name':

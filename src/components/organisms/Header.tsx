@@ -26,7 +26,7 @@ export default function Header() {
       }
       
       // Build breadcrumb for nested dashboard routes
-      let breadcrumbParts = ["Pages", "Dashboard"];
+      const breadcrumbParts = ["Pages", "Dashboard"];
       let currentTitle = "Dashboard";
       
       // Process each segment after dashboard, skip "blood_bank"
@@ -50,7 +50,7 @@ export default function Header() {
     }
     
     // Handle other nested routes (like donor -> appointment -> form)
-    let breadcrumbParts = ["Pages"];
+    const breadcrumbParts = ["Pages"];
     let currentTitle = "Home";
     
     // Process each segment, skip "blood_bank"

@@ -100,7 +100,7 @@ export default function AppointmentRequestsTable() {
 
         <div className="mt-4 text-sm text-gray-600">
           {selectedDate === today ? (
-            <span className="font-medium text-blue-600">Showing today's appointments</span>
+            <span className="font-medium text-blue-600">Showing todays appointments</span>
           ) : (
             <span>Showing appointments for {formatDisplayDate(selectedDate)}</span>
           )}

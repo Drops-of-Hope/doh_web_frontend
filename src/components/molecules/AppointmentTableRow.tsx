@@ -1,14 +1,5 @@
 import React from 'react';
-import { getStatusColor, getBloodGroupColor } from '@/lib/appointmentUtils';
-
-interface Appointment {
-  id: string;
-  name: string;
-  bloodGroup: string;
-  date: string;
-  time: string;
-  status: string;
-}
+import { getStatusColor, getBloodGroupColor, Appointment } from '@/lib/appointmentUtils';
 
 interface RowProps {
   request: Appointment;
