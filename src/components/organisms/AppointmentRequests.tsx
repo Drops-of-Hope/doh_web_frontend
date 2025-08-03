@@ -17,10 +17,8 @@ export default function AppointmentRequestsTable() {
   const [statusFilter] = useState<string>('all');
   const [sortBy] = useState<string>('date');
   const [searchQuery, setSearchQuery] = useState<string>('');
-
   const today = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState<string>(today);
-
   const itemsPerPage = 10;
 
   const filteredData = appointmentRequests.filter(item => {
@@ -69,7 +67,6 @@ export default function AppointmentRequestsTable() {
             View All
           </Link>
         </div>
-
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           <div className="flex-1 max-w-md">
             <SearchBar
@@ -78,7 +75,6 @@ export default function AppointmentRequestsTable() {
               value={searchQuery}
             />
           </div>
-
           <div className="flex gap-3 items-center flex-wrap">
             <div className="flex flex-col">
               <input
@@ -88,7 +84,6 @@ export default function AppointmentRequestsTable() {
                 className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 bg-gray-50 hover:bg-white text-sm text-gray-900"
               />
             </div>
-
             <select
               value={bloodTypeFilter}
               onChange={(e) => setBloodTypeFilter(e.target.value)}
@@ -106,7 +101,6 @@ export default function AppointmentRequestsTable() {
             </select>
           </div>
         </div>
-
         <div className="mt-4 text-sm text-gray-600">
           {selectedDate === today ? (
             <span className="font-medium text-blue-600">Showing todays appointments</span>
@@ -120,7 +114,6 @@ export default function AppointmentRequestsTable() {
           )}
         </div>
       </div>
-
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -163,13 +156,11 @@ export default function AppointmentRequestsTable() {
           </tbody>
         </table>
       </div>
-
       {paginatedData.length > 0 && (
         <div className="px-8 py-6 border-t border-gray-100 flex justify-between items-center">
           <div className="text-sm text-gray-600">
             Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, sortedData.length)} of {sortedData.length} entries
           </div>
-
           <div className="flex gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
