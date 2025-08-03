@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { SearchBar, AppointmentTableRow } from '@/components';
 import { appointmentRequests } from '@/constants/DonationAppointments';
 import {
@@ -59,7 +60,15 @@ export default function AppointmentRequestsTable() {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
       <div className="p-8 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800 mb-6">Donation Appointment Requests</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-800">Donation Appointment Requests</h2>
+          <Link
+            href="/blood_bank/donors/list"
+            className="text-blue-500 hover:text-blue-700 transition-colors duration-150 text-sm font-medium"
+          >
+            View All
+          </Link>
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           <div className="flex-1 max-w-md">
