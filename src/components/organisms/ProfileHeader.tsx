@@ -27,7 +27,7 @@ export default function ProfileHeader({
     <div className="bg-white rounded-lg shadow-sm overflow-hidden">
       {/* Cover Image Section */}
       <div className="h-40 bg-gradient-to-r from-blue-200 to-blue-300 flex items-center justify-center">
-        <span className="text-gray-600 text-lg">cover image goes here</span>
+        
       </div>
 
       {/* Profile Content */}
