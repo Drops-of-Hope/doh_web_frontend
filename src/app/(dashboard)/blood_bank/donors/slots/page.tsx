@@ -26,7 +26,7 @@ const calculateDuration = (start: string, end: string): number => {
 };
 
 export default function DonationSlotsPage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   console.log(session?.decodedIdToken?.sub);
   const medicalEstablishmentId = session?.decodedIdToken?.sub;
   const [startTime, setStartTime] = useState("");
