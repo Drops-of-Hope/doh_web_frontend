@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useGetSlotsByMedicalEstablishmentQuery } from '@/store/api/slotsApi'; 
+import { useSession } from "next-auth/react";
 
 interface Slot {
   id: string;
@@ -25,13 +26,15 @@ const calculateDuration = (start: string, end: string): number => {
 };
 
 export default function DonationSlotsPage() {
-  const medicalEstablishmentId = '3d24eb85-1b4b-4055-8f94-a712fa4ff1d2';
+  const { data: session, status } = useSession();
+  console.log(session?.decodedIdToken?.sub);
+  const medicalEstablishmentId = session?.decodedIdToken?.sub;
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [duration, setDuration] = useState("");
   const [restTime, setRestTime] = useState("");
 
-  const { data } = useGetSlotsByMedicalEstablishmentQuery(medicalEstablishmentId, {
+  const { data } = useGetSlotsByMedicalEstablishmentQuery(medicalEstablishmentId || "", {
     skip: !medicalEstablishmentId,
   });
 
