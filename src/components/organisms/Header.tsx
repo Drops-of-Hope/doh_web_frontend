@@ -14,7 +14,7 @@ export default function Header() {
     if (segments.length === 0) {
       return {
         breadcrumbItems: [
-          { label: "Pages", path: "/" },
+          { label: "Pages", path: "#" },
           { label: "Home", path: "/" },
         ],
         title: "Home",
@@ -27,7 +27,7 @@ export default function Header() {
     ) {
       return {
         breadcrumbItems: [
-          { label: "Pages", path: "/" },
+          { label: "Pages", path: "#" },
           { label: "Home", path: "/" },
         ],
         title: "Home",
@@ -39,7 +39,7 @@ export default function Header() {
       if (segments.length === 1) {
         return {
           breadcrumbItems: [
-            { label: "Pages", path: "/" },
+            { label: "Pages", path: "#" },
             { label: "Dashboard", path: "/dashboard" },
           ],
           title: "Dashboard",
@@ -48,7 +48,7 @@ export default function Header() {
 
       // Build breadcrumb for nested dashboard routes
       const breadcrumbItems = [
-        { label: "Pages", path: "/" },
+        { label: "Pages", path: "#" },
         { label: "Dashboard", path: "/dashboard" },
       ];
       let currentTitle = "Dashboard";
@@ -76,7 +76,7 @@ export default function Header() {
     }
 
     // Handle other nested routes
-    const breadcrumbItems = [{ label: "Pages", path: "/" }];
+    const breadcrumbItems = [{ label: "Pages", path: "#" }];
     let currentTitle = "Home";
     let currentPath = "";
 
