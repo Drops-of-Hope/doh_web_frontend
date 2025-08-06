@@ -1,11 +1,10 @@
 "use client";
 import { FaBell } from "react-icons/fa";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
 
   // Function to get page info and breadcrumb data from pathname
   const getPageInfo = (path: string) => {
