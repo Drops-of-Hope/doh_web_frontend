@@ -8,17 +8,14 @@ interface Slot {
   id: string;
   startTime: string;
   endTime: string;
-  tokenNumber: number;
   isAvailable: boolean;
   medicalEstablishmentId: string;
 }
 
-// Define the API response type
 interface SlotsResponse {
   slots?: Slot[];
 }
 
-// Helper function to calculate duration between two times
 const calculateDuration = (start: string, end: string): number => {
   const startDate = new Date(`1970-01-01T${start}`);
   const endDate = new Date(`1970-01-01T${end}`);
@@ -27,8 +24,8 @@ const calculateDuration = (start: string, end: string): number => {
 
 export default function DonationSlotsPage() {
   const { data: session } = useSession();
-  console.log(session?.decodedIdToken?.sub);
   const medicalEstablishmentId = session?.decodedIdToken?.sub;
+
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [duration, setDuration] = useState("");
@@ -38,34 +35,30 @@ export default function DonationSlotsPage() {
     skip: !medicalEstablishmentId,
   });
 
-  // Memoize slots calculation to prevent dependency changes
   const slots = useMemo(() => {
     if (!data) return [];
     return Array.isArray(data) ? data : (data as SlotsResponse).slots || [];
   }, [data]);
+  const hasSlots = slots.length > 0;
 
-  // Effect to populate form fields when slots exist
   useEffect(() => {
     if (slots && slots.length > 0) {
-      // Sort slots by token number to get proper order
-      const sortedSlots = [...slots].sort((a, b) => a.tokenNumber - b.tokenNumber);
-      
-      // Start time: first token's start time
-      const firstToken = sortedSlots[0];
-      setStartTime(firstToken.startTime);
-      
-      // End time: last token's end time
-      const lastToken = sortedSlots[sortedSlots.length - 1];
-      setEndTime(lastToken.endTime);
-      
-      // Duration: duration of the first token
-      const firstTokenDuration = calculateDuration(firstToken.startTime, firstToken.endTime);
-      setDuration(firstTokenDuration.toString());
-      
-      // Rest time: difference between start time of 2nd token and end time of 1st token
+      const sortedSlots = [...slots].sort((a, b) =>
+        a.startTime.localeCompare(b.startTime)
+      );
+
+      const firstSlot = sortedSlots[0];
+      const lastSlot = sortedSlots[sortedSlots.length - 1];
+
+      setStartTime(firstSlot.startTime);
+      setEndTime(lastSlot.endTime);
+
+      const firstSlotDuration = calculateDuration(firstSlot.startTime, firstSlot.endTime);
+      setDuration(firstSlotDuration.toString());
+
       if (sortedSlots.length >= 2) {
-        const secondToken = sortedSlots[1];
-        const restMinutes = calculateDuration(firstToken.endTime, secondToken.startTime);
+        const secondSlot = sortedSlots[1];
+        const restMinutes = calculateDuration(firstSlot.endTime, secondSlot.startTime);
         setRestTime(restMinutes.toString());
       } else {
         setRestTime("0");
@@ -75,10 +68,8 @@ export default function DonationSlotsPage() {
 
   return (
     <div className="min-h-[100vh] p-4 pt-2 bg-[#f8f8f8]">
-
-      {/* Input Section in a Box */}
+      {/* Input Section */}
       <div className="bg-white shadow-sm rounded-xl p-6 mb-6">
-    
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 mb-1">
@@ -90,9 +81,9 @@ export default function DonationSlotsPage() {
               onChange={(e) => setStartTime(e.target.value)}
               className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="startTime"
+              disabled={hasSlots}
             />
           </div>
-
           <div>
             <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 mb-1">
               End Time
@@ -103,11 +94,11 @@ export default function DonationSlotsPage() {
               onChange={(e) => setEndTime(e.target.value)}
               className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="endTime"
+              disabled={hasSlots}
             />
           </div>
         </div>
 
-        {/* Row 2: Duration and Rest Time */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">
@@ -120,9 +111,9 @@ export default function DonationSlotsPage() {
               placeholder="In minutes"
               className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="duration"
+              disabled={hasSlots}
             />
           </div>
-          
           <div>
             <label htmlFor="restTime" className="block text-sm font-medium text-gray-700 mb-1">
               Rest time between appointments
@@ -134,28 +125,31 @@ export default function DonationSlotsPage() {
               placeholder="In minutes"
               className="border border-gray-500 p-2 rounded-lg w-3/4 text-gray-700"
               id="restTime"
+              disabled={hasSlots}
             />
           </div>
         </div>
-
         <button
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition mt-5"
+          className={`px-4 py-2 rounded-lg mt-5 transition ${
+            hasSlots ? 'bg-gray-300 cursor-not-allowed text-gray-600' : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
           onClick={() => {}}
+          disabled={hasSlots}
         >
-          Generate Tokens
+          Generate Slots
         </button>
       </div>
 
-      {/* Tokens Section */}
+      {/* Display Slots */}
       <div className="grid gap-4">
-        {slots.map((slot: Slot) => (
+        {slots.map((slot: Slot, index: number) => (
           <div
             key={slot.id}
             className="bg-white shadow-sm rounded-xl p-4 flex justify-between items-start"
           >
             <div>
               <h3 className="font-semibold text-gray-800 mb-1">
-                Token #{slot.tokenNumber}
+                Slot #{index + 1}
               </h3>
               <p className="text-sm text-gray-700">
                 <span className="font-medium">From:</span> {slot.startTime}{" "}
@@ -165,7 +159,7 @@ export default function DonationSlotsPage() {
             <button
               onClick={() => {}}
               className="text-red-600 hover:text-red-800 text-lg font-bold"
-              title="Cancel Token"
+              title="Cancel Slot"
             >
               ✕
             </button>
