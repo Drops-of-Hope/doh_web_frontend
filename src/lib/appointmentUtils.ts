@@ -1,14 +1,22 @@
-// Define the Appointment interface
-export interface Appointment {
-  id: number;
-  name: string;
-  bloodGroup: string;
-  date: string;
-  time: string;
-  contact: string;
-  location: string;
-  status: string;
-}
+import { Appointment } from "../../types";
+
+// Map backend blood group format to display format
+export const mapBloodGroupToDisplay = (backendBloodGroup: string | undefined): string => {
+  if (!backendBloodGroup) return '';
+  
+  const mapping: { [key: string]: string } = {
+    'A_POSITIVE': 'A+',
+    'A_NEGATIVE': 'A-',
+    'B_POSITIVE': 'B+',
+    'B_NEGATIVE': 'B-',
+    'AB_POSITIVE': 'AB+',
+    'AB_NEGATIVE': 'AB-',
+    'O_POSITIVE': 'O+',
+    'O_NEGATIVE': 'O-'
+  };
+  
+  return mapping[backendBloodGroup] || backendBloodGroup;
+};
 
 export const getStatusColor = (status: string) => {
   return status === 'Confirmed'
@@ -17,7 +25,10 @@ export const getStatusColor = (status: string) => {
 };
 
 export const getBloodGroupColor = (bloodGroup: string) => {
-  switch (bloodGroup) {
+  // Convert to display format first
+  const displayBloodGroup = mapBloodGroupToDisplay(bloodGroup);
+  
+  switch (displayBloodGroup) {
     case 'O+':
     case 'O-':
       return 'bg-red-100 text-red-800 border-red-200';
@@ -35,12 +46,13 @@ export const getBloodGroupColor = (bloodGroup: string) => {
   }
 };
 
-export const formatDisplayDate = (dateString: string) => {
+export const formatDisplayDate = (dateString: string | undefined): string => {
+  if (!dateString) return '';
+  
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
-    weekday: 'long',
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric'
   });
 };
@@ -49,12 +61,21 @@ export const sortAppointments = (data: Appointment[], sortBy: string): Appointme
   return [...data].sort((a, b) => {
     switch (sortBy) {
       case 'name':
-        return a.name.localeCompare(b.name);
+        // If donor missing, treat as empty string for comparison
+        const nameA = a.donor?.name ?? '';
+        const nameB = b.donor?.name ?? '';
+        return nameA.localeCompare(nameB);
+       
       case 'bloodGroup':
-        return a.bloodGroup.localeCompare(b.bloodGroup);
+        const bloodA = mapBloodGroupToDisplay(a.donor?.bloodGroup) ?? '';
+        const bloodB = mapBloodGroupToDisplay(b.donor?.bloodGroup) ?? '';
+        return bloodA.localeCompare(bloodB);
+       
       case 'date':
       default:
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        const dateA = a.appointmentDate ? new Date(a.appointmentDate).getTime() : 0;
+        const dateB = b.appointmentDate ? new Date(b.appointmentDate).getTime() : 0;
+        return dateA - dateB;
     }
   });
 };
