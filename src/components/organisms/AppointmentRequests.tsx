@@ -4,13 +4,25 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { SearchBar, AppointmentTableRow } from '@/components';
-import { appointmentRequests } from '@/constants/DonationAppointments';
 import {
   formatDisplayDate,
   sortAppointments
 } from '@/lib/appointmentUtils';
+import { useGetAppointmentsByMedicalEstablishmentQuery } from '@/store/api/appointmentsApi';
+import { useSession } from "next-auth/react";
+
 
 export default function AppointmentRequestsTable() {
+  const { data: session } = useSession();
+  const medicalEstablishmentId = session?.decodedIdToken?.sub;
+
+  const { data: appointments = [], isLoading, isError } = useGetAppointmentsByMedicalEstablishmentQuery(
+    medicalEstablishmentId ?? '',
+    {
+      skip: !medicalEstablishmentId, // skip the query if undefined or empty
+    }
+  );
+
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [bloodTypeFilter, setBloodTypeFilter] = useState<string>('all');
@@ -21,16 +33,23 @@ export default function AppointmentRequestsTable() {
   const [selectedDate, setSelectedDate] = useState<string>(today);
   const itemsPerPage = 10;
 
-  const filteredData = appointmentRequests.filter(item => {
-    const bloodTypeMatch = bloodTypeFilter === 'all' || item.bloodGroup === bloodTypeFilter;
-    const statusMatch = statusFilter === 'all' || item.status === statusFilter;
-    const itemDate = new Date(item.date).toISOString().split('T')[0];
+  // Adjust filtering for actual appointment data shape
+  const filteredData = appointments.filter((item) => {
+    // Assuming item.donor.bloodGroup and item.status exist
+    const bloodTypeMatch =
+      bloodTypeFilter === "all" ||
+      (item.donor?.bloodGroup === bloodTypeFilter);
+    const statusMatch = statusFilter === "all" || item.scheduled === statusFilter;
+
+    // Assuming appointmentDate is ISO string
+    const itemDate = new Date(item.appointmentDate).toISOString().split("T")[0];
     const dateMatch = itemDate === selectedDate;
 
-    const searchMatch = searchQuery === '' ||
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.bloodGroup.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.status.toLowerCase().includes(searchQuery.toLowerCase());
+    const searchMatch =
+      searchQuery === "" ||
+      item.donor?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.donor?.bloodGroup?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      item.scheduled.toLowerCase().includes(searchQuery.toLowerCase());
 
     return bloodTypeMatch && statusMatch && dateMatch && searchMatch;
   });
@@ -42,7 +61,7 @@ export default function AppointmentRequestsTable() {
   const paginatedData = sortedData.slice(startIndex, startIndex + itemsPerPage);
 
   const handleRowClick = () => {
-    router.push('/blood_bank/donors/appointment');
+    router.push("/blood_bank/donors/appointment");
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +73,12 @@ export default function AppointmentRequestsTable() {
     setSearchQuery(query);
     setCurrentPage(1);
   };
+
+  if (isLoading)
+    return <div className="p-8 text-center text-gray-500">Loading appointments...</div>;
+
+  if (isError)
+    return <div className="p-8 text-center text-red-500">Failed to load appointments.</div>;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
