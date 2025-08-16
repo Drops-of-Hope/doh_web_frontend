@@ -2,9 +2,23 @@
 import { FaBell } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const given_name = session?.decodedIdToken?.given_name;
+  const family_name = session?.decodedIdToken?.family_name;
+
+  // Function to check if a segment is in ID format (UUID-like or starts with number)
+  const isIdFormat = (segment: string) => {
+    // Check for UUID format (8-4-4-4-12 characters with hyphens)
+    const uuidPattern = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+    // Check if starts with a number (for cases like 51a1486d)
+    const startsWithNumber = /^\d/.test(segment);
+    
+    return uuidPattern.test(segment) || startsWithNumber;
+  };
 
   // Function to get page info and breadcrumb data from pathname
   const getPageInfo = (path: string) => {
@@ -59,8 +73,8 @@ export default function Header() {
         const segment = segments[i];
         currentPath += `/${segment}`;
 
-        // Skip adding "blood_bank" to breadcrumbs but keep it in path
-        if (segment === "blood_bank") {
+        // Skip adding segments that are IDs or "blood_bank" to breadcrumbs
+        if (segment === "blood_bank" || isIdFormat(segment)) {
           continue;
         }
 
@@ -85,8 +99,8 @@ export default function Header() {
       const segment = segments[i];
       currentPath += `/${segment}`;
 
-      // Skip adding "blood_bank" to breadcrumbs but keep it in path
-      if (segment === "blood_bank") {
+      // Skip adding segments that are IDs or "blood_bank" to breadcrumbs
+      if (segment === "blood_bank" || isIdFormat(segment)) {
         continue;
       }
 
@@ -138,9 +152,9 @@ export default function Header() {
           <div className="flex items-center space-x-3">
             <div className="hidden sm:block text-right">
               <div className="text-sm font-medium text-gray-800">
-                Nadhiya Nashath
+                {given_name}
               </div>
-              <div className="text-xs text-gray-500">Admin</div>
+              <div className="text-xs text-gray-500">{family_name}</div>
             </div>
           </div>
         </div>
