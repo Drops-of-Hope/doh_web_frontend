@@ -2,17 +2,20 @@
 
 import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
 import { ReactElement, useState } from "react";
-import { FormData } from '../../../../../../../types';
+import { FormData } from '../../../../../../types';
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3; 
 
   const formData: FormData = {
+    // Section 1: Previous Donation History
+    donatedPreviously: "yes",
     experiencedAilment: "yes",
     ailmentDescription: "Felt slightly dizzy after my second donation, but it passed after resting for 10 minutes",
     medicallyAdvised: "no",
-    readInformationLeaflet: "yes",
+
+    // Section 2: Current Health Status
     feelingWellToday: "yes",
     hasDiseasesConditions: "yes",
     selectedDiseases: ["diabetes", "asthma"],
@@ -21,10 +24,14 @@ export default function Form(): ReactElement {
     surgeryDescription: "Appendectomy in 2022",
     heavyWorkAfterDonation: "no",
     isPregnantOrBreastfeeding: "no",
-    childbirthOrAbortion: "no",
+
+    // Section 3: Past Medical History
     hadJaundiceHepatitis: "no",
     hadTuberculosisTyphoid: "yes",
     tuberculosisTyphoidDetails: "Had typhoid in January 2023, completed full course of antibiotics",
+
+    // Section 4: During past 12 months
+    hadDengueFever: "no",
     receivedVaccinations: "yes",
     vaccinationDetails: "COVID-19 booster shot in November 2023",
     hadTattooOrPiercing: "yes",
@@ -36,7 +43,21 @@ export default function Form(): ReactElement {
     receivedBloodProducts: "no",
     bloodProductsDetails: undefined,
     hadMalaria: "yes",
-    malariaDetails: "Had malaria in 2021 while traveling, completed full treatment with artemisinin"
+
+    // Section 5: Recent Health History
+
+    hadRecentIllness: "no",
+    hadDentalExtraction: "no",
+    takenRecentMedicine: "yes",
+
+    // Section 6: Risk Factors
+    knowsRiskCategories: "yes",
+    belongsToRiskCategory: "no",
+    hasPersistentSymptoms: "no",
+
+    // Legacy fields (can be removed if not needed elsewhere)
+    readInformationLeaflet: "yes",
+    childbirthOrAbortion: "no"
   };
 
   const handleNext = () => {

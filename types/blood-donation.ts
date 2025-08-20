@@ -1,6 +1,7 @@
 export interface FormData {
+  donatedPreviously: string,
   experiencedAilment: string;
-  ailmentDescription?: string;
+  ailmentDescription: string;
   medicallyAdvised: string;
   readInformationLeaflet: string;
   feelingWellToday: string;
@@ -16,6 +17,7 @@ export interface FormData {
   jaundiceHepatitisDetails?: string;
   hadTuberculosisTyphoid: string;
   tuberculosisTyphoidDetails?: string;
+  hadDengueFever: string,
   receivedVaccinations: string;
   vaccinationDetails?: string;
   hadTattooOrPiercing: string;
@@ -27,7 +29,13 @@ export interface FormData {
   receivedBloodProducts: string;
   bloodProductsDetails?: string;
   hadMalaria: string;
+  hadRecentIllness: string,
+  hadDentalExtraction: string,
+  takenRecentMedicine: string,
   malariaDetails?: string;
+  knowsRiskCategories: string,
+  belongsToRiskCategory: string,
+  hasPersistentSymptoms: string,
 }
 
 export interface PreScreeningFormDisplayProps {

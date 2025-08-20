@@ -101,7 +101,7 @@ export default function Appointment() {
   };
 
   const handleViewForm = () => {
-    router.push(`/blood_bank/donors/appointment/form/${appointmentId}`);
+    router.push('/blood_bank/donors/form');
   };
 
   const formatDate = (dateString: string): string => {
