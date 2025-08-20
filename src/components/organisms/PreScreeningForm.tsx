@@ -7,6 +7,16 @@ import { mockPreviousResponses, screeningQuestions } from '@/constants/Screening
 const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formData }) => {
   const [showComparison, setShowComparison] = useState(false);
 
+  // Helper function to convert boolean to yes/no string for display
+  const boolToYesNo = (value: boolean): string => value ? "yes" : "no";
+  
+  // Helper function to get selected diseases as array from Record
+  const getSelectedDiseases = (diseases: Record<string, boolean>): string[] => {
+    return Object.entries(diseases)
+      .filter(([_, selected]) => selected)
+      .map(([disease, _]) => disease);
+  };
+
   const getInconsistencies = () => {
     const inconsistencies: Array<{
       questionNumber: number;
@@ -79,23 +89,23 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
             <QuestionDisplay
               questionNumber={1}
               question="Have you donated blood previously?"
-              answer={formData.donatedPreviously}
+              answer={boolToYesNo(formData.hasDonatedBefore)}
             />
             <QuestionDisplay
               questionNumber={2}
               question="Did you experience any ailment, difficulty or discomfort during previous donations?"
-              answer={formData.experiencedAilment}
+              answer={formData.anyDifficulty ? "yes" : "no"}
             />
             <QuestionDisplay
               questionNumber={3}
               question="If yes, what was the difficulty?"
-              answer={formData.ailmentDescription}
-              additionalDetails={formData.ailmentDescription}
+              answer={formData.anyDifficulty || "N/A"}
+              additionalDetails={formData.anyDifficulty}
             />
             <QuestionDisplay
               questionNumber={4}
               question="Have you ever been medically advised not to donate blood?"
-              answer={formData.medicallyAdvised}
+              answer={boolToYesNo(formData.medicalAdvice)}
             />
           </div>
 
@@ -105,34 +115,34 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
             <QuestionDisplay
               questionNumber={5}
               question="Are you feeling well, today?"
-              answer={formData.feelingWellToday}
+              answer={boolToYesNo(formData.feelingWell)}
             />
             <QuestionDisplay
               questionNumber={6}
               question="Have you ever had or taken treatment for any of the following disease conditions? If Yes, please mark X in relevant boxes and discuss with the medical officer during the interview."
-              answer={formData.hasDiseasesConditions}
+              answer={Object.values(formData.anyDiseases).some(Boolean) ? "yes" : "no"}
               note="Heart Disease, Strokes, Kidney diseases, Diabetes, Fits, Liver diseases, Asthma/Lung disease, Blood disorders, Cancer"
-              selectedItems={formData.selectedDiseases}
+              selectedItems={getSelectedDiseases(formData.anyDiseases)}
             />
             <QuestionDisplay
               questionNumber={7}
               question="Are you taking any medication/treatment, presently?"
-              answer={formData.takingMedication}
+              answer={boolToYesNo(formData.takingMedicines)}
             />
             <QuestionDisplay
               questionNumber={8}
               question="Have you undergone any surgery?"
-              answer={formData.undergoneSurgery}
+              answer={boolToYesNo(formData.anySurgery)}
             />
             <QuestionDisplay
               questionNumber={9}
               question="After donating blood, do you have to engage in any heavy work, driving passenger or heavy vehicles or work at heights today?"
-              answer={formData.heavyWorkAfterDonation}
+              answer={boolToYesNo(formData.workingLater)}
             />
             <QuestionDisplay
               questionNumber={10}
               question="(For females) Are you pregnant or breast feeding at present? Have you had a child birth or an abortion during last 12 months?"
-              answer={formData.isPregnantOrBreastfeeding}
+              answer={boolToYesNo(formData.pregnant)}
             />
           </div>
 
@@ -142,12 +152,12 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
             <QuestionDisplay
               questionNumber={11}
               question="Have you ever had Jaundice/hepatitis in the past?"
-              answer={formData.hadJaundiceHepatitis}
+              answer={boolToYesNo(formData.haveHepatitis)}
             />
             <QuestionDisplay
               questionNumber={12}
               question="During last 2 years: Have you had Tuberculosis or Typhoid or taken treatment for them?"
-              answer={formData.hadTuberculosisTyphoid}
+              answer={boolToYesNo(formData.haveTB)}
             />
           </div>
 
@@ -155,34 +165,34 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
           <div className="mb-6">
             <h3 className="text-lg font-medium text-gray-800 mb-4">(4) During past 12 months</h3>
             <QuestionDisplay
-              questionNumber={12}
+              questionNumber={13}
               question="Have you received any vaccinations?"
-              answer={formData.receivedVaccinations}
+              answer={boolToYesNo(formData.hadVaccination)}
             />
             <QuestionDisplay
               questionNumber={14}
               question="Have you had tattooing, ear / body piercing or acupuncture treatment?"
-              answer={formData.hadTattooOrPiercing}
+              answer={boolToYesNo(formData.tattoos)}
             />
             <QuestionDisplay
               questionNumber={15}
               question="Have you been imprisoned for any reason?"
-              answer={formData.beenImprisoned}
+              answer={boolToYesNo(formData.haveImprisonment)}
             />
             <QuestionDisplay
               questionNumber={16}
               question="Have you or your partner travelled abroad?"
-              answer={formData.travelledAbroad}
+              answer={boolToYesNo(formData.travelledAbroad)}
             />
             <QuestionDisplay
               questionNumber={17}
               question="Have you or your partner received blood or blood products? Had chemo therapy?"
-              answer={formData.receivedBloodProducts}
+              answer={boolToYesNo(formData.receivedBlood || formData.chemotherapy)}
             />
             <QuestionDisplay
               questionNumber={18}
               question="Have you had malaria or taken treatment for malaria?"
-              answer={formData.hadMalaria}
+              answer={boolToYesNo(formData.hadMalaria)}
             />
           </div>
 
@@ -192,22 +202,22 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
             <QuestionDisplay
               questionNumber={19}
               question="During last 6 months: Have you had Dengue fever?"
-              answer={formData.hadDengueFever}
+              answer={boolToYesNo(formData.hasDengue)}
             />
             <QuestionDisplay
               questionNumber={20}
               question="During last 1 month: Have you had chicken pox, measles, mumps, rubella, diarrhoea or any other long standing (more than one week) fever?"
-              answer={formData.hadRecentIllness}
+              answer={boolToYesNo(formData.hadLongFever)}
             />
             <QuestionDisplay
               questionNumber={21}
               question="During last 1 week: Have you had a dental extraction?"
-              answer={formData.hadDentalExtraction}
+              answer={boolToYesNo(formData.hadtoothExtraction)}
             />
             <QuestionDisplay
               questionNumber={22}
               question="During last 1 week: Have you taken Aspirin, Antibiotics or any other medicine?"
-              answer={formData.takenRecentMedicine}
+              answer={boolToYesNo(formData.bookAspirin)}
             />
           </div>
 
@@ -217,7 +227,7 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
             <QuestionDisplay
               questionNumber={23}
               question="Do you know that people of following categories should not give blood?"
-              answer={formData.knowsRiskCategories}
+              answer={boolToYesNo(formData.Acknowledgement)}
               note="* If you were found to be positive for HIV, Hepatitis B, C or Syphilis infections at any time
 * If you have had multiple sexual partners
 * If you have ever engaged in male to male sexual activity
@@ -229,19 +239,19 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
             <QuestionDisplay
               questionNumber={24}
               question="Do you or your sexual partner belong to one of the above categories?"
-              answer={formData.belongsToRiskCategory}
+              answer={boolToYesNo(formData.highRisk)}
             />
             <QuestionDisplay
               questionNumber={25}
               question="Are you having persistent fever, diarrhoea, multiple swollen lymph nodes or unintentional weight loss?"
-              answer={formData.hasPersistentSymptoms}
+              answer={boolToYesNo(formData.hadWeightLoss)}
             />
           </div>
 
           <div className="border-t border-gray-300 pt-6 mt-8">
             <div className="flex justify-between items-center text-sm text-gray-500">
-              <span>Form submitted on: March 15, 2024</span>
-              <span>Donor ID: BD-2024-001</span>
+              <span>Form submitted on: {new Date(formData.dateTime).toLocaleDateString()}</span>
+              <span>Donor ID: {formData.donorId || formData.id}</span>
             </div>
           </div>
         </div>

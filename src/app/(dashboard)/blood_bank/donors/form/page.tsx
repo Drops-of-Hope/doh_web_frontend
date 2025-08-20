@@ -9,57 +9,58 @@ export default function Form(): ReactElement {
   const totalSteps = 3; 
 
   const formData: FormData = {
-    // Section 1: Previous Donation History
-    donatedPreviously: "yes",
-    experiencedAilment: "yes",
-    ailmentDescription: "Felt slightly dizzy after my second donation, but it passed after resting for 10 minutes",
-    medicallyAdvised: "no",
-
-    // Section 2: Current Health Status
-    feelingWellToday: "yes",
-    hasDiseasesConditions: "yes",
-    selectedDiseases: ["diabetes", "asthma"],
-    takingMedication: "no",
-    undergoneSurgery: "yes",
-    surgeryDescription: "Appendectomy in 2022",
-    heavyWorkAfterDonation: "no",
-    isPregnantOrBreastfeeding: "no",
-
-    // Section 3: Past Medical History
-    hadJaundiceHepatitis: "no",
-    hadTuberculosisTyphoid: "yes",
-    tuberculosisTyphoidDetails: "Had typhoid in January 2023, completed full course of antibiotics",
-
-    // Section 4: During past 12 months
-    hadDengueFever: "no",
-    receivedVaccinations: "yes",
-    vaccinationDetails: "COVID-19 booster shot in November 2023",
-    hadTattooOrPiercing: "yes",
-    tattooOrPiercingDetails: "Small tattoo on wrist in August 2023 at licensed parlor",
-    beenImprisoned: "no",
-    imprisonmentDetails: undefined,
-    travelledAbroad: "yes",
-    travelDetails: "Visited India in December 2023 for 2 weeks, Thailand in February 2024 for vacation",
-    receivedBloodProducts: "no",
-    bloodProductsDetails: undefined,
-    hadMalaria: "yes",
-
-    // Section 5: Recent Health History
-
-    hadRecentIllness: "no",
-    hadDentalExtraction: "no",
-    takenRecentMedicine: "yes",
-
-    // Section 6: Risk Factors
-    knowsRiskCategories: "yes",
-    belongsToRiskCategory: "no",
-    hasPersistentSymptoms: "no",
-
-    // Legacy fields (can be removed if not needed elsewhere)
-    readInformationLeaflet: "yes",
-    childbirthOrAbortion: "no"
+    // Required fields
+    id: "donation-001", // You'll need to generate or provide this
+    dateTime: new Date().toISOString(), // Current timestamp
+    
+    userId: "user-456", // Optional - provide if available
+    
+    // Previous Donation History
+    hasDonatedBefore: true,
+    anyDifficulty: "Felt slightly dizzy after my second donation, but it passed after resting for 10 minutes",
+    medicalAdvice: false,
+    
+    // Current Health Status  
+    feelingWell: true,
+    anyDiseases: {
+      diabetes: true,
+      asthma: true,
+      hypertension: false,
+      heartDisease: false,
+      // Add other diseases as needed with boolean values
+    },
+    takingMedicines: false,
+    anySurgery: true,
+    workingLater: false,
+    pregnant: false,
+    
+    // Past Medical History
+    haveHepatitis: false,
+    haveTB: true,
+    
+    // During past 12 months
+    hasDengue: false,
+    hadVaccination: true,
+    tattoos: true,
+    haveImprisonment: false,
+    travelledAbroad: true,
+    receivedBlood: false,
+    hadMalaria: true,
+    
+    // Recent Health History
+    hadLongFever: false,
+    hadtoothExtraction: false,
+    bookAspirin: true,
+    
+    // Risk Factors & Final
+    Acknowledgement: true,
+    highRisk: false,
+    hadWeightLoss: false,
+    
+    // Additional fields from interface not covered above
+    chemotherapy: false
   };
-
+  
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
