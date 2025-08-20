@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { slotsApi } from './api/slotsApi';
 import { appointmentsApi } from './api/appointmentsApi'; 
+import { donationFormApi } from './api/donationFormApi';
 
 export const makeStore = () =>
   configureStore({
@@ -8,11 +9,13 @@ export const makeStore = () =>
       // Add your other reducers here
       [slotsApi.reducerPath]: slotsApi.reducer,
       [appointmentsApi.reducerPath]: appointmentsApi.reducer,  
+      [donationFormApi.reducerPath]: donationFormApi.reducer, 
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
         .concat(slotsApi.middleware)
-        .concat(appointmentsApi.middleware),  
+        .concat(appointmentsApi.middleware)
+        .concat(donationFormApi.middleware),  
   });
 
 // Export types for usage elsewhere

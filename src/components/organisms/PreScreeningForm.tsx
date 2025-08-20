@@ -251,7 +251,6 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
           <div className="border-t border-gray-300 pt-6 mt-8">
             <div className="flex justify-between items-center text-sm text-gray-500">
               <span>Form submitted on: {new Date(formData.dateTime).toLocaleDateString()}</span>
-              <span>Donor ID: {formData.donorId || formData.id}</span>
             </div>
           </div>
         </div>
