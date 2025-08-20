@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { FaHeart, FaCheckCircle } from 'react-icons/fa';
 
 interface DonorDetails {
@@ -86,12 +87,17 @@ export default function DonorProfileCard({ donorData }: DonorProfileCardProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-8">
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 relative">
           {donorData.profileImageUrl ? (
-            <img
+            <Image
               src={donorData.profileImageUrl}
-              alt={donorData.name}
+              alt={`${donorData.name} profile picture`}
+              width={96}
+              height={96}
               className="w-24 h-24 rounded-full border-4 border-gray-200 object-cover"
+              priority={false}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLli+ZCprxbjMegiIuPYa7+xDGg8XqHFTSdLd/VHzp0qE7JlXg8o34Nnn7p7F2gVQaR7gNhyTrr7j6Ky7EZEJ/1hXjf8RCbLOqK0j7rK4QHZQ7uX2rryf14PjdV1qPUjjMj/kNvpruK5kRzxFjEZ4hJKnXhUx4ItOIaHg8Y7u1Q2/XNrFZHa7p1oS3kQr5Uy+PtJ7rYZ4c+W1vYYfgB5EwdPsn2zc9T2bU4vFfqSrjp4nDJZnZyBHCyaDyH5yf9HgtCJt4pBDZ5p/TgcjJ3pOO5X2TQ+7lYW4fCkRd7YW+2WKEKpIJHbf1UkdBp8eFEv8Aat7A="
             />
           ) : (
             <div className="w-24 h-24 rounded-full bg-gray-400 flex items-center justify-center border-4 border-gray-200">

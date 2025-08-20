@@ -29,6 +29,42 @@ interface DonorDetails {
   nextEligible?: string | null;
 }
 
+// Extended interfaces to properly type the API response
+interface ExtendedDonor {
+  id: string;
+  name: string;
+  email: string;
+  bloodGroup: string;
+  nic?: string;
+  createdAt?: string;
+  donationBadge?: string;
+  isActive?: boolean;
+  profileImageUrl?: string | null;
+  totalDonations?: number;
+  totalPoints?: number;
+  updatedAt?: string;
+  nextEligible?: string | null;
+}
+
+interface AppointmentSlot {
+  startTime: string;
+  endTime: string;
+}
+
+interface MedicalEstablishment {
+  id: string;
+  name: string;
+  // Add other properties as needed
+}
+
+interface AppointmentData {
+  id: string;
+  appointmentDate: string;
+  donor: ExtendedDonor;
+  slot: AppointmentSlot;
+  medicalEstablishment: MedicalEstablishment;
+}
+
 export default function Appointment() {
   const router = useRouter();
   const params = useParams();
@@ -46,6 +82,9 @@ export default function Appointment() {
   } = useGetAppointmentByIdQuery(appointmentId, {
     skip: !appointmentId
   });
+
+  // Type guard to ensure we have properly typed appointment data
+  const typedAppointmentData = appointmentData as AppointmentData | undefined;
 
   const donationHistory: DonationHistory[] = [
     { id: 1, date: "2024-12-15", type: "Whole Blood", location: "Colombo Blood Bank" },
@@ -82,6 +121,14 @@ export default function Appointment() {
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
+  const getErrorMessage = (): string => {
+    if (error && 'data' in error) {
+      const errorData = error.data as { message?: string } | undefined;
+      return errorData?.message || 'The requested appointment could not be found.';
+    }
+    return 'The requested appointment could not be found.';
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -100,7 +147,7 @@ export default function Appointment() {
   }
 
   // Error state - also check for missing donor data and required nested properties
-  if (isError || !appointmentData || !appointmentData.donor || !appointmentData.slot || !appointmentData.medicalEstablishment) {
+  if (isError || !typedAppointmentData || !typedAppointmentData.donor || !typedAppointmentData.slot || !typedAppointmentData.medicalEstablishment) {
     return (
       <div className="min-h-[100vh] p-4 pt-2 bg-[#f8f8f8]">
         <div className="mb-6">
@@ -113,22 +160,22 @@ export default function Appointment() {
           <div className="text-center">
             <div className="text-red-500 text-xl mb-2">⚠️</div>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              {!appointmentData 
+              {!typedAppointmentData 
                 ? 'Appointment Not Found' 
-                : !appointmentData.donor 
+                : !typedAppointmentData.donor 
                   ? 'Donor Information Missing'
-                  : !appointmentData.slot
+                  : !typedAppointmentData.slot
                     ? 'Appointment Slot Information Missing'
                     : 'Medical Establishment Information Missing'}
             </h2>
             <p className="text-gray-600">
-              {error && 'data' in error 
-                ? (error.data as any)?.message || 'The requested appointment could not be found.'
-                : !appointmentData 
+              {isError 
+                ? getErrorMessage()
+                : !typedAppointmentData 
                   ? 'The requested appointment could not be found.'
-                  : !appointmentData.donor 
+                  : !typedAppointmentData.donor 
                     ? 'Donor information is missing for this appointment.'
-                    : !appointmentData.slot
+                    : !typedAppointmentData.slot
                       ? 'Appointment slot information is missing.'
                       : 'Medical establishment information is missing.'}
             </p>
@@ -140,19 +187,19 @@ export default function Appointment() {
 
   // Create a properly typed donor object that matches DonorDetails interface
   const donorData: DonorDetails = {
-    id: appointmentData.donor.id,
-    name: appointmentData.donor.name,
-    email: appointmentData.donor.email,
-    bloodGroup: appointmentData.donor.bloodGroup,
-    nic: (appointmentData.donor as any).nic || 'N/A',
-    createdAt: (appointmentData.donor as any).createdAt || new Date().toISOString(),
-    donationBadge: (appointmentData.donor as any).donationBadge || 'BRONZE',
-    isActive: (appointmentData.donor as any).isActive ?? true,
-    profileImageUrl: (appointmentData.donor as any).profileImageUrl || null,
-    totalDonations: (appointmentData.donor as any).totalDonations || 0,
-    totalPoints: (appointmentData.donor as any).totalPoints || 0,
-    updatedAt: (appointmentData.donor as any).updatedAt || new Date().toISOString(),
-    nextEligible: (appointmentData.donor as any).nextEligible || null
+    id: typedAppointmentData.donor.id,
+    name: typedAppointmentData.donor.name,
+    email: typedAppointmentData.donor.email,
+    bloodGroup: typedAppointmentData.donor.bloodGroup,
+    nic: typedAppointmentData.donor.nic ?? 'N/A',
+    createdAt: typedAppointmentData.donor.createdAt ?? new Date().toISOString(),
+    donationBadge: typedAppointmentData.donor.donationBadge ?? 'BRONZE',
+    isActive: typedAppointmentData.donor.isActive ?? true,
+    profileImageUrl: typedAppointmentData.donor.profileImageUrl ?? null,
+    totalDonations: typedAppointmentData.donor.totalDonations ?? 0,
+    totalPoints: typedAppointmentData.donor.totalPoints ?? 0,
+    updatedAt: typedAppointmentData.donor.updatedAt ?? new Date().toISOString(),
+    nextEligible: typedAppointmentData.donor.nextEligible ?? null
   };
   
   return (
@@ -214,13 +261,13 @@ export default function Appointment() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <FaCalendarDay className="w-5 h-5 text-gray-400" />
-                  <span className="text-gray-900">{formatDate(appointmentData.appointmentDate)}</span>
+                  <span className="text-gray-900">{formatDate(typedAppointmentData.appointmentDate)}</span>
                 </div>
                 
                 <div className="flex items-center gap-3">
                   <FaClock className="w-5 h-5 text-gray-400" />
                   <span className="text-gray-900">
-                    {formatTime(appointmentData.appointmentDate, appointmentData.slot.startTime)} - {appointmentData.slot.endTime}
+                    {formatTime(typedAppointmentData.appointmentDate, typedAppointmentData.slot.startTime)} - {typedAppointmentData.slot.endTime}
                   </span>
                 </div>
               </div>
