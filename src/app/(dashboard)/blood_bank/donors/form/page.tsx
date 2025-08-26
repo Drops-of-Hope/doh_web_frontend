@@ -2,42 +2,17 @@
 
 import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
 import { ReactElement, useState } from "react";
-import { FormData } from '../../../../../../../types';
+import { useGetDonationFormByIdQuery } from "@/store/api/donationFormApi"; 
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 3; 
+  const totalSteps = 3;
 
-  const formData: FormData = {
-    experiencedAilment: "yes",
-    ailmentDescription: "Felt slightly dizzy after my second donation, but it passed after resting for 10 minutes",
-    medicallyAdvised: "no",
-    readInformationLeaflet: "yes",
-    feelingWellToday: "yes",
-    hasDiseasesConditions: "yes",
-    selectedDiseases: ["diabetes", "asthma"],
-    takingMedication: "no",
-    undergoneSurgery: "yes",
-    surgeryDescription: "Appendectomy in 2022",
-    heavyWorkAfterDonation: "no",
-    isPregnantOrBreastfeeding: "no",
-    childbirthOrAbortion: "no",
-    hadJaundiceHepatitis: "no",
-    hadTuberculosisTyphoid: "yes",
-    tuberculosisTyphoidDetails: "Had typhoid in January 2023, completed full course of antibiotics",
-    receivedVaccinations: "yes",
-    vaccinationDetails: "COVID-19 booster shot in November 2023",
-    hadTattooOrPiercing: "yes",
-    tattooOrPiercingDetails: "Small tattoo on wrist in August 2023 at licensed parlor",
-    beenImprisoned: "no",
-    imprisonmentDetails: undefined,
-    travelledAbroad: "yes",
-    travelDetails: "Visited India in December 2023 for 2 weeks, Thailand in February 2024 for vacation",
-    receivedBloodProducts: "no",
-    bloodProductsDetails: undefined,
-    hadMalaria: "yes",
-    malariaDetails: "Had malaria in 2021 while traveling, completed full treatment with artemisinin"
-  };
+  // 👇 Example: you’ll get this ID from route params or props
+  const formId = "7bb02404-02f7-4b30-bd77-9806560f9009";
+
+  // Fetch form data
+  const { data: formData, isLoading, error } = useGetDonationFormByIdQuery(formId);
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -54,17 +29,17 @@ export default function Form(): ReactElement {
   };
 
   const renderCurrentStep = () => {
+    if (isLoading) return <p>Loading form...</p>;
+    if (error) return <p className="text-red-500">Failed to load donation form</p>;
+    if (!formData) return <p>No form data found</p>;
+
     switch (currentStep) {
       case 1:
         return <PreScreeningFormDisplay formData={formData} />;
       case 2:
-        return (
-          <MedicalOfficerEvaluation />
-        );
+        return <MedicalOfficerEvaluation />;
       case 3:
-        return (
-          <AddBloodUnit />
-        );
+        return <AddBloodUnit />;
       default:
         return <PreScreeningFormDisplay formData={formData} />;
     }
@@ -73,11 +48,8 @@ export default function Form(): ReactElement {
   return (
     <div className="min-h-[100vh] p-4 pt-2 bg-[#f8f8f8]">
       <div className="">
-
         {/* Current step content */}
-        <div className="mb-6">
-          {renderCurrentStep()}
-        </div>
+        <div className="mb-6">{renderCurrentStep()}</div>
 
         {/* Pagination controls */}
         <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
@@ -86,8 +58,8 @@ export default function Form(): ReactElement {
             disabled={currentStep === 1}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
               currentStep === 1
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-400 text-white hover:bg-gray-600'
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-gray-400 text-white hover:bg-gray-600"
             }`}
           >
             Previous
@@ -100,10 +72,10 @@ export default function Form(): ReactElement {
                 onClick={() => setCurrentStep(i + 1)}
                 className={`w-8 h-8 rounded-full font-medium transition-colors ${
                   currentStep === i + 1
-                    ? 'bg-blue-500 text-white'
+                    ? "bg-blue-500 text-white"
                     : currentStep > i + 1
-                    ? 'bg-gray-200 text-gray-600'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                    ? "bg-gray-200 text-gray-600"
+                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
                 }`}
               >
                 {i + 1}
@@ -115,7 +87,7 @@ export default function Form(): ReactElement {
             onClick={handleNext}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            {currentStep === totalSteps ? 'Submit' : 'Next'}
+            {currentStep === totalSteps ? "Submit" : "Next"}
           </button>
         </div>
       </div>

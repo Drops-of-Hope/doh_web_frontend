@@ -8,9 +8,13 @@ import {
 } from "@/components";
 import { useRouter } from "next/navigation";
 import { FaTint, FaClock, FaTruck } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function HomePage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const given_name = session?.decodedIdToken?.given_name;
+  const family_name = session?.decodedIdToken?.family_name;
   const handleRequestBlood = () => {
     router.push("/blood_bank/request");
   };
@@ -96,7 +100,7 @@ export default function HomePage() {
     <div className="min-h-[100vh] p-4 pt-0 bg-[#f8f8f8]">
       <div className="text-[#2D3748] flex justify-between">
         <div>
-          <h1 className="font-semibold">Hello, Nadhiya</h1>
+          <h1 className="font-semibold">{given_name} {family_name}</h1>
           <p className="text-s text-gray-500">Your summary for the day</p>
         </div>
         <div className="mt-4">
