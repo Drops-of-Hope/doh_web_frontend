@@ -3,7 +3,6 @@
 import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
 import { ReactElement, useState } from "react";
 import { useGetDonationFormByIdQuery } from "@/store/api/donationFormApi"; 
-import { BloodDonationForm } from "@/store/api/donationFormApi";
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);

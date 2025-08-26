@@ -13,8 +13,8 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
   // Helper function to get selected diseases as array from Record
   const getSelectedDiseases = (diseases: Record<string, boolean>): string[] => {
     return Object.entries(diseases)
-      .filter(([_, selected]) => selected)
-      .map(([disease, _]) => disease);
+      .filter(([selected]) => selected)
+      .map(([disease]) => disease);
   };
 
   const getInconsistencies = () => {
