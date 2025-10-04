@@ -15,7 +15,7 @@ export default function ListPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const medicalEstablishmentId = session?.decodedIdToken?.sub;
   
-    const { data: appointments = [], isLoading, isError } = useGetAppointmentsByMedicalEstablishmentQuery(
+    const { data: appointments = []} = useGetAppointmentsByMedicalEstablishmentQuery(
       medicalEstablishmentId ?? '',
       {
         skip: !medicalEstablishmentId, // skip the query if undefined or empty
