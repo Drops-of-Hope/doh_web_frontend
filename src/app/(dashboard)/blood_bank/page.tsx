@@ -16,7 +16,7 @@ export default function HomePage() {
   const given_name = session?.decodedIdToken?.given_name;
   const family_name = session?.decodedIdToken?.family_name;
   const handleRequestBlood = () => {
-    router.push("/blood_bank/request");
+    router.push("/blood_bank/requests/request_form");
   };
 
   const bloodTypeData = [
@@ -113,9 +113,9 @@ export default function HomePage() {
       </div>
 
       <div className="flex justify-between gap-4 mt-4">
-        <StatCard title="Blood Units" count="247" icon={<FaTint />} />
-        <StatCard title="Expiring Soon" count="12" icon={<FaClock />} />
-        <StatCard title="In Transit" count="8" icon={<FaTruck />} />
+        <StatCard title="Blood Units" count="107" icon={<FaTint />} />
+        <StatCard title="Expiring Soon" count="9" icon={<FaClock />} />
+        <StatCard title="In Transit" count="0" icon={<FaTruck />} />
       </div>
 
       <div className="flex justify-between gap-4 mt-4">
