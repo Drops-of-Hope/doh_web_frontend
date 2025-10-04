@@ -60,8 +60,9 @@ export default function AppointmentRequestsTable() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedData.slice(startIndex, startIndex + itemsPerPage);
 
-  const handleRowClick = () => {
-    router.push("/blood_bank/donors/appointment");
+  // Modified handleRowClick to accept appointmentId parameter
+  const handleRowClick = (appointmentId: string) => {
+    router.push(`/blood_bank/donors/appointment/${appointmentId}`);
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,7 +157,7 @@ export default function AppointmentRequestsTable() {
                 <AppointmentTableRow
                   key={request.id}
                   request={request}
-                  onClick={handleRowClick}
+                  onClick={() => handleRowClick(request.id)}
                 />
               ))
             ) : (
