@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { slotsApi } from './api/slotsApi';
 import { appointmentsApi } from './api/appointmentsApi'; 
 import { donationFormApi } from './api/donationFormApi';
+import { healthVitalsApi } from './api/healthVitalsApi';
 
 export const makeStore = () =>
   configureStore({
@@ -10,12 +11,14 @@ export const makeStore = () =>
       [slotsApi.reducerPath]: slotsApi.reducer,
       [appointmentsApi.reducerPath]: appointmentsApi.reducer,  
       [donationFormApi.reducerPath]: donationFormApi.reducer, 
+      [healthVitalsApi.reducerPath]: healthVitalsApi.reducer, 
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
         .concat(slotsApi.middleware)
         .concat(appointmentsApi.middleware)
-        .concat(donationFormApi.middleware),  
+        .concat(donationFormApi.middleware)
+        .concat(healthVitalsApi.middleware),  
   });
 
 // Export types for usage elsewhere
