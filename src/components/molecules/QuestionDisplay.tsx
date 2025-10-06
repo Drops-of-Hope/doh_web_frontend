@@ -21,15 +21,28 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   selectedItems,
   note
 }) => {
-  const getBadgeColor = (answer: string, isYesNoQuestion: boolean) => {
-    if (!isYesNoQuestion) {
-      return "bg-blue-100 text-blue-800";
-    }
-    
-    return answer === "yes" 
-      ? "bg-red-100 text-red-800" 
-      : "bg-green-100 text-green-800";
-  };
+  const getBadgeColor = (questionNumber: number, answer: string, isYesNoQuestion: boolean) => {
+  // Special rule: Question 1 (Have you donated blood before?) → always green
+  if (questionNumber === 1 || questionNumber === 22) {
+    return "bg-green-100 text-green-800";
+  }
+
+  if (questionNumber === 4) {
+    return answer === "no"
+    ? "bg-red-100 text-red-800"
+    : "bg-green-100 text-green-800";
+  }
+
+
+  if (!isYesNoQuestion) {
+    return "bg-blue-100 text-blue-800";
+  }
+
+  return answer === "yes"
+    ? "bg-red-100 text-red-800"
+    : "bg-green-100 text-green-800";
+};
+
 
   return (
     <div className="mb-8">
@@ -43,7 +56,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       )}
       <div className="bg-gray-100 p-4 rounded-md">
         <div className="flex items-center mb-3">
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getBadgeColor(answer, isYesNoQuestion)}`}>
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getBadgeColor(questionNumber, answer, isYesNoQuestion)}`}>
             {answer.toUpperCase()}
           </span>
         </div>

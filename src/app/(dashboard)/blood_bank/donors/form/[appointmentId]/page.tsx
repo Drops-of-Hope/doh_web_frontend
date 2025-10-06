@@ -20,7 +20,6 @@ const { data: formsData, isLoading, error } = useGetDonationFormByAppointmentIdQ
 );
 
 const formData = formsData?.[0];
-console.log(formData);
 
 
   const handleNext = () => {
