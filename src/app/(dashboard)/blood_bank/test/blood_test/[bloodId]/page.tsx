@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { BackButton, BloodUnitInfo, TestResultsToBeCompleted } from '@/components';
 import { useRouter } from 'next/navigation';
-import { TestResult, BloodUnit } from '../../../../../../types';
+import { TestResult, BloodUnit } from '../../../../../../../types';
 
 export default function BloodUnitTestingPage() {
 

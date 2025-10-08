@@ -5,6 +5,7 @@ import { donationFormApi } from './api/donationFormApi';
 import { healthVitalsApi } from './api/healthVitalsApi';
 import { bloodDonationApi } from './api/bloodDonationApi';
 import { inventoryApi } from './api/inventoryApi';
+import { bloodTestApi } from './api/bloodTestApi';
 
 export const makeStore = () =>
   configureStore({
@@ -16,6 +17,7 @@ export const makeStore = () =>
       [healthVitalsApi.reducerPath]: healthVitalsApi.reducer, 
       [bloodDonationApi.reducerPath]: bloodDonationApi.reducer, 
       [inventoryApi.reducerPath]: inventoryApi.reducer, 
+      [bloodTestApi.reducerPath]: bloodTestApi.reducer, 
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
@@ -24,7 +26,8 @@ export const makeStore = () =>
         .concat(donationFormApi.middleware)
         .concat(healthVitalsApi.middleware)
         .concat(bloodDonationApi.middleware)
-        .concat(inventoryApi.middleware),
+        .concat(inventoryApi.middleware)
+        .concat(bloodTestApi.middleware),
   });
 
 // Export types for usage elsewhere
