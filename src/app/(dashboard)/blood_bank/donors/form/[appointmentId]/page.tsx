@@ -95,7 +95,7 @@ const formData = formsData?.[0];
             onClick={handleNext}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            {currentStep === totalSteps ? "Submit" : "Next"}
+            {currentStep === totalSteps ? "Go Back" : "Next"}
           </button>
         </div>
       </div>
