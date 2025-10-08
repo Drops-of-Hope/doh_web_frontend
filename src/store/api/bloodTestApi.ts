@@ -2,6 +2,18 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export interface UserInfo {
   bloodGroup: string;
+  id: string;
+  nic: string;
+  email: string;
+  name: string;
+  createdAt: string;
+  donationBadge: string;
+  isActive: boolean;
+  nextEligible: string;
+  profileImageUrl: string | null;
+  totalDonations: number;
+  totalPoints: number;
+  updatedAt: string;
 }
 
 export interface BloodDonationInfo {
@@ -44,9 +56,16 @@ export const bloodTestApi = createApi({
             ]
           : [{ type: 'BloodTests', id: inventoryId }],
     }),
+
+    // Get a single blood unit by its ID
+    getBloodUnitById: builder.query<Blood, string>({
+      query: (bloodId) => `/unit/${bloodId}`,
+      providesTags: (result, error, bloodId) => [{ type: 'BloodTests', id: bloodId }],
+    }),
   }),
 });
 
 export const {
   useGetPendingBloodUnitsByInventoryQuery,
+  useGetBloodUnitByIdQuery,
 } = bloodTestApi;

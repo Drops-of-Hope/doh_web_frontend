@@ -109,7 +109,7 @@ const BloodGroupingResultsPage: React.FC = () => {
     <div className="min-h-screen bg-[#f8f8f8] p-4">
       <div>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 mt-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">ABO Blood Grouping Test</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Blood Grouping Test</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
