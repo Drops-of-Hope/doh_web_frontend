@@ -24,7 +24,7 @@ export interface BloodDonationInfo {
   pointsEarned: number;
   startTime: string;
   endTime: string;
-  user?: UserInfo; // Include user details
+  user?: UserInfo;
 }
 
 export interface Blood {
@@ -37,7 +37,19 @@ export interface Blood {
   expiryDate: string;
   consumed: boolean;
   disposed: boolean;
-  bloodDonation?: BloodDonationInfo; // Include donation details
+  bloodDonation?: BloodDonationInfo;
+}
+
+// New interface for Blood Test Result
+export interface BloodTestResult {
+  bloodId: string;
+  ABOTest: string;
+  hivTest: boolean;
+  hemoglobin: number;
+  syphilis: boolean;
+  hepatitisB: boolean;
+  hepatitisC: boolean;
+  malaria: boolean;
 }
 
 export const bloodTestApi = createApi({
@@ -62,10 +74,27 @@ export const bloodTestApi = createApi({
       query: (bloodId) => `/unit/${bloodId}`,
       providesTags: (result, error, bloodId) => [{ type: 'BloodTests', id: bloodId }],
     }),
+
+    // Get blood test results by Blood ID
+    getBloodTestByBloodId: builder.query<BloodTestResult, string>({
+      query: (bloodId) => `/test/${bloodId}`,
+      transformResponse: (response: any): BloodTestResult => ({
+        bloodId: response.bloodId,
+        ABOTest: response.ABOTest,
+        hivTest: response.hivTest,
+        hemoglobin: response.hemoglobin,
+        syphilis: response.syphilis,
+        hepatitisB: response.hepatitisB,
+        hepatitisC: response.hepatitisC,
+        malaria: response.malaria,
+      }),
+      providesTags: (result, error, bloodId) => [{ type: 'BloodTests', id: bloodId }],
+    }),
   }),
 });
 
 export const {
   useGetPendingBloodUnitsByInventoryQuery,
   useGetBloodUnitByIdQuery,
+  useGetBloodTestByBloodIdQuery, 
 } = bloodTestApi;
