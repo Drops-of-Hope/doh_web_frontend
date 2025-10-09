@@ -4,13 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import QrScanner from "qr-scanner";
 import { FaTimes, FaCamera } from "react-icons/fa";
 
+type QRPayload =
+  | string
+  | {
+      name?: string;
+      email?: string;
+      uid?: string;
+      timestamp?: string | number;
+      [key: string]: unknown;
+    };
+
 interface QRScannerProps {
-  appointmentId?: string;
-  onSuccess?: (result: any) => void;
+  onSuccess?: (result: QRPayload) => void;
   onError?: (err: string) => void;
 }
 
-export default function QRScanner({ appointmentId, onSuccess, onError }: QRScannerProps) {
+export default function QRScanner({ onSuccess, onError }: QRScannerProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const qrScannerRef = useRef<QrScanner | null>(null);
   const fallbackStreamRef = useRef<MediaStream | null>(null);
@@ -20,7 +29,7 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
   const [visible, setVisible] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [scanned, setScanned] = useState(false);
-  const [scanPayload, setScanPayload] = useState<any | null>(null);
+  const [scanPayload, setScanPayload] = useState<QRPayload | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -102,7 +111,7 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
                   canvas.height = videoRef.current.videoHeight || canvas.height;
                   ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
                 }
-              } catch (e) {
+              } catch {
                 // ignore draw errors
               }
               drawLoopRef.current = requestAnimationFrame(draw);
@@ -122,16 +131,18 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
       try {
         const scanner = new QrScanner(
           videoRef.current!,
-          (result: any) => {
+          (result: QrScanner.ScanResult) => {
             console.log('QR decoded:', result?.data ?? result);
             try {
               // stop polling immediately
               if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
-            } catch (e) { /* ignore */ }
+            } catch {
+              /* ignore */
+            }
             setIsScanning(false);
 
-            const payload = (() => {
-              try { return result && result.data ? JSON.parse(result.data) : result; } catch { return result?.data ?? result; }
+            const payload: QRPayload = (() => {
+              try { return result && result.data ? JSON.parse(result.data) : result.data; } catch { return result?.data ?? ''; }
             })();
 
             // stop decoding but keep the video stream running so user sees preview
@@ -161,13 +172,13 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
                   console.debug('QRScanner.poll: decoded', res);
                   try { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; } } catch {}
                   setIsScanning(false);
-                  const payload = (() => { try { return JSON.parse(res); } catch { return res; } })();
+                  const payload: QRPayload = (() => { try { return JSON.parse(res); } catch { return res; } })();
                   // stop any active scanner decoding but keep video visible
                   try { if (qrScannerRef.current) { qrScannerRef.current.stop(); } } catch (e) { console.debug('QRScanner: error stopping scanner after poll', e); }
                   setScanPayload(payload);
                   setTimeout(() => setScanned(true), 120);
                 }
-              } catch (e) {
+              } catch {
                 // ignore no-result errors
               }
             }, 700);
@@ -185,12 +196,13 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
         } catch (attachErr) {
           console.debug('QRScanner: failed to attach fallback after scanner.start()', attachErr);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!mounted) return;
+        const msg = err instanceof Error ? err.message : String(err);
         console.error('QR scanner error', err);
-        setCameraError(err?.message ?? String(err));
+        setCameraError(msg);
         setIsScanning(false);
-        onError?.(err?.message ?? String(err));
+        onError?.(msg);
       }
     };
 
@@ -216,7 +228,7 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
         pollRef.current = null;
       }
     };
-  }, [visible]);
+  }, [visible, onError]);
 
   const openScanner = async () => {
     console.debug('QRScanner: opening scanner modal');
@@ -335,7 +347,7 @@ export default function QRScanner({ appointmentId, onSuccess, onError }: QRScann
                         try { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; } } catch {}
                         try { if (qrScannerRef.current) { qrScannerRef.current.stop(); qrScannerRef.current.destroy(); qrScannerRef.current = null; } } catch (e) { console.debug('QRScanner: error destroying scanner on confirm', e); }
                         try { if (fallbackStreamRef.current) { fallbackStreamRef.current.getTracks().forEach(t => t.stop()); fallbackStreamRef.current = null; } } catch (e) { console.debug('QRScanner: error stopping tracks on confirm', e); }
-                        onSuccess?.(scanPayload);
+                        if (scanPayload != null) onSuccess?.(scanPayload);
                         setScanPayload(null);
                         setScanned(false);
                         setVisible(false);

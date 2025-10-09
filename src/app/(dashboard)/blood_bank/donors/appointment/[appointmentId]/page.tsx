@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { FaQrcode, FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
 import { RecentDonations, BackButton, DonorProfileCard, QRScanner } from '@/components';
 import { useRouter, useParams } from 'next/navigation';
 import { useGetAppointmentByIdQuery, useConfirmAppointmentMutation } from '@/store/api/appointmentsApi';
@@ -91,15 +91,15 @@ export default function Appointment() {
     { id: 3, date: "2024-06-05", type: "Whole Blood", location: "Colombo Blood Bank" }
   ];
 
-  const handleQRSuccess = (result: any) => {
+  const handleQRSuccess = (result: unknown) => {
     console.log('QR scan result:', result);
   };
 
   const [attendanceConfirmed, setAttendanceConfirmed] = useState(false);
 
-  const [confirmAppointment, { isLoading: isConfirming }] = useConfirmAppointmentMutation();
+  const [confirmAppointment] = useConfirmAppointmentMutation();
 
-  const handleConfirm = async (result: any) => {
+  const handleConfirm = async (result: unknown) => {
     console.log('Attendance confirmed for (local):', result);
     try {
       await confirmAppointment({ appointmentId, status: 'confirmed' }).unwrap();
@@ -238,7 +238,6 @@ export default function Appointment() {
               
               {!attendanceConfirmed ? (
                 <QRScanner
-                  appointmentId={appointmentId}
                   onSuccess={handleConfirm}
                   onError={handleQRError}
                 />
