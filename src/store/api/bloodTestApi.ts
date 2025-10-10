@@ -90,6 +90,16 @@ export const bloodTestApi = createApi({
       }),
       providesTags: (result, error, bloodId) => [{ type: 'BloodTests', id: bloodId }],
     }),
+
+    updateBloodTest: builder.mutation<BloodTestResult, { bloodId: string; data: { aboTest: string } }>({
+      query: ({ bloodId, data }) => ({
+        url: `/type/${bloodId}`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { bloodId }) => [{ type: 'BloodTests', id: bloodId }],
+    }),
+
   }),
 });
 
@@ -97,4 +107,5 @@ export const {
   useGetPendingBloodUnitsByInventoryQuery,
   useGetBloodUnitByIdQuery,
   useGetBloodTestByBloodIdQuery, 
+  useUpdateBloodTestMutation,
 } = bloodTestApi;
