@@ -16,6 +16,8 @@ export default function HivTestInputPage() {
   const [saved, setSaved] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [updateHivTest, { isLoading: isSaving }] = useUpdateHivTestMutation();
 
   const od = parseFloat(odValue);
   const validOd = !isNaN(od) && od >= 0;
@@ -30,10 +32,10 @@ export default function HivTestInputPage() {
 
   const handleCalculate = () => {
     if (!validOd) return;
-    
+
     setShowResult(false);
     setIsCalculating(true);
-    
+
     setTimeout(() => {
       setIsCalculating(false);
       setShowResult(true);
@@ -42,8 +44,22 @@ export default function HivTestInputPage() {
 
   const handleSave = () => {
     if (!validOd) return;
-    // TODO: wire up API call to save HIV test result for bloodIdStr
-    setSaved(true);
+
+    // reset any previous states
+    setSaveError(null);
+    setSaved(false);
+
+    // call mutation
+    updateHivTest({ bloodId: bloodIdStr!, data: { hivTest: isPositive } })
+      .unwrap()
+      .then(() => {
+        setSaved(true);
+      })
+      .catch((err: any) => {
+        const msg =
+          err?.data?.message || err?.message || "Failed to save result";
+        setSaveError(msg);
+      });
   };
 
   return (
@@ -99,7 +115,8 @@ export default function HivTestInputPage() {
               Cutoff OD value: <strong>{CUTOFF_OD}</strong>
             </div>
             <div className="text-sm text-gray-600">
-              S/CO Ratio: <strong>{validOd && showResult ? sco.toFixed(3) : "-"}</strong>
+              S/CO Ratio:{" "}
+              <strong>{validOd && showResult ? sco.toFixed(3) : "-"}</strong>
             </div>
           </div>
 
@@ -107,7 +124,9 @@ export default function HivTestInputPage() {
             <div className="mt-6 p-4 rounded-lg border-2 border-gray-300 bg-gray-50">
               <div className="flex items-center gap-3">
                 <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                <span className="text-sm text-gray-600">Calculating result...</span>
+                <span className="text-sm text-gray-600">
+                  Calculating result...
+                </span>
               </div>
             </div>
           )}
@@ -115,9 +134,7 @@ export default function HivTestInputPage() {
           {showResult && validOd && (
             <div
               className={`mt-6 p-6${
-                isPositive
-                  ? "bg-red-50 border-red-300"
-                  : ""
+                isPositive ? "bg-red-50 border-red-300" : ""
               }`}
             >
               <div className="text-sm font-medium text-gray-600 mb-2">
@@ -136,16 +153,18 @@ export default function HivTestInputPage() {
           <div className="mt-6 flex items-center gap-3">
             <button
               onClick={handleSave}
-              disabled={!validOd || !showResult}
+              disabled={!validOd || !showResult || isSaving}
               className="bg-green-50 text-green-500 border border-green-500 px-4 py-2 rounded-lg disabled:opacity-50"
             >
-              Save Result
+              {isSaving ? "Saving..." : "Save Result"}
             </button>
 
             {saved && (
-              <div className="text-green-600">
-                Result saved locally (no API).
-              </div>
+              <div className="text-green-600">Result saved successfully.</div>
+            )}
+
+            {saveError && (
+              <div className="text-red-600">Error: {saveError}</div>
             )}
           </div>
         </div>
