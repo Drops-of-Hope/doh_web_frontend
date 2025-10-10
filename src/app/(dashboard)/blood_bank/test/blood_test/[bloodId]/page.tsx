@@ -12,6 +12,7 @@ import {
   useGetBloodUnitByIdQuery,
   useGetBloodTestByBloodIdQuery,
 } from "@/store/api/bloodTestApi";
+import { useUpdateSyphilisTestMutation } from "@/store/api/bloodTestApi";
 import { useParams } from "next/navigation";
 import {
   mapBloodGroupToDisplay,
@@ -159,6 +160,10 @@ export default function BloodUnitTestingPage() {
     } else if (testId === "hiv" && bloodIdStr) {
       // Navigate to HIV result input page
       router.push(`/blood_bank/test/blood_test/${bloodIdStr}/hiv`);
+    } else if (testId === "syphilis") {
+      // open modal to choose positive/negative
+      setSelectedTest(testId);
+      setIsSyphilisModalOpen(true);
     } else {
       console.log("Other tests not implemented yet");
     }
@@ -168,6 +173,40 @@ export default function BloodUnitTestingPage() {
     if (bloodUnit) {
       setBloodUnit({ ...bloodUnit, status: finalStatus });
       console.log("Blood unit finalized with status:", finalStatus);
+    }
+  };
+
+  // Syphilis modal state
+  const [isSyphilisModalOpen, setIsSyphilisModalOpen] = useState(false);
+  const [selectedTest, setSelectedTest] = useState<string | null>(null);
+  const [syphilisSelection, setSyphilisSelection] =
+    useState<string>("negative");
+  const [updateSyphilisTest, { isLoading: isUpdatingSyphilis }] =
+    useUpdateSyphilisTestMutation();
+
+  const saveSyphilisResult = async (isPositive: boolean) => {
+    if (!bloodIdStr) return;
+
+    try {
+      await updateSyphilisTest({
+        bloodId: bloodIdStr,
+        data: { syphilis: isPositive },
+      }).unwrap();
+      // update local tests state optimistically
+      setTests((prev) =>
+        prev.map((t) =>
+          t.id === "syphilis"
+            ? { ...t, status: isPositive ? "fail" : "pass" }
+            : t
+        )
+      );
+      setIsSyphilisModalOpen(false);
+      setSelectedTest(null);
+    } catch (err) {
+      console.error("Failed to save syphilis result", err);
+      // keep modal open or show error - for now just close
+      setIsSyphilisModalOpen(false);
+      setSelectedTest(null);
     }
   };
 
@@ -192,6 +231,63 @@ export default function BloodUnitTestingPage() {
           onTestCardClick={handleTestCardClick}
           onFinalizeStatus={handleFinalizeStatus}
         />
+        {/* Syphilis Result Modal */}
+        {isSyphilisModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black opacity-40"
+              onClick={() => {
+                setIsSyphilisModalOpen(false);
+                setSelectedTest(null);
+              }}
+            />
+            <div className="bg-white rounded-lg p-6 z-10 w-full max-w-md shadow-lg">
+              <h3 className="text-lg font-semibold mb-4">
+                Syphilis Test Result
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">
+                Select the test result for the Syphilis screening below, then
+                click Save.
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-sm text-gray-600 mb-2">
+                  Result
+                </label>
+                <select
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={syphilisSelection}
+                  onChange={(e) => setSyphilisSelection(e.target.value)}
+                >
+                  <option value="negative">Negative</option>
+                  <option value="positive">Positive</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setIsSyphilisModalOpen(false);
+                    setSelectedTest(null);
+                  }}
+                  className="px-4 py-2 rounded-lg border text-sm text-gray-600"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={() =>
+                    saveSyphilisResult(syphilisSelection === "positive")
+                  }
+                  disabled={isUpdatingSyphilis}
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm"
+                >
+                  {isUpdatingSyphilis ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

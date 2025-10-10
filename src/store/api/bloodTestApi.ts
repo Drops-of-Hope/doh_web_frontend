@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export interface UserInfo {
   bloodGroup: string;
@@ -31,7 +31,7 @@ export interface Blood {
   id: string;
   donationId: string;
   inventoryId: string;
-  status: 'PENDING' | 'TESTED' | 'SAFE' | 'DISCARDED';
+  status: "PENDING" | "TESTED" | "SAFE" | "DISCARDED";
   volume: number;
   bagType: string;
   expiryDate: string;
@@ -53,9 +53,11 @@ export interface BloodTestResult {
 }
 
 export const bloodTestApi = createApi({
-  reducerPath: 'bloodTestApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/blood-test' }),
-  tagTypes: ['BloodTests'],
+  reducerPath: "bloodTestApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5000/api/blood-test",
+  }),
+  tagTypes: ["BloodTests"],
   endpoints: (builder) => ({
     // Get all pending blood units for a specific inventory
     getPendingBloodUnitsByInventory: builder.query<Blood[], string>({
@@ -63,16 +65,18 @@ export const bloodTestApi = createApi({
       providesTags: (result, error, inventoryId) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'BloodTests' as const, id })),
-              { type: 'BloodTests', id: inventoryId },
+              ...result.map(({ id }) => ({ type: "BloodTests" as const, id })),
+              { type: "BloodTests", id: inventoryId },
             ]
-          : [{ type: 'BloodTests', id: inventoryId }],
+          : [{ type: "BloodTests", id: inventoryId }],
     }),
 
     // Get a single blood unit by its ID
     getBloodUnitById: builder.query<Blood, string>({
       query: (bloodId) => `/unit/${bloodId}`,
-      providesTags: (result, error, bloodId) => [{ type: 'BloodTests', id: bloodId }],
+      providesTags: (result, error, bloodId) => [
+        { type: "BloodTests", id: bloodId },
+      ],
     }),
 
     // Get blood test results by Blood ID
@@ -88,35 +92,53 @@ export const bloodTestApi = createApi({
         hepatitisC: response.hepatitisC,
         malaria: response.malaria,
       }),
-      providesTags: (result, error, bloodId) => [{ type: 'BloodTests', id: bloodId }],
+      providesTags: (result, error, bloodId) => [
+        { type: "BloodTests", id: bloodId },
+      ],
     }),
 
-    updateBloodTest: builder.mutation<BloodTestResult, { bloodId: string; data: { aboTest: string } }>({
+    updateBloodTest: builder.mutation< BloodTestResult, { bloodId: string; data: { aboTest: string } }>({
       query: ({ bloodId, data }) => ({
         url: `/type/${bloodId}`,
-        method: 'POST',
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: (result, error, { bloodId }) => [{ type: 'BloodTests', id: bloodId }],
+      invalidatesTags: (result, error, { bloodId }) => [
+        { type: "BloodTests", id: bloodId },
+      ],
     }),
 
     // Update HIV test result for a blood unit
-    updateHivTest: builder.mutation<BloodTestResult, { bloodId: string; data: { hivTest: boolean } }>({
+    updateHivTest: builder.mutation< BloodTestResult, { bloodId: string; data: { hivTest: boolean } } >({
       query: ({ bloodId, data }) => ({
         url: `/hiv/${bloodId}`,
-        method: 'POST',
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: (result, error, { bloodId }) => [{ type: 'BloodTests', id: bloodId }],
+      invalidatesTags: (result, error, { bloodId }) => [
+        { type: "BloodTests", id: bloodId },
+      ],
     }),
 
+    // Update Syphilis test result for a blood unit
+    updateSyphilisTest: builder.mutation< BloodTestResult, { bloodId: string; data: { syphilis: boolean } } >({
+      query: ({ bloodId, data }) => ({
+        url: `/syphilis/${bloodId}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { bloodId }) => [
+        { type: "BloodTests", id: bloodId },
+      ],
+    }),
   }),
 });
 
 export const {
   useGetPendingBloodUnitsByInventoryQuery,
   useGetBloodUnitByIdQuery,
-  useGetBloodTestByBloodIdQuery, 
+  useGetBloodTestByBloodIdQuery,
   useUpdateBloodTestMutation,
-  useUpdateHivTestMutation
+  useUpdateHivTestMutation,
+  useUpdateSyphilisTestMutation,
 } = bloodTestApi;
