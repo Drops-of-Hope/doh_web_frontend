@@ -100,6 +100,16 @@ export const bloodTestApi = createApi({
       invalidatesTags: (result, error, { bloodId }) => [{ type: 'BloodTests', id: bloodId }],
     }),
 
+    // Update HIV test result for a blood unit
+    updateHivTest: builder.mutation<BloodTestResult, { bloodId: string; data: { hivTest: boolean } }>({
+      query: ({ bloodId, data }) => ({
+        url: `/hiv/${bloodId}`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { bloodId }) => [{ type: 'BloodTests', id: bloodId }],
+    }),
+
   }),
 });
 

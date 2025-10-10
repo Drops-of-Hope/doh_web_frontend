@@ -156,6 +156,9 @@ export default function BloodUnitTestingPage() {
   const handleTestCardClick = (testId: string) => {
     if (testId === "blood-group" && bloodIdStr) {
       router.push(`/blood_bank/test/blood_test/${bloodIdStr}/blood_type`);
+    } else if (testId === "hiv" && bloodIdStr) {
+      // Navigate to HIV result input page
+      router.push(`/blood_bank/test/blood_test/${bloodIdStr}/hiv`);
     } else {
       console.log("Other tests not implemented yet");
     }
