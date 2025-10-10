@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BackButton } from "@/components";
 import { useRouter, useParams } from "next/navigation";
+import { useUpdateHivTestMutation } from "@/store/api/bloodTestApi";
 
 const CUTOFF_OD = 0.5;
 
@@ -13,16 +14,31 @@ export default function HivTestInputPage() {
 
   const [odValue, setOdValue] = useState<string>("");
   const [saved, setSaved] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   const od = parseFloat(odValue);
   const validOd = !isNaN(od) && od >= 0;
 
   const sco = validOd ? od / CUTOFF_OD : NaN;
+  const isPositive = validOd && sco >= 1;
   const interpretation = validOd
     ? sco < 1
       ? "Negative"
       : "Reactive / Positive"
     : "-";
+
+  const handleCalculate = () => {
+    if (!validOd) return;
+    
+    setShowResult(false);
+    setIsCalculating(true);
+    
+    setTimeout(() => {
+      setIsCalculating(false);
+      setShowResult(true);
+    }, 800);
+  };
 
   const handleSave = () => {
     if (!validOd) return;
@@ -40,40 +56,88 @@ export default function HivTestInputPage() {
           />
         </div>
 
-        <div className="bg-white shadow rounded p-6">
+        <div className="bg-white shadow rounded-xl p-6">
+          <div className="mb-6 p-4">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">
+              Instructions
+            </h3>
+            <p className="text-sm text-blue-800">
+              Enter the Optical Density (OD) value of the blood unit derived
+              from the HIV test to determine if the unit is HIV positive or
+              negative.
+            </p>
+          </div>
+
           <label className="block text-sm font-medium text-gray-700">
             Optical Density (OD)
           </label>
-          <input
-            type="number"
-            step="0.001"
-            min="0"
-            value={odValue}
-            onChange={(e) => {
-              setOdValue(e.target.value);
-              setSaved(false);
-            }}
-            className="mt-2 w-1/2 border border-gray-300 rounded-lg px-3 py-2"
-            placeholder="Enter OD value"
-          />
+          <div className="mt-2 flex items-center gap-3">
+            <input
+              type="number"
+              step="0.001"
+              min="0"
+              value={odValue}
+              onChange={(e) => {
+                setOdValue(e.target.value);
+                setSaved(false);
+                setShowResult(false);
+              }}
+              className="w-1/2 border border-gray-300 rounded-lg px-3 py-2"
+              placeholder="Enter OD value"
+            />
+            <button
+              onClick={handleCalculate}
+              disabled={!validOd}
+              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50 whitespace-nowrap"
+            >
+              Calculate
+            </button>
+          </div>
 
-          <div className="mt-4">
+          <div className="mt-6 space-y-3">
             <div className="text-sm text-gray-600">
               Cutoff OD value: <strong>{CUTOFF_OD}</strong>
             </div>
-            <div className="mt-2">
-              S/CO Ratio: <strong>{validOd ? sco.toFixed(3) : "-"}</strong>
-            </div>
-            <div className="mt-1">
-              Interpretation: <strong>{interpretation}</strong>
+            <div className="text-sm text-gray-600">
+              S/CO Ratio: <strong>{validOd && showResult ? sco.toFixed(3) : "-"}</strong>
             </div>
           </div>
+
+          {isCalculating && (
+            <div className="mt-6 p-4 rounded-lg border-2 border-gray-300 bg-gray-50">
+              <div className="flex items-center gap-3">
+                <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                <span className="text-sm text-gray-600">Calculating result...</span>
+              </div>
+            </div>
+          )}
+
+          {showResult && validOd && (
+            <div
+              className={`mt-6 p-6${
+                isPositive
+                  ? "bg-red-50 border-red-300"
+                  : ""
+              }`}
+            >
+              <div className="text-sm font-medium text-gray-600 mb-2">
+                Test Result
+              </div>
+              <div
+                className={`text-3xl font-bold ${
+                  isPositive ? "text-red-600" : "text-green-700"
+                }`}
+              >
+                {interpretation}
+              </div>
+            </div>
+          )}
 
           <div className="mt-6 flex items-center gap-3">
             <button
               onClick={handleSave}
-              disabled={!validOd}
-              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              disabled={!validOd || !showResult}
+              className="bg-green-50 text-green-500 border border-green-500 px-4 py-2 rounded-lg disabled:opacity-50"
             >
               Save Result
             </button>

@@ -118,4 +118,5 @@ export const {
   useGetBloodUnitByIdQuery,
   useGetBloodTestByBloodIdQuery, 
   useUpdateBloodTestMutation,
+  useUpdateHivTestMutation
 } = bloodTestApi;
