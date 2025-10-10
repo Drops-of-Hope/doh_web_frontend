@@ -87,7 +87,14 @@ export default function BloodUnitTestingPage() {
           id: "syphilis",
           name: "Syphilis Screening",
           isCompulsory: true,
-          status: bloodTestData.syphilis ? "fail" : "pending",
+          // syphilis: null/undefined => pending, true => fail, false => pass
+          status:
+            bloodTestData.syphilis === null ||
+            typeof bloodTestData.syphilis === "undefined"
+              ? "pending"
+              : bloodTestData.syphilis === true
+              ? "fail"
+              : "pass",
         },
         {
           id: "hepatitis",

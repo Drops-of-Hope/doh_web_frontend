@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { BloodTypeResult } from "@/components";
 import { useUpdateBloodTestMutation } from '@/store/api/bloodTestApi';
 import { useParams } from "next/navigation";
@@ -87,7 +86,6 @@ const BloodGroupingResultsPage: React.FC = () => {
     }
   };
 
-  const router = useRouter();
   const [forwardGrouping, setForwardGrouping] = useState<ForwardGrouping>({
     antiA: "",
     antiB: "",

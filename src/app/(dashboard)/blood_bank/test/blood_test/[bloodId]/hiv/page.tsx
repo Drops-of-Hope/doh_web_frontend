@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { BackButton } from "@/components";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useUpdateHivTestMutation } from "@/store/api/bloodTestApi";
 
 const CUTOFF_OD = 0.5;
 
 export default function HivTestInputPage() {
-  const router = useRouter();
   const { bloodId } = useParams();
   const bloodIdStr = Array.isArray(bloodId) ? bloodId[0] : bloodId;
 
