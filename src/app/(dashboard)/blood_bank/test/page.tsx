@@ -12,28 +12,28 @@ export default function TestPage() {
           iconBgColor="#EBF8FF"
           heading="Untested Blood Units"
           body="Pending laboratory testing after donation"
-          count={247}
+          count={10}
           icon={<FaFlask className="w-6 h-6 text-blue-600" />}
         />
         <MetricCard
           iconBgColor="#F8F9FA"
           heading="Tests Done This Week"
           body="Blood units that tested for safety screening"
-          count={324}
+          count={24}
           icon={<FaClipboardCheck className="w-6 h-6 text-gray-600" />}
         />
         <MetricCard
           iconBgColor="#F0FDF4"
           heading="Tests Passed This Week"
           body="Blood units that passed safety screening"
-          count={185}
+          count={22}
           icon={<FaCheckCircle className="w-6 h-6 text-green-600" />}
         />
         <MetricCard
           iconBgColor="#FEF2F2"
           heading="Failed Tests This Week"
           body="Blood units that failed safety screening"
-          count={12}
+          count={2}
           icon={<FaExclamationTriangle className="w-6 h-6 text-red-600" />}
         />
 

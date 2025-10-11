@@ -3,30 +3,30 @@
 import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
 import { ReactElement, useState } from "react";
 import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi"; 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation"; 
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
+  const router = useRouter(); 
 
   const { appointmentId } = useParams();
 
-// Make sure appointmentId is a string (pick the first if array)
-const appointmentIdStr = Array.isArray(appointmentId) ? appointmentId[0] : appointmentId;
+  // Make sure appointmentId is a string (pick the first if array)
+  const appointmentIdStr = Array.isArray(appointmentId) ? appointmentId[0] : appointmentId;
 
-// Only call the query if we have a valid string
-const { data: formsData, isLoading, error } = useGetDonationFormByAppointmentIdQuery(
-  appointmentIdStr || ""
-);
+  // Only call the query if we have a valid string
+  const { data: formsData, isLoading, error } = useGetDonationFormByAppointmentIdQuery(
+    appointmentIdStr || ""
+  );
 
-const formData = formsData?.[0];
-
+  const formData = formsData?.[0];
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      console.log("Form completed");
+      router.push("/blood_bank/donors");
     }
   };
 
@@ -95,7 +95,7 @@ const formData = formsData?.[0];
             onClick={handleNext}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            {currentStep === totalSteps ? "Submit" : "Next"}
+            {currentStep === totalSteps ? "Go Back" : "Next"}
           </button>
         </div>
       </div>

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { BloodTypeResult } from "@/components";
+import { useUpdateBloodTestMutation } from '@/store/api/bloodTestApi';
+import { useParams } from "next/navigation";
 
 interface ForwardGrouping {
   antiA: string;
@@ -58,7 +59,33 @@ const ResultInput: React.FC<ResultInputProps> = ({
 };
 
 const BloodGroupingResultsPage: React.FC = () => {
-  const router = useRouter();
+  const { bloodId } = useParams(); 
+  const bloodIdStr = Array.isArray(bloodId) ? bloodId[0] : bloodId;
+
+  const mapBloodTypeForBackend = (full: string) => {
+    if (!full) return "";
+    const [abo, rh] = [full.slice(0, -1), full.slice(-1)];
+    return `${abo}_${rh === "+" ? "POSITIVE" : "NEGATIVE"}`.toUpperCase();
+  };
+
+  const [updateBloodTest, { isLoading }] = useUpdateBloodTestMutation();
+  const handleSubmit = async () => {
+    if (!bloodType || bloodType.full === "Invalid Test") return;
+
+    const aboTestMapped = mapBloodTypeForBackend(bloodType.full);
+
+    try {
+      await updateBloodTest({
+        bloodId: bloodIdStr!,
+        data: { aboTest: aboTestMapped },
+      }).unwrap();
+
+      console.log("Blood test updated successfully!");
+    } catch (err) {
+      console.error("Failed to update blood test:", err);
+    }
+  };
+
   const [forwardGrouping, setForwardGrouping] = useState<ForwardGrouping>({
     antiA: "",
     antiB: "",
@@ -109,7 +136,7 @@ const BloodGroupingResultsPage: React.FC = () => {
     <div className="min-h-screen bg-[#f8f8f8] p-4">
       <div>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 mt-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">ABO Blood Grouping Test</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Blood Grouping Test</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -151,9 +178,8 @@ const BloodGroupingResultsPage: React.FC = () => {
         <div className="flex justify-end gap-4 mb-6">
           {isFormComplete && (
             <button
-              onClick={() => {
-                router.push("/blood_bank/test/blood_test");
-              }}
+              onClick={handleSubmit}
+              disabled={isLoading}
               className="flex items-center gap-2 px-6 py-3 bg-green-50 text-green-600 border border-green-600 rounded-lg font-medium transition-colors hover:bg-green-100"
             >
               <Check size={18} /> Finalize & Submit
