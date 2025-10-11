@@ -82,22 +82,33 @@ export const bloodTestApi = createApi({
     // Get blood test results by Blood ID
     getBloodTestByBloodId: builder.query<BloodTestResult, string>({
       query: (bloodId) => `/test/${bloodId}`,
-      transformResponse: (response: any): BloodTestResult => ({
-        bloodId: response.bloodId,
-        ABOTest: response.ABOTest,
-        hivTest: response.hivTest,
-        hemoglobin: response.hemoglobin,
-        syphilis: response.syphilis,
-        hepatitisB: response.hepatitisB,
-        hepatitisC: response.hepatitisC,
-        malaria: response.malaria,
-      }),
+      transformResponse: (response: unknown): BloodTestResult => {
+        // Treat the raw response as a partial result and normalize types safely
+        const res = (response as Partial<BloodTestResult>) || {};
+
+        return {
+          bloodId: res.bloodId ?? "",
+          ABOTest: res.ABOTest ?? "",
+          hivTest: Boolean(res.hivTest),
+          hemoglobin:
+            typeof res.hemoglobin === "number"
+              ? res.hemoglobin
+              : Number(res.hemoglobin) || 0,
+          syphilis: Boolean(res.syphilis),
+          hepatitisB: Boolean(res.hepatitisB),
+          hepatitisC: Boolean(res.hepatitisC),
+          malaria: Boolean(res.malaria),
+        };
+      },
       providesTags: (result, error, bloodId) => [
         { type: "BloodTests", id: bloodId },
       ],
     }),
 
-    updateBloodTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { aboTest: string } }>({
+    updateBloodTest: builder.mutation<
+      BloodTestResult,
+      { bloodId: string; data: { aboTest: string } }
+    >({
       query: ({ bloodId, data }) => ({
         url: `/type/${bloodId}`,
         method: "POST",
@@ -109,7 +120,10 @@ export const bloodTestApi = createApi({
     }),
 
     // Update HIV test result for a blood unit
-    updateHivTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { hivTest: boolean } }>({
+    updateHivTest: builder.mutation<
+      BloodTestResult,
+      { bloodId: string; data: { hivTest: boolean } }
+    >({
       query: ({ bloodId, data }) => ({
         url: `/hiv/${bloodId}`,
         method: "POST",
@@ -121,7 +135,10 @@ export const bloodTestApi = createApi({
     }),
 
     // Update Syphilis test result for a blood unit
-    updateSyphilisTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { syphilis: boolean } }>({
+    updateSyphilisTest: builder.mutation<
+      BloodTestResult,
+      { bloodId: string; data: { syphilis: boolean } }
+    >({
       query: ({ bloodId, data }) => ({
         url: `/syphilis/${bloodId}`,
         method: "POST",
@@ -133,7 +150,10 @@ export const bloodTestApi = createApi({
     }),
 
     // Update Hepatitis B and C test results for a blood unit
-    updateHepatitisTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { hepatitisB?: boolean; hepatitisC?: boolean } }>({
+    updateHepatitisTest: builder.mutation<
+      BloodTestResult,
+      { bloodId: string; data: { hepatitisB?: boolean; hepatitisC?: boolean } }
+    >({
       query: ({ bloodId, data }) => ({
         url: `/hepatitis/${bloodId}`,
         method: "POST",
@@ -145,7 +165,10 @@ export const bloodTestApi = createApi({
     }),
 
     // Update Malaria test result for a blood unit
-    updateMalariaTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { malaria: boolean } }>({
+    updateMalariaTest: builder.mutation<
+      BloodTestResult,
+      { bloodId: string; data: { malaria: boolean } }
+    >({
       query: ({ bloodId, data }) => ({
         url: `/malaria/${bloodId}`,
         method: "POST",
