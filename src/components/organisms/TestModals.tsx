@@ -1,14 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import type { BloodTestResult } from "@/store/api/bloodTestApi";
+import type { TestResult } from "./TestCard";
+
+// RTK Query mutation hook returns a tuple; here we only accept the trigger function
+type UpdateSyphilisFn = (args: {
+  bloodId: string;
+  data: { syphilis: boolean };
+}) => {
+  unwrap: () => Promise<BloodTestResult>;
+};
+
+type UpdateHepatitisFn = (args: {
+  bloodId: string;
+  data: { hepatitisB?: boolean; hepatitisC?: boolean };
+}) => {
+  unwrap: () => Promise<BloodTestResult>;
+};
 
 interface Props {
   selectedTest: string | null;
   setSelectedTest: (test: string | null) => void;
   bloodIdStr: string | undefined;
-  setTests: React.Dispatch<React.SetStateAction<any[]>>;
-  updateSyphilisTest: any;
-  updateHepatitisTest: any;
+  setTests: React.Dispatch<React.SetStateAction<TestResult[]>>;
+  updateSyphilisTest: UpdateSyphilisFn;
+  updateHepatitisTest: UpdateHepatitisFn;
   isUpdatingSyphilis: boolean;
   isUpdatingHepatitis: boolean;
 }

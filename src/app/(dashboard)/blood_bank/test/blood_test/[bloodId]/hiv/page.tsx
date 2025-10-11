@@ -54,10 +54,27 @@ export default function HivTestInputPage() {
       .then(() => {
         setSaved(true);
       })
-      .catch((err: any) => {
-        const msg =
-          err?.data?.message || err?.message || "Failed to save result";
-        setSaveError(msg);
+      .catch((err: unknown) => {
+        const getErrorMessage = (e: unknown): string => {
+          if (typeof e === "string") return e;
+          if (e && typeof e === "object") {
+            const obj = e as Record<string, unknown>;
+            if (
+              "data" in obj &&
+              obj["data"] &&
+              typeof obj["data"] === "object"
+            ) {
+              const d = obj["data"] as Record<string, unknown>;
+              if ("message" in d && typeof d["message"] === "string")
+                return d["message"] as string;
+            }
+            if ("message" in obj && typeof obj["message"] === "string")
+              return obj["message"] as string;
+          }
+          return "Failed to save result";
+        };
+
+        setSaveError(getErrorMessage(err));
       });
   };
 

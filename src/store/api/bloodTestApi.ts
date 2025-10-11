@@ -143,6 +143,18 @@ export const bloodTestApi = createApi({
         { type: "BloodTests", id: bloodId },
       ],
     }),
+
+    // Update Malaria test result for a blood unit
+    updateMalariaTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { malaria: boolean } }>({
+      query: ({ bloodId, data }) => ({
+        url: `/malaria/${bloodId}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { bloodId }) => [
+        { type: "BloodTests", id: bloodId },
+      ],
+    }),
   }),
 });
 
@@ -154,4 +166,5 @@ export const {
   useUpdateHivTestMutation,
   useUpdateSyphilisTestMutation,
   useUpdateHepatitisTestMutation,
+  useUpdateMalariaTestMutation,
 } = bloodTestApi;

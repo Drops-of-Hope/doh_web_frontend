@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { BloodTestResult } from "./bloodTestApi";
 
 interface BloodUnit {
   id: string;
@@ -27,19 +28,23 @@ interface InventoryItem {
   EstablishmentId: string;
   lastChecked: string;
   blood: BloodUnit[];
-  bloodTests: any[]; 
+  bloodTests: BloodTestResult[];
   medicalEstablishment: MedicalEstablishment;
 }
 
 export const inventoryApi = createApi({
-  reducerPath: 'inventoryApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/medical-establishments' }),
-  tagTypes: ['Inventory'],
+  reducerPath: "inventoryApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5000/api/medical-establishments",
+  }),
+  tagTypes: ["Inventory"],
 
   endpoints: (builder) => ({
     getInventoryByEstablishmentId: builder.query<InventoryItem[], string>({
       query: (establishmentId) => `/inventory/${establishmentId}`,
-      providesTags: (result, error, establishmentId) => [{ type: 'Inventory', id: establishmentId }],
+      providesTags: (result, error, establishmentId) => [
+        { type: "Inventory", id: establishmentId },
+      ],
     }),
   }),
 });

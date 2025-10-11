@@ -5,7 +5,7 @@ import {
   BackButton,
   BloodUnitInfo,
   TestResultsToBeCompleted,
-  TestModals
+  TestModals,
 } from "@/components";
 import { useRouter, useParams } from "next/navigation";
 import {
@@ -103,20 +103,25 @@ export default function BloodUnitTestingPage() {
           name: "Hepatitis B & C Screening",
           isCompulsory: true,
           status:
-            bloodTestData.hepatitisB || bloodTestData.hepatitisC
+            bloodTestData.hepatitisB === null ||
+            typeof bloodTestData.hepatitisB === "undefined" ||
+            bloodTestData.hepatitisC === null ||
+            typeof bloodTestData.hepatitisC === "undefined"
+              ? "pending"
+              : bloodTestData.hepatitisB || bloodTestData.hepatitisC
               ? "fail"
-              : "pending",
+              : "pass",
         },
         {
           id: "malaria",
           name: "Malaria Screening",
-          isCompulsory: false,
+          isCompulsory: true,
           status: bloodTestData.malaria ? "fail" : "pending",
         },
         {
           id: "hemoglobin",
           name: "Hemoglobin Level Check",
-          isCompulsory: false,
+          isCompulsory: true,
           status: bloodTestData.hemoglobin > 0 ? "pass" : "pending",
         },
       ]);
