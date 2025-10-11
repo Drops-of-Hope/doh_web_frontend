@@ -97,7 +97,7 @@ export const bloodTestApi = createApi({
       ],
     }),
 
-    updateBloodTest: builder.mutation< BloodTestResult, { bloodId: string; data: { aboTest: string } }>({
+    updateBloodTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { aboTest: string } }>({
       query: ({ bloodId, data }) => ({
         url: `/type/${bloodId}`,
         method: "POST",
@@ -109,7 +109,7 @@ export const bloodTestApi = createApi({
     }),
 
     // Update HIV test result for a blood unit
-    updateHivTest: builder.mutation< BloodTestResult, { bloodId: string; data: { hivTest: boolean } } >({
+    updateHivTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { hivTest: boolean } }>({
       query: ({ bloodId, data }) => ({
         url: `/hiv/${bloodId}`,
         method: "POST",
@@ -121,9 +121,21 @@ export const bloodTestApi = createApi({
     }),
 
     // Update Syphilis test result for a blood unit
-    updateSyphilisTest: builder.mutation< BloodTestResult, { bloodId: string; data: { syphilis: boolean } } >({
+    updateSyphilisTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { syphilis: boolean } }>({
       query: ({ bloodId, data }) => ({
         url: `/syphilis/${bloodId}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { bloodId }) => [
+        { type: "BloodTests", id: bloodId },
+      ],
+    }),
+
+    // Update Hepatitis B and C test results for a blood unit
+    updateHepatitisTest: builder.mutation<BloodTestResult,{ bloodId: string; data: { hepatitisB?: boolean; hepatitisC?: boolean } }>({
+      query: ({ bloodId, data }) => ({
+        url: `/hepatitis/${bloodId}`,
         method: "POST",
         body: data,
       }),
@@ -141,4 +153,5 @@ export const {
   useUpdateBloodTestMutation,
   useUpdateHivTestMutation,
   useUpdateSyphilisTestMutation,
+  useUpdateHepatitisTestMutation,
 } = bloodTestApi;

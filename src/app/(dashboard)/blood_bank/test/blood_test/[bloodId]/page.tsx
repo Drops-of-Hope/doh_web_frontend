@@ -171,6 +171,10 @@ export default function BloodUnitTestingPage() {
       // open modal to choose positive/negative
       setSelectedTest(testId);
       setIsSyphilisModalOpen(true);
+    } else if (testId === "hepatitis") {
+      // open hepatitis modal to set B and C
+      setSelectedTest(testId);
+      setIsHepatitisModalOpen(true);
     } else {
       console.log("Other tests not implemented yet");
     }
@@ -190,6 +194,13 @@ export default function BloodUnitTestingPage() {
     useState<string>("negative");
   const [updateSyphilisTest, { isLoading: isUpdatingSyphilis }] =
     useUpdateSyphilisTestMutation();
+
+  // Hepatitis modal state
+  const [isHepatitisModalOpen, setIsHepatitisModalOpen] = useState(false);
+  const [hepatitisBSelection, setHepatitisBSelection] =
+    useState<string>("negative");
+  const [hepatitisCSelection, setHepatitisCSelection] =
+    useState<string>("negative");
 
   const saveSyphilisResult = async (isPositive: boolean) => {
     if (!bloodIdStr) return;
@@ -213,6 +224,31 @@ export default function BloodUnitTestingPage() {
       console.error("Failed to save syphilis result", err);
       // keep modal open or show error - for now just close
       setIsSyphilisModalOpen(false);
+      setSelectedTest(null);
+    }
+  };
+
+  // Save hepatitis results locally (optimistic). Replace with API call if available.
+  const saveHepatitisResults = async (
+    isBPositive: boolean,
+    isCPositive: boolean
+  ) => {
+    if (!bloodIdStr) return;
+
+    try {
+      // TODO: call an API mutation when available to persist hepatitis results
+      setTests((prev) =>
+        prev.map((t) =>
+          t.id === "hepatitis"
+            ? { ...t, status: isBPositive || isCPositive ? "fail" : "pass" }
+            : t
+        )
+      );
+      setIsHepatitisModalOpen(false);
+      setSelectedTest(null);
+    } catch (err) {
+      console.error("Failed to save hepatitis results", err);
+      setIsHepatitisModalOpen(false);
       setSelectedTest(null);
     }
   };
@@ -290,6 +326,77 @@ export default function BloodUnitTestingPage() {
                   className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm"
                 >
                   {isUpdatingSyphilis ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Hepatitis Result Modal */}
+        {isHepatitisModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black opacity-40"
+              onClick={() => {
+                setIsHepatitisModalOpen(false);
+                setSelectedTest(null);
+              }}
+            />
+            <div className="bg-white rounded-lg p-6 z-10 w-full max-w-md shadow-lg">
+              <h3 className="text-lg font-semibold mb-4">
+                Hepatitis B & C Test Results
+              </h3>
+              <p className="text-sm text-gray-700 mb-4">
+                Select the test result for Hepatitis B and Hepatitis C below,
+                then click Save.
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-sm text-gray-600 mb-2">
+                  Hepatitis B
+                </label>
+                <select
+                  className="w-full border rounded-lg px-3 py-2 mb-3"
+                  value={hepatitisBSelection}
+                  onChange={(e) => setHepatitisBSelection(e.target.value)}
+                >
+                  <option value="negative">Negative</option>
+                  <option value="positive">Positive</option>
+                </select>
+
+                <label className="block text-sm text-gray-600 mb-2">
+                  Hepatitis C
+                </label>
+                <select
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={hepatitisCSelection}
+                  onChange={(e) => setHepatitisCSelection(e.target.value)}
+                >
+                  <option value="negative">Negative</option>
+                  <option value="positive">Positive</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setIsHepatitisModalOpen(false);
+                    setSelectedTest(null);
+                  }}
+                  className="px-4 py-2 rounded-lg border text-sm text-gray-600"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={() =>
+                    saveHepatitisResults(
+                      hepatitisBSelection === "positive",
+                      hepatitisCSelection === "positive"
+                    )
+                  }
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm"
+                >
+                  Save
                 </button>
               </div>
             </div>
