@@ -11,8 +11,9 @@ import { TestResult, BloodUnit } from "../../../../../../../types";
 import {
   useGetBloodUnitByIdQuery,
   useGetBloodTestByBloodIdQuery,
+  useUpdateSyphilisTestMutation,
+  useUpdateHepatitisTestMutation,
 } from "@/store/api/bloodTestApi";
-import { useUpdateSyphilisTestMutation } from "@/store/api/bloodTestApi";
 import { useParams } from "next/navigation";
 import {
   mapBloodGroupToDisplay,
@@ -195,6 +196,9 @@ export default function BloodUnitTestingPage() {
   const [updateSyphilisTest, { isLoading: isUpdatingSyphilis }] =
     useUpdateSyphilisTestMutation();
 
+  const [updateHepatitisTest, { isLoading: isUpdatingHepatitis }] =
+    useUpdateHepatitisTestMutation();
+
   // Hepatitis modal state
   const [isHepatitisModalOpen, setIsHepatitisModalOpen] = useState(false);
   const [hepatitisBSelection, setHepatitisBSelection] =
@@ -236,7 +240,12 @@ export default function BloodUnitTestingPage() {
     if (!bloodIdStr) return;
 
     try {
-      // TODO: call an API mutation when available to persist hepatitis results
+      // Persist hepatitis results to backend
+      await updateHepatitisTest({
+        bloodId: bloodIdStr,
+        data: { hepatitisB: isBPositive, hepatitisC: isCPositive },
+      }).unwrap();
+      // update local tests state optimistically after successful save
       setTests((prev) =>
         prev.map((t) =>
           t.id === "hepatitis"
