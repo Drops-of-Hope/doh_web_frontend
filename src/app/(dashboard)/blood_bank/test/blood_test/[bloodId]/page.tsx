@@ -151,6 +151,8 @@ export default function BloodUnitTestingPage() {
     } else if (testId === "malaria") {
       // Open modal for malaria test
       setSelectedTest(testId);
+    } else if (testId === "hemoglobin") {
+      router.push(`/blood_bank/test/blood_test/${bloodIdStr}/hemoglobin`);
     }
   };
 

@@ -183,6 +183,21 @@ export const bloodTestApi = createApi({
         { type: "BloodTests", id: bloodId },
       ],
     }),
+
+    // Update Hemoglobin value for a blood unit
+    updateHemoglobinTest: builder.mutation<
+      BloodTestResult,
+      { bloodId: string; data: { hemoglobin: number } }
+    >({
+      query: ({ bloodId, data }) => ({
+        url: `/hemoglobin/${bloodId}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { bloodId }) => [
+        { type: "BloodTests", id: bloodId },
+      ],
+    }),
   }),
 });
 
@@ -195,4 +210,5 @@ export const {
   useUpdateSyphilisTestMutation,
   useUpdateHepatitisTestMutation,
   useUpdateMalariaTestMutation,
+  useUpdateHemoglobinTestMutation,
 } = bloodTestApi;
