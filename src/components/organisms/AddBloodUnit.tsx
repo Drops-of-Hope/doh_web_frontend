@@ -1,5 +1,10 @@
 "use client";
 import { useState } from "react";
+import { useCreateBloodDonationMutation } from "@/store/api/bloodDonationApi"; 
+import { useGetInventoryByEstablishmentIdQuery } from "@/store/api/inventoryApi";
+import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi"; 
+import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface FormData {
   bloodUnitCode: string;
@@ -18,35 +23,127 @@ interface FormErrors {
 }
 
 export default function AddBloodUnit() {
+
+  const { appointmentId } = useParams();
+  const appointmentIdStr = Array.isArray(appointmentId) ? appointmentId[0] : appointmentId;
+  const { data: formsData } = useGetDonationFormByAppointmentIdQuery(appointmentIdStr || "");
+  const donationFormData = formsData?.[0];
+  const bfId = donationFormData?.id;
+  const userId = donationFormData?.userId;
+
+  const { data: session } = useSession();
+  const medicalEstablishmentId = session?.decodedIdToken?.sub;
+  const { data: inventoryData } = useGetInventoryByEstablishmentIdQuery(medicalEstablishmentId ?? "", {
+    skip: !medicalEstablishmentId,
+  });
+
+  const inventoryId = inventoryData?.[0]?.id;
+  const [createBloodDonation, { isLoading: isSubmitting }] = useCreateBloodDonationMutation();
+
   const [formData, setFormData] = useState<FormData>({
-    bloodUnitCode: '',
-    startTime: '',
-    endTime: '',
-    volumeCollected: '',
-    bloodBagType: ''
+    bloodUnitCode: "",
+    startTime: "",
+    endTime: "",
+    volumeCollected: "",
+    bloodBagType: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
 
   const bloodBagTypes = [
-    { value: 'Q', label: 'Q - Quadruple Bag' },
-    { value: 'T', label: 'T - Triple Bag' },
-    { value: 'D', label: 'D - Double Bag' },
-    { value: 'S', label: 'S - Single Bag' }
+    { value: "Q", label: "Q - Quadruple Bag" },
+    { value: "T", label: "T - Triple Bag" },
+    { value: "D", label: "D - Double Bag" },
+    { value: "S", label: "S - Single Bag" },
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.bloodUnitCode.trim()) newErrors.bloodUnitCode = "Blood unit code is required";
+    if (!formData.startTime) newErrors.startTime = "Start time is required";
+    if (!formData.endTime) newErrors.endTime = "End time is required";
+    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime)
+      newErrors.endTime = "End time must be after start time";
+    if (!formData.volumeCollected) newErrors.volumeCollected = "Volume collected is required";
+    else if (parseFloat(formData.volumeCollected) <= 0)
+      newErrors.volumeCollected = "Volume must be greater than 0";
+    if (!formData.bloodBagType) newErrors.bloodBagType = "Blood bag type is required";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatusMessage(null);
+    setStatusType(null);
+
+    if (!validateForm()) return;
+
+    if (!bfId || !userId || !inventoryId) {
+      setStatusMessage("Missing required data. Please ensure donation form and inventory data are loaded.");
+      setStatusType("error");
+      return;
+    }
+
+    try {
+      const today = new Date();
+      const [startHour, startMinute] = formData.startTime.split(":");
+      const [endHour, endMinute] = formData.endTime.split(":");
+
+      const startDateTime = new Date(today);
+      startDateTime.setHours(parseInt(startHour), parseInt(startMinute), 0, 0);
+      const endDateTime = new Date(today);
+      endDateTime.setHours(parseInt(endHour), parseInt(endMinute), 0, 0);
+
+      const payload = {
+        bdfId: bfId,
+        userId: userId,
+        startTime: startDateTime.toISOString(),
+        endTime: endDateTime.toISOString(),
+        bloodUnits: [
+          {
+            id: formData.bloodUnitCode,
+            inventoryId: inventoryId,
+            volume: parseFloat(formData.volumeCollected),
+          },
+        ],
+      };
+
+      await createBloodDonation(payload).unwrap();
+
+      setFormData({
+        bloodUnitCode: "",
+        startTime: "",
+        endTime: "",
+        volumeCollected: "",
+        bloodBagType: "",
+      });
+      setErrors({});
+      setStatusMessage("Blood unit added successfully!");
+      setStatusType("success");
+    } catch (error) {
+      console.error("Failed to create blood donation:", error);
+      setStatusMessage("Failed to add blood unit. Please try again.");
+      setStatusType("error");
     }
   };
 
@@ -56,8 +153,7 @@ export default function AddBloodUnit() {
         <h2 className="text-2xl font-semibold text-gray-700">Add Blood Unit</h2>
       </div>
 
-      <div className="space-y-6">
-        {/* Blood Unit Code */}
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="bloodUnitCode" className="block text-sm font-medium text-gray-700 mb-2">
             Blood Unit Code *
@@ -166,7 +262,44 @@ export default function AddBloodUnit() {
           )}
         </div>
         </div>
-      </div>
+
+        <div className="flex justify-end gap-4 pt-4">
+          <button
+            type="button"
+            onClick={() => {
+              setFormData({
+                bloodUnitCode: "",
+                startTime: "",
+                endTime: "",
+                volumeCollected: "",
+                bloodBagType: "",
+              });
+              setErrors({});
+              setStatusMessage(null);
+              setStatusType(null);
+            }}
+            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? "Submitting..." : "Add Blood Unit"}
+          </button>
+        </div>
+      </form>
+      {statusMessage && (
+        <p
+          className={`mt-4 text-center font-medium ${
+            statusType === "success" ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {statusMessage}
+        </p>
+      )}
     </div>
   );
 }

@@ -2,23 +2,31 @@
 
 import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
 import { ReactElement, useState } from "react";
-import { useGetDonationFormByIdQuery } from "@/store/api/donationFormApi"; 
+import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi"; 
+import { useParams, useRouter } from "next/navigation"; 
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
+  const router = useRouter(); 
 
-  // 👇 Example: you’ll get this ID from route params or props
-  const formId = "7bb02404-02f7-4b30-bd77-9806560f9009";
+  const { appointmentId } = useParams();
 
-  // Fetch form data
-  const { data: formData, isLoading, error } = useGetDonationFormByIdQuery(formId);
+  // Make sure appointmentId is a string (pick the first if array)
+  const appointmentIdStr = Array.isArray(appointmentId) ? appointmentId[0] : appointmentId;
+
+  // Only call the query if we have a valid string
+  const { data: formsData, isLoading, error } = useGetDonationFormByAppointmentIdQuery(
+    appointmentIdStr || ""
+  );
+
+  const formData = formsData?.[0];
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      console.log("Form completed");
+      router.push("/blood_bank/donors");
     }
   };
 
@@ -87,7 +95,7 @@ export default function Form(): ReactElement {
             onClick={handleNext}
             className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            {currentStep === totalSteps ? "Submit" : "Next"}
+            {currentStep === totalSteps ? "Go Back" : "Next"}
           </button>
         </div>
       </div>

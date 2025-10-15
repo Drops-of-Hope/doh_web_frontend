@@ -51,15 +51,24 @@ export interface BloodDonationForm {
 
 export const donationFormApi = createApi({
   reducerPath: 'donationFormApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/donations' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api' }), // base URL
   tagTypes: ['DonationForms'],
   endpoints: (builder) => ({
     getDonationFormById: builder.query<BloodDonationForm, string>({
-      query: (id) => `/form/${id}`,
+      query: (id) => `/donations/form/${id}`,
       transformResponse: (response: { data: BloodDonationForm }) => response.data,
       providesTags: (result, error, id) => [{ type: 'DonationForms', id }],
+    }),
+    // New endpoint: Get donation form(s) by appointment ID
+    getDonationFormByAppointmentId: builder.query<BloodDonationForm[], string>({
+      query: (appointmentId) => `/donation-forms/appointment/${appointmentId}`,
+      transformResponse: (response: BloodDonationForm[]) => response, // adjust if API wraps in { data }
+      providesTags: (result, error, appointmentId) => [{ type: 'DonationForms', id: appointmentId }],
     }),
   }),
 });
 
-export const { useGetDonationFormByIdQuery } = donationFormApi;
+export const { 
+  useGetDonationFormByIdQuery, 
+  useGetDonationFormByAppointmentIdQuery 
+} = donationFormApi;

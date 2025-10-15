@@ -62,17 +62,7 @@ const DonorFitnessAssessment: React.FC<DonorFitnessAssessmentProps> = ({
 
         {isUnfit && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Reason for Unfitness *
-            </label>
-            <textarea
-              value={evaluationData.fitnessReason}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onInputChange('fitnessReason', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md placeholder:text-gray-400"
-              rows={3}
-              placeholder="Please provide detailed reason for declaring donor unfit..."
-            />
-            {errors.fitnessReason && <p className="text-red-600 text-sm mt-1">{errors.fitnessReason}</p>}
+            unfit to donate
           </div>
         )}
       </div>

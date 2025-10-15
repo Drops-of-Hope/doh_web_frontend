@@ -116,8 +116,11 @@ export default function Appointment() {
   };
 
   const handleViewForm = () => {
-    router.push('/blood_bank/donors/form');
-  };
+  if (appointmentId) {
+    router.push(`/blood_bank/donors/form/${appointmentId}`);
+  }
+};
+
 
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -173,7 +176,6 @@ export default function Appointment() {
         </div>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="text-red-500 text-xl mb-2">⚠️</div>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               {!typedAppointmentData 
                 ? 'Appointment Not Found' 
