@@ -45,6 +45,7 @@ import DonorProfileCard from "./organisms/DonorProfileCard";
 import Banner from "./organisms/Banner";
 import PreScreeningFormDisplay from "./organisms/PreScreeningForm";
 import QuestionDisplay from "./molecules/QuestionDisplay";
+import QRScanner from "./organisms/QRScanner";
 import { DonorCard, BloodBankCard, HospitalCard} from "./molecules/UserCard";
 import MedicalOfficerEvaluation from "./organisms/MedicalEvaluation";
 import DonorFitnessAssessment from "./molecules/DonorFitness";
@@ -120,6 +121,7 @@ export {
     DonorCard,
     BloodBankCard,
     HospitalCard,
+    QRScanner,
     MedicalOfficerEvaluation,
     DonorFitnessAssessment,
     AddBloodUnit,
