@@ -44,12 +44,12 @@ export interface Blood {
 export interface BloodTestResult {
   bloodId: string;
   ABOTest: string;
-  hivTest: boolean;
-  hemoglobin: number;
-  syphilis: boolean;
-  hepatitisB: boolean;
-  hepatitisC: boolean;
-  malaria: boolean;
+  hivTest: boolean | null;
+  hemoglobin: number | null;
+  syphilis: boolean | null;
+  hepatitisB: boolean | null;
+  hepatitisC: boolean | null;
+  malaria: boolean | null;
 }
 
 export const bloodTestApi = createApi({
@@ -83,21 +83,26 @@ export const bloodTestApi = createApi({
     getBloodTestByBloodId: builder.query<BloodTestResult, string>({
       query: (bloodId) => `/test/${bloodId}`,
       transformResponse: (response: unknown): BloodTestResult => {
-        // Treat the raw response as a partial result and normalize types safely
+        // Treat the raw response as a partial result and preserve null/undefined
+        // so the UI can differentiate between "no result yet" and a false result.
         const res = (response as Partial<BloodTestResult>) || {};
 
         return {
           bloodId: res.bloodId ?? "",
           ABOTest: res.ABOTest ?? "",
-          hivTest: Boolean(res.hivTest),
+          hivTest: typeof res.hivTest === "boolean" ? res.hivTest : null,
           hemoglobin:
             typeof res.hemoglobin === "number"
               ? res.hemoglobin
-              : Number(res.hemoglobin) || 0,
-          syphilis: Boolean(res.syphilis),
-          hepatitisB: Boolean(res.hepatitisB),
-          hepatitisC: Boolean(res.hepatitisC),
-          malaria: Boolean(res.malaria),
+              : typeof res.hemoglobin === "string" && res.hemoglobin !== ""
+              ? Number(res.hemoglobin)
+              : null,
+          syphilis: typeof res.syphilis === "boolean" ? res.syphilis : null,
+          hepatitisB:
+            typeof res.hepatitisB === "boolean" ? res.hepatitisB : null,
+          hepatitisC:
+            typeof res.hepatitisC === "boolean" ? res.hepatitisC : null,
+          malaria: typeof res.malaria === "boolean" ? res.malaria : null,
         };
       },
       providesTags: (result, error, bloodId) => [

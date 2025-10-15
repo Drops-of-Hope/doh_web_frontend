@@ -13,6 +13,7 @@ import {
   useGetBloodTestByBloodIdQuery,
   useUpdateSyphilisTestMutation,
   useUpdateHepatitisTestMutation,
+  useUpdateMalariaTestMutation,
 } from "@/store/api/bloodTestApi";
 import {
   mapBloodGroupToDisplay,
@@ -43,6 +44,8 @@ export default function BloodUnitTestingPage() {
     useUpdateSyphilisTestMutation();
   const [updateHepatitisTest, { isLoading: isUpdatingHepatitis }] =
     useUpdateHepatitisTestMutation();
+  const [updateMalariaTest, { isLoading: isUpdatingMalaria }] =
+    useUpdateMalariaTestMutation();
 
   useEffect(() => {
     if (bloodUnitData) {
@@ -116,13 +119,23 @@ export default function BloodUnitTestingPage() {
           id: "malaria",
           name: "Malaria Screening",
           isCompulsory: true,
-          status: bloodTestData.malaria ? "fail" : "pending",
+          status:
+            bloodTestData.malaria === null ||
+            typeof bloodTestData.malaria === "undefined"
+              ? "pending"
+              : bloodTestData.malaria
+              ? "fail"
+              : "pass",
         },
         {
           id: "hemoglobin",
           name: "Hemoglobin Level Check",
           isCompulsory: true,
-          status: bloodTestData.hemoglobin > 0 ? "pass" : "pending",
+          status:
+            typeof bloodTestData.hemoglobin === "number" &&
+            bloodTestData.hemoglobin > 0
+              ? "pass"
+              : "pending",
         },
       ]);
     }
@@ -134,6 +147,9 @@ export default function BloodUnitTestingPage() {
     } else if (testId === "hiv") {
       router.push(`/blood_bank/test/blood_test/${bloodIdStr}/hiv`);
     } else if (testId === "syphilis" || testId === "hepatitis") {
+      setSelectedTest(testId);
+    } else if (testId === "malaria") {
+      // Open modal for malaria test
       setSelectedTest(testId);
     }
   };
@@ -171,8 +187,10 @@ export default function BloodUnitTestingPage() {
           setTests={setTests}
           updateSyphilisTest={updateSyphilisTest}
           updateHepatitisTest={updateHepatitisTest}
+          updateMalariaTest={updateMalariaTest}
           isUpdatingSyphilis={isUpdatingSyphilis}
           isUpdatingHepatitis={isUpdatingHepatitis}
+          isUpdatingMalaria={isUpdatingMalaria}
         />
       </div>
     </div>
