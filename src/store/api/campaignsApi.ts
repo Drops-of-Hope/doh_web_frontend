@@ -73,10 +73,25 @@ export const campaignsApi = createApi({
       query: (campaignId) => `/${campaignId}`,
       providesTags: (result, error, id) => [{ type: "Campaigns", id }],
     }),
+    setCampaignApproval: builder.mutation<
+      { success?: boolean } | CampaignDto,
+      { campaignId: string; approval: 'accepted' | 'rejected'; token?: string }
+    >({
+      query: ({ campaignId, approval, token }) => ({
+        url: `/${campaignId}/approval`,
+        method: 'PATCH',
+        body: { approval },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      }),
+      invalidatesTags: (result, error, { campaignId }) => [
+        { type: 'Campaigns', id: campaignId },
+      ],
+    }),
   }),
 });
 
 export const { 
   useGetPendingCampaignsByMedicalEstablishmentQuery,
-  useGetCampaignByIdQuery
+  useGetCampaignByIdQuery,
+  useSetCampaignApprovalMutation
 } = campaignsApi;

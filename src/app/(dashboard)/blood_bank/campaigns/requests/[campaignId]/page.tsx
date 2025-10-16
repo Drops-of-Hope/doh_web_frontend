@@ -1,10 +1,12 @@
 "use client";
 import React, { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useGetCampaignByIdQuery } from '@/store/api/campaignsApi';
+import { useGetCampaignByIdQuery, useSetCampaignApprovalMutation } from '@/store/api/campaignsApi';
+import { useSession } from 'next-auth/react';
 import { BackButton, CampaignDetailsLayout, CampaignAvailabilityActions } from '@/components';
 
 export default function CampaignRequestDetailsById() {
+  const { data: session } = useSession();
   const params = useParams();
   const router = useRouter();
   const campaignId = Array.isArray(params?.campaignId) ? params?.campaignId[0] : (params?.campaignId as string);
@@ -17,6 +19,9 @@ export default function CampaignRequestDetailsById() {
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const [setApproval, { isLoading: isApproving }] = useSetCampaignApprovalMutation();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -102,6 +107,14 @@ export default function CampaignRequestDetailsById() {
           <BackButton fallbackUrl="/blood_bank/campaigns/requests" className="hover:shadow-md" />
         </div>
 
+        {feedback && (
+          <div className={`mb-4 p-4 rounded-lg border ${
+            feedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
+          }`}>
+            {feedback.message}
+          </div>
+        )}
+
         <CampaignDetailsLayout
           campaignRequest={requestViewModel}
           formatDate={formatDate}
@@ -151,15 +164,28 @@ export default function CampaignRequestDetailsById() {
             setShowRejectModal={setShowRejectModal}
             rejectReason={rejectReason}
             setRejectReason={setRejectReason}
-            handleReject={() => {
+            handleReject={async () => {
               if (!rejectReason.trim()) return;
-              console.log('Campaign rejected:', requestViewModel.id, 'Reason:', rejectReason);
-              setShowRejectModal(false);
-              router.push('/blood_bank/campaigns');
+              try {
+                await setApproval({ campaignId: requestViewModel.id, approval: 'rejected', token: session?.accessToken }).unwrap();
+                setFeedback({ type: 'success', message: 'Campaign request has been rejected.' });
+                setShowRejectModal(false);
+                // Refresh data to reflect new status
+                // navigate back after a short delay
+                setTimeout(() => router.push('/blood_bank/campaigns'), 800);
+              } catch (e) {
+                setFeedback({ type: 'error', message: 'Failed to reject the campaign. Please try again.' });
+              }
             }}
-            handleAccept={() => {
-              console.log('Campaign accepted:', requestViewModel.id);
-              router.push('/blood_bank/campaigns');
+            handleAccept={async () => {
+              try {
+                await setApproval({ campaignId: requestViewModel.id, approval: 'accepted', token: session?.accessToken }).unwrap();
+                setFeedback({ type: 'success', message: 'Campaign request has been accepted.' });
+                // navigate back after a short delay
+                setTimeout(() => router.push('/blood_bank/campaigns'), 800);
+              } catch (e) {
+                setFeedback({ type: 'error', message: 'Failed to accept the campaign. Please try again.' });
+              }
             }}
           />
         </div>
