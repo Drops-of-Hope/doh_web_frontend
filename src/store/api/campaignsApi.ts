@@ -4,27 +4,35 @@ export interface OrganizerInfo {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  organization?: string;
 }
 
 export interface MedicalEstablishmentInfo {
   id: string;
   name: string;
   address: string;
+  contactNumber?: string;
 }
 
 export interface CampaignDto {
   id: string;
   title: string;
   description?: string;
-  startTime: string;
-  endTime: string;
+  startTime?: string;
+  endTime?: string;
+  startDate?: string;
+  endDate?: string;
   location: string;
-  expectedDonors: number;
+  expectedDonors?: number;
+  goalBloodUnits?: number;
+  currentBloodUnits?: number;
   contactPersonName?: string;
   contactPersonPhone?: string;
   requirements?: { notes?: string };
   isApproved: "PENDING" | "APPROVED" | "REJECTED" | string;
   isActive?: boolean;
+  status?: string;
   organizer?: OrganizerInfo;
   medicalEstablishment?: MedicalEstablishmentInfo;
   participantsCount?: number;
@@ -61,7 +69,14 @@ export const campaignsApi = createApi({
         `/pending/medical-establishment/${medicalEstablishmentId}?page=${page}&limit=${limit}`,
       providesTags: (result, error, arg) => [{ type: "Campaigns", id: arg.medicalEstablishmentId }],
     }),
+    getCampaignById: builder.query<CampaignDto, string>({
+      query: (campaignId) => `/${campaignId}`,
+      providesTags: (result, error, id) => [{ type: "Campaigns", id }],
+    }),
   }),
 });
 
-export const { useGetPendingCampaignsByMedicalEstablishmentQuery } = campaignsApi;
+export const { 
+  useGetPendingCampaignsByMedicalEstablishmentQuery,
+  useGetCampaignByIdQuery
+} = campaignsApi;
