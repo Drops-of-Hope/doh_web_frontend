@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { FaTint, FaClock, FaTruck } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 
+
 export default function HomePage() {
   const router = useRouter();
   const { data: session } = useSession();
