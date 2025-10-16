@@ -198,6 +198,15 @@ export const bloodTestApi = createApi({
         { type: "BloodTests", id: bloodId },
       ],
     }),
+
+    // Mark a blood unit as passed (GET /pass/:bloodId)
+    passBloodUnit: builder.mutation<void, string>({
+      // We only need to send the request; the response body is not used.
+      query: (bloodId) => ({ url: `/pass/${bloodId}`, method: "GET" }),
+      invalidatesTags: (result, error, bloodId) => [
+        { type: "BloodTests", id: bloodId },
+      ],
+    }),
   }),
 });
 
@@ -211,4 +220,5 @@ export const {
   useUpdateHepatitisTestMutation,
   useUpdateMalariaTestMutation,
   useUpdateHemoglobinTestMutation,
+  usePassBloodUnitMutation,
 } = bloodTestApi;
