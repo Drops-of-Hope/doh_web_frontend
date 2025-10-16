@@ -35,18 +35,28 @@ interface InventoryItem {
 export const inventoryApi = createApi({
   reducerPath: "inventoryApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/medical-establishments",
+    baseUrl: "http://localhost:5000/api",
   }),
   tagTypes: ["Inventory"],
 
   endpoints: (builder) => ({
     getInventoryByEstablishmentId: builder.query<InventoryItem[], string>({
-      query: (establishmentId) => `/inventory/${establishmentId}`,
+      query: (establishmentId) =>
+        `/medical-establishments/${establishmentId}/inventory`,
       providesTags: (result, error, establishmentId) => [
         { type: "Inventory", id: establishmentId },
+      ],
+    }),
+    getSafeUnitsByInventoryId: builder.query<BloodUnit[], string>({
+      query: (inventoryId) => `/inventories/${inventoryId}/safe-units`,
+      providesTags: (result, error, inventoryId) => [
+        { type: "Inventory", id: inventoryId },
       ],
     }),
   }),
 });
 
-export const { useGetInventoryByEstablishmentIdQuery } = inventoryApi;
+export const {
+  useGetInventoryByEstablishmentIdQuery,
+  useGetSafeUnitsByInventoryIdQuery,
+} = inventoryApi;

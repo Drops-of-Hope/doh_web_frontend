@@ -4,6 +4,7 @@ import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import { TestCard } from "@/components";
 import { TestResult, BloodUnit } from "../../../types";
 import { usePassBloodUnitMutation } from "@/store/api/bloodTestApi";
+import { useState, useEffect } from "react";
 
 // Button that triggers the pass mutation
 const PassButton = ({
@@ -16,32 +17,48 @@ const PassButton = ({
   bloodId: string | null | undefined;
 }) => {
   const [passBloodUnit, { isLoading }] = usePassBloodUnitMutation();
+  const [succeeded, setSucceeded] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleClick = async () => {
     if (!bloodId) return;
 
     try {
       await passBloodUnit(bloodId).unwrap();
+      setSucceeded(true);
+      setShowMessage(true);
       onFinalizeStatus("pass");
     } catch (err) {
-      // Optionally handle error (toast/log)
       console.error("Failed to pass blood unit:", err);
     }
   };
 
+  useEffect(() => {
+    if (showMessage) {
+      const t = setTimeout(() => setShowMessage(false), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [showMessage]);
+
   return (
-    <button
-      onClick={handleClick}
-      disabled={disabled || isLoading}
-      className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
-        disabled || isLoading
-          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-          : "bg-green-600 text-white hover:bg-green-700"
-      }`}
-    >
-      <FaCheckCircle className="w-4 h-4" />
-      {isLoading ? "Passing..." : "Pass Blood Unit"}
-    </button>
+    <div className="flex flex-col items-start gap-2">
+      <button
+        onClick={handleClick}
+        disabled={disabled || isLoading || succeeded}
+        className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+          disabled || isLoading || succeeded
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-green-600 text-white hover:bg-green-700"
+        }`}
+      >
+        <FaCheckCircle className="w-4 h-4" />
+        {isLoading
+          ? "Passing..."
+          : succeeded
+          ? "Marked Safe"
+          : "Pass Blood Unit"}
+      </button>
+    </div>
   );
 };
 
