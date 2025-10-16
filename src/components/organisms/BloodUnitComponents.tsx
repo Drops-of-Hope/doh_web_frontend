@@ -3,7 +3,47 @@
 import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import { TestCard } from "@/components";
 import { TestResult, BloodUnit } from "../../../types";
-import { usePassBloodUnitMutation } from '@/store/api/bloodTestApi';
+import { usePassBloodUnitMutation } from "@/store/api/bloodTestApi";
+
+// Button that triggers the pass mutation
+const PassButton = ({
+  onFinalizeStatus,
+  disabled,
+  bloodId,
+}: {
+  onFinalizeStatus: (finalStatus: "pass" | "fail") => void;
+  disabled: boolean;
+  bloodId: string | null | undefined;
+}) => {
+  const [passBloodUnit, { isLoading }] = usePassBloodUnitMutation();
+
+  const handleClick = async () => {
+    if (!bloodId) return;
+
+    try {
+      await passBloodUnit(bloodId).unwrap();
+      onFinalizeStatus("pass");
+    } catch (err) {
+      // Optionally handle error (toast/log)
+      console.error("Failed to pass blood unit:", err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={disabled || isLoading}
+      className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+        disabled || isLoading
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : "bg-green-600 text-white hover:bg-green-700"
+      }`}
+    >
+      <FaCheckCircle className="w-4 h-4" />
+      {isLoading ? "Passing..." : "Pass Blood Unit"}
+    </button>
+  );
+};
 
 export const TestBadge = ({
   status,
@@ -78,7 +118,8 @@ export const BloodUnitInfo = ({ bloodUnit }: { bloodUnit: BloodUnit }) => {
       },
     };
 
-    const config = statusConfig[status];
+    const config =
+      (statusConfig as Record<string, any>)[status] ?? statusConfig.pending;
 
     return (
       <span
@@ -160,10 +201,12 @@ export const TestResultsToBeCompleted = ({
   tests,
   onTestCardClick,
   onFinalizeStatus,
+  bloodId,
 }: {
   tests: TestResult[];
   onTestCardClick: (testId: string) => void;
   onFinalizeStatus: (finalStatus: "pass" | "fail") => void;
+  bloodId: string | null | undefined;
 }) => {
   // Check if all compulsory tests are completed
   const compulsoryTests = tests.filter((test) => test.isCompulsory);
@@ -211,18 +254,11 @@ export const TestResultsToBeCompleted = ({
         )}
 
         <div className="flex gap-4">
-          <button
-            onClick={() => onFinalizeStatus("pass")}
+          <PassButton
+            onFinalizeStatus={onFinalizeStatus}
             disabled={!allCompulsoryCompleted || hasFailedTests}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
-              !allCompulsoryCompleted || hasFailedTests
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-green-600 text-white hover:bg-green-700"
-            }`}
-          >
-            <FaCheckCircle className="w-4 h-4" />
-            Pass Blood Unit
-          </button>
+            bloodId={bloodId}
+          />
 
           <button
             onClick={() => onFinalizeStatus("fail")}

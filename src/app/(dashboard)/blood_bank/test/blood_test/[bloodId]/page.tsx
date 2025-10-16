@@ -179,6 +179,7 @@ export default function BloodUnitTestingPage() {
           tests={tests}
           onTestCardClick={handleTestCardClick}
           onFinalizeStatus={handleFinalizeStatus}
+          bloodId={bloodIdStr}
         />
 
         {/* Modal Component */}
