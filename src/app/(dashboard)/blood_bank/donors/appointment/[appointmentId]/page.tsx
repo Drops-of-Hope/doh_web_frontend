@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-import { FaQrcode, FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
-import { RecentDonations, BackButton, DonorProfileCard } from '@/components';
+import { FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
+import { RecentDonations, BackButton, DonorProfileCard, QRScanner } from '@/components';
 import { useRouter, useParams } from 'next/navigation';
-import { useGetAppointmentByIdQuery } from '@/store/api/appointmentsApi';
+import { useGetAppointmentByIdQuery, useConfirmAppointmentMutation } from '@/store/api/appointmentsApi';
 
 interface DonationHistory {
   id: number;
@@ -70,8 +70,7 @@ export default function Appointment() {
   const params = useParams();
   const appointmentId = params.appointmentId as string;
   
-  const [showQRScanner, setShowQRScanner] = useState<boolean>(false);
-  const [scanResult, setScanResult] = useState<string>('');
+  // QR scanner handled by separate component
 
   // Fetch appointment data from API
   const { 
@@ -92,12 +91,28 @@ export default function Appointment() {
     { id: 3, date: "2024-06-05", type: "Whole Blood", location: "Colombo Blood Bank" }
   ];
 
-  const handleQRScan = () => {
-    setShowQRScanner(true);
-    setTimeout(() => {
-      setScanResult("QR_CODE_VERIFIED");
-      setShowQRScanner(false);
-    }, 2000);
+  const handleQRSuccess = (result: unknown) => {
+    console.log('QR scan result:', result);
+  };
+
+  const [attendanceConfirmed, setAttendanceConfirmed] = useState(false);
+
+  const [confirmAppointment] = useConfirmAppointmentMutation();
+
+  const handleConfirm = async (result: unknown) => {
+    console.log('Attendance confirmed for (local):', result);
+    try {
+      await confirmAppointment({ appointmentId, status: 'confirmed' }).unwrap();
+      setAttendanceConfirmed(true);
+      handleQRSuccess(result);
+    } catch (err) {
+      console.error('Failed to confirm attendance:', err);
+      // Optionally show error to user
+    }
+  };
+
+  const handleQRError = (err: string) => {
+    console.error('QR scan error:', err);
   };
 
   const handleViewForm = () => {
@@ -143,7 +158,7 @@ export default function Appointment() {
           />
         </div>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent mb-4"></div>
         </div>
       </div>
     );
@@ -223,30 +238,15 @@ export default function Appointment() {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-[100%]">
               <h3 className="text-lg font-semibold text-gray-900 mb-8">Mark Donor Attendance</h3>
               
-              <button
-                onClick={handleQRScan}
-                disabled={showQRScanner}
-                className="w-full bg-blue-500 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2"
-              >
-                <FaQrcode className="w-4 h-4" />
-                {showQRScanner ? 'Scanning...' : 'Scan QR Code'}
-              </button>
-
-              {showQRScanner && (
-                <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  </div>
-                  <p className="text-center text-blue-700 mt-1 text-sm">Scanning QR Code...</p>
-                </div>
-              )}
-
-              {scanResult && (
-                <div className="mt-2 p-2 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center gap-1">
-                    <FaCheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="text-green-700 font-semibold">Verified</span>
-                  </div>
+              {!attendanceConfirmed ? (
+                <QRScanner
+                  onSuccess={handleConfirm}
+                  onError={handleQRError}
+                />
+              ) : (
+                <div className="mt-3 inline-flex items-center gap-2 text-green-700 font-semibold">
+                  <FaCheckCircle className="w-4 h-4" />
+                  Attendance confirmed!
                 </div>
               )}
               

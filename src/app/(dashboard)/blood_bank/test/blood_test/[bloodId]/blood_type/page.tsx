@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { BloodTypeResult } from "@/components";
+import { useUpdateBloodTestMutation } from "@/store/api/bloodTestApi";
+import { useParams } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ForwardGrouping {
   antiA: string;
@@ -25,9 +28,7 @@ const ResultInput: React.FC<ResultInputProps> = ({
   options = ["Agglutination", "No Agglutination"],
   colorTheme,
 }) => {
-  const getColorClasses = (
-    theme?: "blue" | "yellow" | "gray"
-  ): string => {
+  const getColorClasses = (theme?: "blue" | "yellow" | "gray"): string => {
     switch (theme) {
       case "blue":
         return "focus:ring-blue-500 focus:border-blue-500 border-blue-200 text-gray-600";
@@ -58,7 +59,34 @@ const ResultInput: React.FC<ResultInputProps> = ({
 };
 
 const BloodGroupingResultsPage: React.FC = () => {
-  const router = useRouter();
+  const { bloodId } = useParams();
+  const bloodIdStr = Array.isArray(bloodId) ? bloodId[0] : bloodId;
+
+  const mapBloodTypeForBackend = (full: string) => {
+    if (!full) return "";
+    const [abo, rh] = [full.slice(0, -1), full.slice(-1)];
+    return `${abo}_${rh === "+" ? "POSITIVE" : "NEGATIVE"}`.toUpperCase();
+  };
+
+  const [updateBloodTest, { isLoading }] = useUpdateBloodTestMutation();
+  const handleSubmit = async () => {
+    if (!bloodType || bloodType.full === "Invalid Test") return;
+
+    const aboTestMapped = mapBloodTypeForBackend(bloodType.full);
+
+    try {
+      await updateBloodTest({
+        bloodId: bloodIdStr!,
+        data: { aboTest: aboTestMapped },
+      }).unwrap();
+      console.log("Blood test updated successfully!");
+      toast.success("Blood test updated successfully!");
+    } catch (err) {
+      console.error("Failed to update blood test:", err);
+      toast.error("Failed to update blood test. Please try again.");
+    }
+  };
+
   const [forwardGrouping, setForwardGrouping] = useState<ForwardGrouping>({
     antiA: "",
     antiB: "",
@@ -73,7 +101,11 @@ const BloodGroupingResultsPage: React.FC = () => {
   const isFormComplete = Object.values(forwardGrouping).every(Boolean);
 
   // Blood type determination logic
-  const determineBloodType = (): { abo: string; rh: string; full: string } | null => {
+  const determineBloodType = (): {
+    abo: string;
+    rh: string;
+    full: string;
+  } | null => {
     if (!isFormComplete) return null;
 
     const { antiA, antiB, antiD, normalSaline } = forwardGrouping;
@@ -109,33 +141,48 @@ const BloodGroupingResultsPage: React.FC = () => {
     <div className="min-h-screen bg-[#f8f8f8] p-4">
       <div>
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 mt-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">ABO Blood Grouping Test</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Blood Grouping Test
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-blue-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-blue-500 rounded-full" /> Anti‑A
               </label>
-              <ResultInput value={forwardGrouping.antiA} onChange={(val) => handleChange("antiA", val)} colorTheme="blue" />
+              <ResultInput
+                value={forwardGrouping.antiA}
+                onChange={(val) => handleChange("antiA", val)}
+                colorTheme="blue"
+              />
             </div>
 
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-yellow-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-yellow-500 rounded-full" /> Anti‑B
               </label>
-              <ResultInput value={forwardGrouping.antiB} onChange={(val) => handleChange("antiB", val)} colorTheme="yellow" />
+              <ResultInput
+                value={forwardGrouping.antiB}
+                onChange={(val) => handleChange("antiB", val)}
+                colorTheme="yellow"
+              />
             </div>
 
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-gray-500 rounded-full" /> Anti‑D
               </label>
-              <ResultInput value={forwardGrouping.antiD} onChange={(val) => handleChange("antiD", val)} colorTheme="gray" />
+              <ResultInput
+                value={forwardGrouping.antiD}
+                onChange={(val) => handleChange("antiD", val)}
+                colorTheme="gray"
+              />
             </div>
 
             <div className="bg-white border border-gray-200 rounded-lg p-4">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                <span className="w-3 h-3 bg-gray-300 rounded-full" /> Normal Saline
+                <span className="w-3 h-3 bg-gray-300 rounded-full" /> Normal
+                Saline
               </label>
               <ResultInput
                 value={forwardGrouping.normalSaline}
@@ -143,17 +190,30 @@ const BloodGroupingResultsPage: React.FC = () => {
                 colorTheme="gray"
               />
             </div>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
           </div>
         </div>
 
-        <BloodTypeResult forwardGrouping={forwardGrouping} bloodType={bloodType} />
+        <BloodTypeResult
+          forwardGrouping={forwardGrouping}
+          bloodType={bloodType}
+        />
 
         <div className="flex justify-end gap-4 mb-6">
           {isFormComplete && (
             <button
-              onClick={() => {
-                router.push("/blood_bank/test/blood_test");
-              }}
+              onClick={handleSubmit}
+              disabled={isLoading}
               className="flex items-center gap-2 px-6 py-3 bg-green-50 text-green-600 border border-green-600 rounded-lg font-medium transition-colors hover:bg-green-100"
             >
               <Check size={18} /> Finalize & Submit

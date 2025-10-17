@@ -45,6 +45,7 @@ import DonorProfileCard from "./organisms/DonorProfileCard";
 import Banner from "./organisms/Banner";
 import PreScreeningFormDisplay from "./organisms/PreScreeningForm";
 import QuestionDisplay from "./molecules/QuestionDisplay";
+import QRScanner from "./organisms/QRScanner";
 import { DonorCard, BloodBankCard, HospitalCard} from "./molecules/UserCard";
 import MedicalOfficerEvaluation from "./organisms/MedicalEvaluation";
 import DonorFitnessAssessment from "./molecules/DonorFitness";
@@ -67,6 +68,8 @@ import { RequestDetailsCard } from "./organisms/RequestDetailsCard";
 import PreScreeningComparisonPanel from "./organisms/ComparisionPanel";
 import AppointmentTableRow from "./molecules/AppointmentTableRow";
 import PreScreeningSummary from "./organisms/PreScreeningSummary";
+import { EvaluationForm } from "./organisms/EvaluationForm";
+import { TestModals } from "./organisms/TestModals";
 
 export {
     Button,
@@ -119,6 +122,7 @@ export {
     DonorCard,
     BloodBankCard,
     HospitalCard,
+    QRScanner,
     MedicalOfficerEvaluation,
     DonorFitnessAssessment,
     AddBloodUnit,
@@ -141,6 +145,8 @@ export {
     RequestDetailsCard,
     PreScreeningComparisonPanel,
     AppointmentTableRow,
-    PreScreeningSummary
+    PreScreeningSummary,
+    EvaluationForm,
+    TestModals
 }
 

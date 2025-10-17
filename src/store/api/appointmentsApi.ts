@@ -18,10 +18,19 @@ export const appointmentsApi = createApi({
       query: (appointmentId) => `/${appointmentId}`,
       providesTags: (result, error, id) => [{ type: 'Appointments', id }],
     }),
+    confirmAppointment: builder.mutation<void, { appointmentId: string; status?: string }>({
+      query: ({ appointmentId, status = 'confirmed' }) => ({
+        url: `/${appointmentId}/status`,
+        method: 'POST',
+        body: { status },
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: 'Appointments', id: arg.appointmentId }],
+    }),
   }),
 });
 
 export const {
   useGetAppointmentsByMedicalEstablishmentQuery,
   useGetAppointmentByIdQuery,
+  useConfirmAppointmentMutation,
 } = appointmentsApi;
