@@ -44,6 +44,12 @@ export default function BloodInventoryTable(): React.JSX.Element {
 
   const bloodUnits = React.useMemo(() => bloodResp?.data ?? [], [bloodResp]);
 
+  // Helper function to check if a unit is expired
+  const isExpired = (expiryDate: string | undefined) => {
+    if (!expiryDate) return false;
+    return new Date(expiryDate) < new Date();
+  };
+
   const handleRowClick = () => {
     router.push("/blood_bank/inventory/blood_group");
   };
@@ -84,37 +90,60 @@ export default function BloodInventoryTable(): React.JSX.Element {
                 </td>
               </tr>
             )}
-            {bloodUnits.map((unit) => (
-              <tr
-                key={unit.id}
-                onClick={handleRowClick}
-                className="hover:bg-gray-50"
-              >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                  {unit.id}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
-                  <span
-                    className={
-                      `w-10 inline-flex items-center justify-center px-2 py-1 rounded-2xl border text-xs font-medium ` +
-                      getBloodGroupColor(
-                        unit.bloodDonation?.user?.bloodGroup || ""
-                      )
-                    }
-                  >
-                    {mapBloodGroupToDisplay(
-                      unit.bloodDonation?.user?.bloodGroup
-                    ) || "N/A"}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                  {formatDisplayDate(unit.bloodDonation?.startTime) || "-"}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                  {formatDisplayDate(unit.expiryDate) || "-"}
-                </td>
-              </tr>
-            ))}
+            {bloodUnits.map((unit) => {
+              const expired = isExpired(unit.expiryDate);
+              return (
+                <tr
+                  key={unit.id}
+                  onClick={handleRowClick}
+                  className={`hover:bg-gray-50 ${expired ? 'bg-red-50' : ''}`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                    {unit.id}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
+                    <span
+                      className={
+                        `w-10 inline-flex items-center justify-center px-2 py-1 rounded-2xl border text-xs font-medium ` +
+                        getBloodGroupColor(
+                          unit.bloodDonation?.user?.bloodGroup || ""
+                        )
+                      }
+                    >
+                      {mapBloodGroupToDisplay(
+                        unit.bloodDonation?.user?.bloodGroup
+                      ) || "N/A"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                    {formatDisplayDate(unit.bloodDonation?.startTime) || "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <div className="flex items-center gap-2">
+                      {expired && (
+                        <svg
+                          className="w-5 h-5 text-red-600 flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                      <span className={expired ? 'text-red-600 font-semibold' : 'text-gray-700'}>
+                        {formatDisplayDate(unit.expiryDate) || "-"}
+                        {expired && (
+                          <span className="ml-1 text-xs">Expired</span>
+                        )}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

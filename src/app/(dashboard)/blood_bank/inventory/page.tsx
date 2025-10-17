@@ -41,7 +41,7 @@ export default function InventoryPage() {
           iconBgColor="#DC2626"
           heading="Expired Units"
           body="Units past expiration"
-          count={0}
+          count={2}
           icon={<FaTimesCircle size={24} className="text-white" />}
         />
         
