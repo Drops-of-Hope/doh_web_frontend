@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSession } from "next-auth/react";
-import { useGetInventoryByEstablishmentIdQuery } from '@/store/api/inventoryApi';
-import { useGetPendingBloodUnitsByInventoryQuery } from '@/store/api/bloodTestApi';
-import { formatDisplayDate, mapBloodGroupToDisplay } from '@/lib/appointmentUtils';
+import { useGetInventoryByEstablishmentIdQuery } from "@/store/api/inventoryApi";
+import { useGetPendingBloodUnitsByInventoryQuery } from "@/store/api/bloodTestApi";
+import {
+  formatDisplayDate,
+  mapBloodGroupToDisplay,
+} from "@/lib/appointmentUtils";
 
 interface UserInfo {
   bloodGroup: string;
@@ -42,18 +45,18 @@ export default function TestTable() {
   const medicalEstablishmentId = session?.decodedIdToken?.sub;
 
   // Get inventory for this establishment
-  const { data: inventoryData, isLoading: inventoryLoading } = useGetInventoryByEstablishmentIdQuery(
-    medicalEstablishmentId ?? "", 
-    { skip: !medicalEstablishmentId }
-  );
-
-  const inventoryId = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+  const { data: inventoryData, isLoading: inventoryLoading } =
+    useGetInventoryByEstablishmentIdQuery(medicalEstablishmentId ?? "", {
+      skip: !medicalEstablishmentId,
+    });
+  // Use the first inventory Id available for the establishment
+  const inventoryId = inventoryData?.[0]?.id;
 
   // Fetch pending blood units for the inventory
-  const { data: bloodUnitsData = [], isLoading: bloodLoading } = useGetPendingBloodUnitsByInventoryQuery(
-    inventoryId ?? "",
-    { skip: !inventoryId }
-  );
+  const { data: bloodUnitsData = [], isLoading: bloodLoading } =
+    useGetPendingBloodUnitsByInventoryQuery(inventoryId ?? "", {
+      skip: !inventoryId,
+    });
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
@@ -63,28 +66,30 @@ export default function TestTable() {
   const endIndex = startIndex + itemsPerPage;
   const currentData = bloodUnitsData.slice(startIndex, endIndex);
 
-  const handlePreviousPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
-  const handleNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  const handlePreviousPage = () =>
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   const handleRowClick = (bloodId: string) => {
     router.push(`./test/blood_test/${bloodId}`);
   };
 
   const getBloodTypeBadgeColor = (bagType: string) => {
     switch (bagType) {
-      case 'O+':
-      case 'O-':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'A+':
-      case 'A-':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'B+':
-      case 'B-':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'AB+':
-      case 'AB-':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case "O+":
+      case "O-":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "A+":
+      case "A-":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "B+":
+      case "B-":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "AB+":
+      case "AB-":
+        return "bg-purple-100 text-purple-800 border-purple-200";
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -96,42 +101,68 @@ export default function TestTable() {
     <div>
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Blood units available for testing</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            Blood units available for testing
+          </h2>
           <p className="text-sm text-gray-600">
-            Showing {startIndex + 1} to {Math.min(endIndex, bloodUnitsData.length)} of {bloodUnitsData.length} entries
+            Showing {startIndex + 1} to{" "}
+            {Math.min(endIndex, bloodUnitsData.length)} of{" "}
+            {bloodUnitsData.length} entries
           </p>
         </div>
 
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Type</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collection Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Unit ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Blood Type
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Collection Date
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Expiry Date
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {currentData.map((item: BloodUnit) => (
-              <tr 
-                key={item.id} 
+              <tr
+                key={item.id}
                 onClick={() => handleRowClick(item.id)}
                 className="hover:bg-gray-50 cursor-pointer transition-colors duration-150"
               >
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">{item.id}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
+                  {item.id}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {item.bloodDonation?.user?.bloodGroup ? (
-                    <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full border ${getBloodTypeBadgeColor(mapBloodGroupToDisplay(item.bloodDonation.user.bloodGroup))}`}>
-                      {mapBloodGroupToDisplay(item.bloodDonation.user.bloodGroup)}
+                    <span
+                      className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full border ${getBloodTypeBadgeColor(
+                        mapBloodGroupToDisplay(
+                          item.bloodDonation.user.bloodGroup
+                        )
+                      )}`}
+                    >
+                      {mapBloodGroupToDisplay(
+                        item.bloodDonation.user.bloodGroup
+                      )}
                     </span>
                   ) : (
-                    'N/A'
+                    "N/A"
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {item.bloodDonation ? formatDisplayDate(item.bloodDonation.startTime) : 'N/A'}
+                  {item.bloodDonation
+                    ? formatDisplayDate(item.bloodDonation.startTime)
+                    : "N/A"}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDisplayDate(item.expiryDate)}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {formatDisplayDate(item.expiryDate)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -146,27 +177,41 @@ export default function TestTable() {
             <button
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
-              className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg border ${currentPage === 1 ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg border ${
+                currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+              }`}
             >
               <FaChevronLeft className="w-4 h-4 mr-1" />
             </button>
-            
+
             <div className="flex items-center space-x-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page: number) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-3 py-3 text-sm font-medium rounded-full ${currentPage === page ? 'bg-blue-400 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'}`}
-                >
-                  {page}
-                </button>
-              ))}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page: number) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-3 text-sm font-medium rounded-full ${
+                      currentPage === page
+                        ? "bg-blue-400 text-white"
+                        : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
             </div>
-            
+
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg border ${currentPage === totalPages ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}`}
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg border ${
+                currentPage === totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+              }`}
             >
               <FaChevronRight className="w-4 h-4 ml-1" />
             </button>

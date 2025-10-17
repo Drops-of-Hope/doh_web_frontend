@@ -4,7 +4,7 @@ import { FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import { TestCard } from "@/components";
 import { TestResult, BloodUnit } from "../../../types";
 import { usePassBloodUnitMutation } from "@/store/api/bloodTestApi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 
 // Button that triggers the pass mutation
 const PassButton = ({
@@ -111,7 +111,15 @@ export const BloodUnitInfo = ({ bloodUnit }: { bloodUnit: BloodUnit }) => {
   };
 
   const StatusBadge = ({ status }: { status: "pending" | "pass" | "fail" }) => {
-    const statusConfig = {
+    type StatusKey = "pending" | "pass" | "fail";
+    type StatusConfig = {
+      bg: string;
+      text: string;
+      icon: ReactNode;
+      label: string;
+      border: string;
+    };
+    const statusConfig: Record<StatusKey, StatusConfig> = {
       pending: {
         bg: "bg-amber-50",
         text: "text-amber-400",
@@ -135,8 +143,7 @@ export const BloodUnitInfo = ({ bloodUnit }: { bloodUnit: BloodUnit }) => {
       },
     };
 
-    const config =
-      (statusConfig as Record<string, any>)[status] ?? statusConfig.pending;
+    const config = statusConfig[status];
 
     return (
       <span

@@ -1,26 +1,15 @@
 "use client";
-import React from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useGetInventoryByEstablishmentIdQuery } from "@/store/api/inventoryApi";
+// removed unused session import
 
 interface BloodGroupData {
   id: string;
   bloodGroup: string;
 }
 
-export default function BloodInventoryTable(): React.JSX.Element {
+export default function BloodInventoryTable(): ReactElement {
   const router = useRouter();
-  const { data: session } = useSession();
-  const medicalEstablishmentId = session?.decodedIdToken?.sub;
-
-  // Get inventory for this establishment
-  const { data: inventoryData, isLoading: inventoryLoading } =
-    useGetInventoryByEstablishmentIdQuery(medicalEstablishmentId ?? "", {
-      skip: !medicalEstablishmentId,
-    });
-
-  const inventoryId = inventoryData?.[0]?.id;
 
   const bloodGroupData: BloodGroupData[] = [
     { id: "BG-001", bloodGroup: "O+" },

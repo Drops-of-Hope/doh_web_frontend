@@ -44,8 +44,8 @@ export default function AddBloodUnit() {
       skip: !medicalEstablishmentId,
     }
   );
-
-  const inventoryId = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+  // Use the first inventory id returned for this establishment
+  const inventoryId = inventoryData?.[0]?.id;
   const [createBloodDonation, { isLoading: isSubmitting }] =
     useCreateBloodDonationMutation();
 
