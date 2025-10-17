@@ -20,6 +20,8 @@ import {
   formatDisplayDate,
 } from "@/lib/appointmentUtils";
 import { TestResult, BloodUnit } from "../../../../../../../types";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function BloodUnitTestingPage() {
   const router = useRouter();
@@ -197,6 +199,9 @@ export default function BloodUnitTestingPage() {
 
   const handleFinalizeStatus = (finalStatus: "pass" | "fail") => {
     if (bloodUnit) setBloodUnit({ ...bloodUnit, status: finalStatus });
+    if (finalStatus === "pass") {
+      toast.success("Blood unit marked as PASS");
+    }
   };
 
   if (isUnitLoading || isTestLoading) return <div>Loading blood unit...</div>;
@@ -233,6 +238,17 @@ export default function BloodUnitTestingPage() {
           isUpdatingSyphilis={isUpdatingSyphilis}
           isUpdatingHepatitis={isUpdatingHepatitis}
           isUpdatingMalaria={isUpdatingMalaria}
+        />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
         />
       </div>
     </div>
