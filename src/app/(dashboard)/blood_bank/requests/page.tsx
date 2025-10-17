@@ -30,7 +30,7 @@ export default function RequestPage() {
           iconBgColor="#EF4444"
           heading="Total Requests"
           body="All blood requests"
-          count={127}
+          count={12}
           icon={<Heart className="w-6 h-6 text-white" />}
         />
         
@@ -38,7 +38,7 @@ export default function RequestPage() {
           iconBgColor="#F59E0B"
           heading="Incoming Requests"
           body="From hospitals & banks"
-          count={89}
+          count={8}
           icon={<ArrowDown className="w-6 h-6 text-white" />}
         />
         
@@ -46,7 +46,7 @@ export default function RequestPage() {
           iconBgColor="#10B981"
           heading="Outgoing Requests"
           body="To donors & facilities"
-          count={38}
+          count={4}
           icon={<ArrowUp className="w-6 h-6 text-white" />}
         />
         
@@ -54,7 +54,7 @@ export default function RequestPage() {
           iconBgColor="#8B5CF6"
           heading="In Transit"
           body="Currently being delivered"
-          count={23}
+          count={0}
           icon={<Clock className="w-6 h-6 text-white" />}
         />
       </div>

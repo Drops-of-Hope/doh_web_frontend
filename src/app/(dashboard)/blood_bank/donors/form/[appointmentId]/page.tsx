@@ -1,24 +1,32 @@
 "use client";
 
-import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
+import {
+  PreScreeningFormDisplay,
+  MedicalOfficerEvaluation,
+  AddBloodUnit,
+} from "@/components";
 import { ReactElement, useState } from "react";
-import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi"; 
-import { useParams, useRouter } from "next/navigation"; 
+import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi";
+import { useParams, useRouter } from "next/navigation";
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
-  const router = useRouter(); 
+  const router = useRouter();
 
   const { appointmentId } = useParams();
 
   // Make sure appointmentId is a string (pick the first if array)
-  const appointmentIdStr = Array.isArray(appointmentId) ? appointmentId[0] : appointmentId;
+  const appointmentIdStr = Array.isArray(appointmentId)
+    ? appointmentId[0]
+    : appointmentId;
 
   // Only call the query if we have a valid string
-  const { data: formsData, isLoading, error } = useGetDonationFormByAppointmentIdQuery(
-    appointmentIdStr || ""
-  );
+  const {
+    data: formsData,
+    isLoading,
+    error,
+  } = useGetDonationFormByAppointmentIdQuery(appointmentIdStr || "");
 
   const formData = formsData?.[0];
 
@@ -38,8 +46,9 @@ export default function Form(): ReactElement {
 
   const renderCurrentStep = () => {
     if (isLoading) return <p>Loading form...</p>;
-    if (error) return <p className="text-red-500">Failed to load donation form</p>;
-    if (!formData) return <p>No form data found</p>;
+    if (error)
+      return <p className="text-red-500">Form not filled yet, refresh page once filled</p>;
+    if (!formData) return <p>form not filled yet, refresh page once filled</p>;
 
     switch (currentStep) {
       case 1:
