@@ -1,11 +1,10 @@
-import React from 'react';
-import { Activity, UserCheck, UserX } from 'lucide-react';
-import { EvaluationData, ValidationErrors } from '../../../types';
+import React from "react";
+import { Activity, UserCheck, UserX } from "lucide-react";
+import { EvaluationData, ValidationErrors } from "../../../types";
 
 interface EvaluationFormProps {
   evaluationData: EvaluationData;
   errors: ValidationErrors;
-  successMessage: string;
   errorMessage: string;
   isCreatingVital: boolean;
   onInputChange: (field: keyof EvaluationData, value: string) => void;
@@ -16,14 +15,13 @@ interface EvaluationFormProps {
 export const EvaluationForm: React.FC<EvaluationFormProps> = ({
   evaluationData,
   errors,
-  successMessage,
   errorMessage,
   isCreatingVital,
   onInputChange,
   onAcceptDonor,
   onRejectDonor,
 }) => {
-  const isFit = evaluationData.donorFitness === 'fit';
+  const isFit = evaluationData.donorFitness === "fit";
   if (!isFit) return null;
 
   // Convert numeric values safely
@@ -33,9 +31,9 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
 
   // Check if all required fields are entered
   const allFieldsEntered =
-    evaluationData.weight.trim() !== '' &&
-    evaluationData.systolicBP.trim() !== '' &&
-    evaluationData.pulseRate.trim() !== '';
+    evaluationData.weight.trim() !== "" &&
+    evaluationData.systolicBP.trim() !== "" &&
+    evaluationData.pulseRate.trim() !== "";
 
   // Threshold logic
   const weightValid = weight >= 50;
@@ -43,7 +41,6 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
   const pulseValid = pulse >= 60 && pulse <= 100; // Normal healthy pulse range
 
   const isEligible = weightValid && bpValid && pulseValid;
-
 
   return (
     <>
@@ -62,7 +59,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
               type="number"
               step="0.1"
               value={evaluationData.weight}
-              onChange={(e) => onInputChange('weight', e.target.value)}
+              onChange={(e) => onInputChange("weight", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
               placeholder="e.g., 65.5"
             />
@@ -88,7 +85,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
             <input
               type="number"
               value={evaluationData.systolicBP}
-              onChange={(e) => onInputChange('systolicBP', e.target.value)}
+              onChange={(e) => onInputChange("systolicBP", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
               placeholder="e.g., 120"
             />
@@ -104,7 +101,7 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
             <input
               type="number"
               value={evaluationData.pulseRate}
-              onChange={(e) => onInputChange('pulseRate', e.target.value)}
+              onChange={(e) => onInputChange("pulseRate", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-gray-400"
               placeholder="e.g., 72"
             />
@@ -115,22 +112,22 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
         </div>
       </div>
 
-      
-        {/* Eligibility Message */}
-        {allFieldsEntered && (
-            <div className="mt-4 p-4 rounded-lg text-center font-medium">
-            {isEligible ? (
-                <p className="text-green-700 border-green-300 rounded-lg p-2">
-                This donor is eligible to donate. Donor’s current health vitals are within the acceptable range for safe blood donation.
-                </p>
-            ) : (
-                <p className="text-red-700 bg-red-100 border-red-300 rounded-lg p-2">
-                This donor cannot donate. Donor’s current health vitals are not within the acceptable range for safe blood donation.
-                </p>
-            )}
-            </div>
-        )}
-
+      {/* Eligibility Message */}
+      {allFieldsEntered && (
+        <div className="mt-4 p-4 rounded-lg text-center font-medium">
+          {isEligible ? (
+            <p className="text-green-700 border-green-300 rounded-lg p-2">
+              This donor is eligible to donate. Donor’s current health vitals
+              are within the acceptable range for safe blood donation.
+            </p>
+          ) : (
+            <p className="text-red-700 bg-red-100 border-red-300 rounded-lg p-2">
+              This donor cannot donate. Donor’s current health vitals are not
+              within the acceptable range for safe blood donation.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Final Decision */}
       <div className="bg-gray-50 rounded-lg p-6">
@@ -154,16 +151,11 @@ export const EvaluationForm: React.FC<EvaluationFormProps> = ({
             className="flex items-center justify-center gap-3 px-6 py-3 bg-green-50 text-green-600 hover:bg-green-100 font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <UserCheck size={24} />
-            {isCreatingVital ? 'Saving...' : 'Accept Donor'}
+            {isCreatingVital ? "Saving..." : "Accept Donor"}
           </button>
         </div>
 
-        {/* Success & Error Messages */}
-        {successMessage && (
-          <div className="mt-4 p-4 text-gray-700">
-            <p className="text-center font-medium">{successMessage}</p>
-          </div>
-        )}
+        {/* Error Messages */}
         {errorMessage && (
           <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
             <p className="text-center font-medium">{errorMessage}</p>
