@@ -3,10 +3,10 @@ import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useCreateBloodDonationMutation } from "@/store/api/bloodDonationApi";
-import { useGetInventoryByEstablishmentIdQuery } from "@/store/api/inventoryApi";
+// import { useGetInventoryByEstablishmentIdQuery } from "@/store/api/inventoryApi";
 import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi";
 import { useParams } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 
 interface FormData {
   bloodUnitCode: string;
@@ -36,14 +36,14 @@ export default function AddBloodUnit() {
   const bfId = donationFormData?.id;
   const userId = donationFormData?.userId;
 
-  const { data: session } = useSession();
-  const medicalEstablishmentId = session?.decodedIdToken?.sub;
-  const { data: inventoryData } = useGetInventoryByEstablishmentIdQuery(
-    medicalEstablishmentId ?? "",
-    {
-      skip: !medicalEstablishmentId,
-    }
-  );
+  // const { data: session } = useSession();
+  // const medicalEstablishmentId = session?.decodedIdToken?.sub;
+  // const { data: inventoryData } = useGetInventoryByEstablishmentIdQuery(
+  //   medicalEstablishmentId ?? "",
+  //   {
+  //     skip: !medicalEstablishmentId,
+  //   }
+  // );
 
   const inventoryId = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
   const [createBloodDonation, { isLoading: isSubmitting }] =

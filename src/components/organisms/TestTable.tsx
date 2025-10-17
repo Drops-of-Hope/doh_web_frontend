@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { useSession } from "next-auth/react";
-import { useGetInventoryByEstablishmentIdQuery } from '@/store/api/inventoryApi';
+// import { useSession } from "next-auth/react";
+// import { useGetInventoryByEstablishmentIdQuery } from '@/store/api/inventoryApi';
 import { useGetPendingBloodUnitsByInventoryQuery } from '@/store/api/bloodTestApi';
 import { formatDisplayDate, mapBloodGroupToDisplay } from '@/lib/appointmentUtils';
 
@@ -38,14 +38,14 @@ interface BloodUnit {
 
 export default function TestTable() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const medicalEstablishmentId = session?.decodedIdToken?.sub;
+  // const { data: session } = useSession();
+  // const medicalEstablishmentId = session?.decodedIdToken?.sub;
 
-  // Get inventory for this establishment
-  const { data: inventoryData, isLoading: inventoryLoading } = useGetInventoryByEstablishmentIdQuery(
-    medicalEstablishmentId ?? "", 
-    { skip: !medicalEstablishmentId }
-  );
+  // // Get inventory for this establishment
+  // const { data: inventoryData, isLoading: inventoryLoading } = useGetInventoryByEstablishmentIdQuery(
+  //   medicalEstablishmentId ?? "", 
+  //   { skip: !medicalEstablishmentId }
+  // );
 
   const inventoryId = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
 
@@ -88,7 +88,7 @@ export default function TestTable() {
     }
   };
 
-  if (inventoryLoading || bloodLoading) {
+  if (bloodLoading) {
     return <div className="p-6">Loading blood units...</div>;
   }
 

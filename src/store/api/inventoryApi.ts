@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { BloodTestResult } from "./bloodTestApi";
+import { BloodDonationInfo, BloodTestResult } from "./bloodTestApi";
 
-interface BloodUnit {
+export interface BloodUnit {
   id: string;
   donationId: string;
   inventoryId: string;
@@ -11,6 +11,8 @@ interface BloodUnit {
   expiryDate: string;
   consumed: boolean;
   disposed: boolean;
+  // Newly included: nested donation data with donor user and blood group
+  bloodDonation?: BloodDonationInfo;
 }
 
 interface MedicalEstablishment {
@@ -30,6 +32,18 @@ interface InventoryItem {
   blood: BloodUnit[];
   bloodTests: BloodTestResult[];
   medicalEstablishment: MedicalEstablishment;
+}
+
+// Request/Response types for POST /blood/by-inventory
+export interface BloodByInventoryRequest {
+  inventory_id: string;
+}
+
+export interface BloodByInventoryResponse {
+  message: string;
+  available_units: number;
+  count: number;
+  data: BloodUnit[];
 }
 
 export const inventoryApi = createApi({
@@ -53,10 +67,22 @@ export const inventoryApi = createApi({
         { type: "Inventory", id: inventoryId },
       ],
     }),
+    // POST: /blood/by-inventory
+    getBloodByInventory: builder.mutation<
+      BloodByInventoryResponse,
+      BloodByInventoryRequest
+    >({
+      query: (body) => ({
+        url: "/blood/by-inventory",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
 export const {
   useGetInventoryByEstablishmentIdQuery,
   useGetSafeUnitsByInventoryIdQuery,
+  useGetBloodByInventoryMutation,
 } = inventoryApi;

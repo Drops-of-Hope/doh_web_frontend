@@ -114,7 +114,7 @@ export default function HomePage() {
       </div>
 
       <div className="flex justify-between gap-4 mt-4">
-        <StatCard title="Blood Units" count="107" icon={<FaTint />} />
+        <StatCard title="Blood Units" count="54" icon={<FaTint />} />
         <StatCard title="Expiring Soon" count="9" icon={<FaClock />} />
         <StatCard title="In Transit" count="0" icon={<FaTruck />} />
       </div>

@@ -79,7 +79,7 @@ export default function Form(): ReactElement {
               Form Not Available
             </h3>
             <p className="text-gray-600 mb-4">
-              The donation form hasn't been filled yet. Please refresh the page
+              The donation form hasnt been filled yet. Please refresh the page
               once the form is completed.
             </p>
             <button
