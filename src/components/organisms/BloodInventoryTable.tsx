@@ -11,8 +11,15 @@ import {
   getBloodGroupColor,
 } from "@/lib/appointmentUtils";
 import { formatDisplayDate } from "@/lib/appointmentUtils";
+import { Button } from "@/components";
 
-export default function BloodInventoryTable(): React.JSX.Element {
+interface Props {
+  showOnlyExpired?: boolean;
+}
+
+export default function BloodInventoryTable({
+  showOnlyExpired = false,
+}: Props): React.JSX.Element {
   const router = useRouter();
   // const { data: session } = useSession();
   // const medicalEstablishmentId = session?.decodedIdToken?.sub;
@@ -42,22 +49,38 @@ export default function BloodInventoryTable(): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inventoryId]);
 
-  const bloodUnits = React.useMemo(() => bloodResp?.data ?? [], [bloodResp]);
-
   // Helper function to check if a unit is expired
   const isExpired = (expiryDate: string | undefined) => {
     if (!expiryDate) return false;
     return new Date(expiryDate) < new Date();
   };
 
+  const bloodUnits = React.useMemo(() => {
+    const units = bloodResp?.data ?? [];
+    if (!showOnlyExpired) return units;
+    return units.filter((u: any) => isExpired(u?.expiryDate));
+  }, [bloodResp, showOnlyExpired]);
+
   const handleRowClick = () => {
     router.push("/blood_bank/inventory/blood_group");
+  };
+
+  const handleDispose = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    unitId: string
+  ) => {
+    // Prevent triggering the row click navigation
+    e.stopPropagation();
+    // TODO: Wire this up to a dispose/delete API mutation
+    // e.g., disposeBloodUnit({ id: unitId })
+    // For now, just log
+    console.log("Dispose unit:", unitId);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
-        {(bloodLoading) && (
+        {bloodLoading && (
           <div className="p-6 text-sm text-gray-500">Loading inventory…</div>
         )}
         {bloodError && !bloodLoading && (
@@ -96,7 +119,7 @@ export default function BloodInventoryTable(): React.JSX.Element {
                 <tr
                   key={unit.id}
                   onClick={handleRowClick}
-                  className={`hover:bg-gray-50 ${expired ? 'bg-red-50' : ''}`}
+                  className={`hover:bg-gray-50 ${expired ? "bg-red-50" : ""}`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                     {unit.id}
@@ -133,12 +156,25 @@ export default function BloodInventoryTable(): React.JSX.Element {
                           />
                         </svg>
                       )}
-                      <span className={expired ? 'text-red-600 font-semibold' : 'text-gray-700'}>
+                      <span
+                        className={
+                          expired
+                            ? "text-red-600 font-semibold"
+                            : "text-gray-700"
+                        }
+                      >
                         {formatDisplayDate(unit.expiryDate) || "-"}
                         {expired && (
                           <span className="ml-1 text-xs">Expired</span>
                         )}
                       </span>
+                      {expired && (
+                        <Button
+                          title="Dispose Unit"
+                          containerStyles="ml-auto border border-red-500 text-red-500 bg-red-50 hover:bg-red-100 rounded-md"
+                          handleClick={(e) => handleDispose(e as any, unit.id)}
+                        />
+                      )}
                     </div>
                   </td>
                 </tr>

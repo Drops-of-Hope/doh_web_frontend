@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import { ReactElement } from 'react';
+import { ReactElement } from "react";
 
 export interface ButtonProps {
   title: string;
@@ -22,7 +22,7 @@ export interface LogoProps {
 }
 
 export interface SearchBarProps {
-  title: string;         
+  title: string;
 }
 
 export interface StatisticCardProps {
@@ -38,16 +38,22 @@ export interface MetricCardProps {
   heading: string;
   body: string;
   count: number;
+  onClick?: MouseEventHandler<HTMLDivElement>;
 }
 
-export type DashboardType = 'blood_bank' | 'donor' | 'hospital' | 'it_support' | 'campaign_org';
+export type DashboardType =
+  | "blood_bank"
+  | "donor"
+  | "hospital"
+  | "it_support"
+  | "campaign_org";
 
 export interface MenuItem {
   name: string;
   href?: string;
   icon: ReactElement;
   active: boolean;
-  position: 'top' | 'bottom';
+  position: "top" | "bottom";
   onClick?: () => void;
   children?: Array<{
     name: string;
