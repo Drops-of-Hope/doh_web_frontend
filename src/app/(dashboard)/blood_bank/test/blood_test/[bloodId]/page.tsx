@@ -69,18 +69,52 @@ export default function BloodUnitTestingPage() {
   }, [bloodUnitData]);
 
   useEffect(() => {
+    // Default template for tests when there's no bloodTestData yet.
+    const defaultTests: TestResult[] = [
+      {
+        id: "blood-group",
+        name: "Blood Group Typing",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "hiv",
+        name: "HIV Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "syphilis",
+        name: "Syphilis Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "hepatitis",
+        name: "Hepatitis B & C Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "malaria",
+        name: "Malaria Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "hemoglobin",
+        name: "Hemoglobin Level Check",
+        isCompulsory: true,
+        status: "pending",
+      },
+    ];
+
     if (bloodTestData) {
+      // Map actual data to test statuses
       setTests([
+        defaultTests[0],
         {
-          id: "blood-group",
-          name: "Blood Group Typing",
-          isCompulsory: true,
-          status: "pass",
-        },
-        {
-          id: "hiv",
-          name: "HIV Screening",
-          isCompulsory: true,
+          ...defaultTests[1],
           status:
             bloodTestData.hivTest === null ||
             typeof bloodTestData.hivTest === "undefined"
@@ -90,9 +124,7 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "syphilis",
-          name: "Syphilis Screening",
-          isCompulsory: true,
+          ...defaultTests[2],
           status:
             bloodTestData.syphilis === null ||
             typeof bloodTestData.syphilis === "undefined"
@@ -102,9 +134,7 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "hepatitis",
-          name: "Hepatitis B & C Screening",
-          isCompulsory: true,
+          ...defaultTests[3],
           status:
             bloodTestData.hepatitisB === null ||
             typeof bloodTestData.hepatitisB === "undefined" ||
@@ -116,9 +146,7 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "malaria",
-          name: "Malaria Screening",
-          isCompulsory: true,
+          ...defaultTests[4],
           status:
             bloodTestData.malaria === null ||
             typeof bloodTestData.malaria === "undefined"
@@ -128,9 +156,7 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "hemoglobin",
-          name: "Hemoglobin Level Check",
-          isCompulsory: true,
+          ...defaultTests[5],
           status:
             typeof bloodTestData.hemoglobin === "number" &&
             bloodTestData.hemoglobin > 0
@@ -138,6 +164,9 @@ export default function BloodUnitTestingPage() {
               : "pending",
         },
       ]);
+    } else {
+      // No tests exist yet — show the default pending cards so user can create tests
+      setTests(defaultTests);
     }
   }, [bloodTestData]);
 
