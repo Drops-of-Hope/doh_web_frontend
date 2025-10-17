@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
+import type { FormData } from "../../../types";
 
 interface PreScreeningSummaryProps {
-  formData: any;
+  formData: FormData;
 }
 
 const PreScreeningSummary: React.FC<PreScreeningSummaryProps> = ({ formData }) => {
