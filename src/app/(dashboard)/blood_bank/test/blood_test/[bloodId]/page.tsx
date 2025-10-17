@@ -13,12 +13,15 @@ import {
   useGetBloodTestByBloodIdQuery,
   useUpdateSyphilisTestMutation,
   useUpdateHepatitisTestMutation,
+  useUpdateMalariaTestMutation,
 } from "@/store/api/bloodTestApi";
 import {
   mapBloodGroupToDisplay,
   formatDisplayDate,
 } from "@/lib/appointmentUtils";
 import { TestResult, BloodUnit } from "../../../../../../../types";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function BloodUnitTestingPage() {
   const router = useRouter();
@@ -43,6 +46,8 @@ export default function BloodUnitTestingPage() {
     useUpdateSyphilisTestMutation();
   const [updateHepatitisTest, { isLoading: isUpdatingHepatitis }] =
     useUpdateHepatitisTestMutation();
+  const [updateMalariaTest, { isLoading: isUpdatingMalaria }] =
+    useUpdateMalariaTestMutation();
 
   useEffect(() => {
     if (bloodUnitData) {
@@ -66,18 +71,58 @@ export default function BloodUnitTestingPage() {
   }, [bloodUnitData]);
 
   useEffect(() => {
+    // Default template for tests when there's no bloodTestData yet.
+    const defaultTests: TestResult[] = [
+      {
+        id: "blood-group",
+        name: "Blood Group Typing",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "hiv",
+        name: "HIV Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "syphilis",
+        name: "Syphilis Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "hepatitis",
+        name: "Hepatitis B & C Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "malaria",
+        name: "Malaria Screening",
+        isCompulsory: true,
+        status: "pending",
+      },
+      {
+        id: "hemoglobin",
+        name: "Hemoglobin Level Check",
+        isCompulsory: true,
+        status: "pending",
+      },
+    ];
+
+    // Consider blood group typed if the bloodUnitData has a bloodDonation.user.bloodGroup
+    const bloodGroupExists = !!bloodUnitData?.bloodDonation?.user?.bloodGroup;
+
     if (bloodTestData) {
+      // Map actual data to test statuses
       setTests([
         {
-          id: "blood-group",
-          name: "Blood Group Typing",
-          isCompulsory: true,
-          status: "pass",
+          ...defaultTests[0],
+          status: bloodGroupExists ? "pass" : defaultTests[0].status,
         },
         {
-          id: "hiv",
-          name: "HIV Screening",
-          isCompulsory: true,
+          ...defaultTests[1],
           status:
             bloodTestData.hivTest === null ||
             typeof bloodTestData.hivTest === "undefined"
@@ -87,9 +132,7 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "syphilis",
-          name: "Syphilis Screening",
-          isCompulsory: true,
+          ...defaultTests[2],
           status:
             bloodTestData.syphilis === null ||
             typeof bloodTestData.syphilis === "undefined"
@@ -99,9 +142,7 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "hepatitis",
-          name: "Hepatitis B & C Screening",
-          isCompulsory: true,
+          ...defaultTests[3],
           status:
             bloodTestData.hepatitisB === null ||
             typeof bloodTestData.hepatitisB === "undefined" ||
@@ -113,20 +154,33 @@ export default function BloodUnitTestingPage() {
               : "pass",
         },
         {
-          id: "malaria",
-          name: "Malaria Screening",
-          isCompulsory: true,
-          status: bloodTestData.malaria ? "fail" : "pending",
+          ...defaultTests[4],
+          status:
+            bloodTestData.malaria === null ||
+            typeof bloodTestData.malaria === "undefined"
+              ? "pending"
+              : bloodTestData.malaria
+              ? "fail"
+              : "pass",
         },
         {
-          id: "hemoglobin",
-          name: "Hemoglobin Level Check",
-          isCompulsory: true,
-          status: bloodTestData.hemoglobin > 0 ? "pass" : "pending",
+          ...defaultTests[5],
+          status:
+            typeof bloodTestData.hemoglobin === "number" &&
+            bloodTestData.hemoglobin > 0
+              ? "pass"
+              : "pending",
         },
       ]);
+    } else {
+      // No tests exist yet — but if blood group already typed, mark it pass
+      setTests(
+        defaultTests.map((t, i) =>
+          i === 0 ? { ...t, status: bloodGroupExists ? "pass" : t.status } : t
+        )
+      );
     }
-  }, [bloodTestData]);
+  }, [bloodTestData, bloodUnitData]);
 
   const handleTestCardClick = (testId: string) => {
     if (testId === "blood-group") {
@@ -135,11 +189,19 @@ export default function BloodUnitTestingPage() {
       router.push(`/blood_bank/test/blood_test/${bloodIdStr}/hiv`);
     } else if (testId === "syphilis" || testId === "hepatitis") {
       setSelectedTest(testId);
+    } else if (testId === "malaria") {
+      // Open modal for malaria test
+      setSelectedTest(testId);
+    } else if (testId === "hemoglobin") {
+      router.push(`/blood_bank/test/blood_test/${bloodIdStr}/hemoglobin`);
     }
   };
 
   const handleFinalizeStatus = (finalStatus: "pass" | "fail") => {
     if (bloodUnit) setBloodUnit({ ...bloodUnit, status: finalStatus });
+    if (finalStatus === "pass") {
+      toast.success("Blood unit marked as PASS");
+    }
   };
 
   if (isUnitLoading || isTestLoading) return <div>Loading blood unit...</div>;
@@ -161,6 +223,7 @@ export default function BloodUnitTestingPage() {
           tests={tests}
           onTestCardClick={handleTestCardClick}
           onFinalizeStatus={handleFinalizeStatus}
+          bloodId={bloodIdStr}
         />
 
         {/* Modal Component */}
@@ -171,8 +234,21 @@ export default function BloodUnitTestingPage() {
           setTests={setTests}
           updateSyphilisTest={updateSyphilisTest}
           updateHepatitisTest={updateHepatitisTest}
+          updateMalariaTest={updateMalariaTest}
           isUpdatingSyphilis={isUpdatingSyphilis}
           isUpdatingHepatitis={isUpdatingHepatitis}
+          isUpdatingMalaria={isUpdatingMalaria}
+        />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
         />
       </div>
     </div>

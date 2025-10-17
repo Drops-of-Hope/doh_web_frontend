@@ -25,14 +25,14 @@ export default function InventoryPage() {
           iconBgColor="#3B82F6"
           heading="Total Units"
           body="Blood units in stock"
-          count={1247}
+          count={54}
           icon={<FaBoxes size={24} className="text-white" />}
         />
         
         <MetricCard
-          iconBgColor="#EF4444"
-          heading="Low Blood Stock"
-          body="Units below threshold"
+          iconBgColor="#28A745"
+          heading="Safe Blood Units"
+          body="Units ready for transfusion"
           count={23}
           icon={<FaExclamationTriangle size={24} className="text-white" />}
         />
@@ -41,7 +41,7 @@ export default function InventoryPage() {
           iconBgColor="#DC2626"
           heading="Expired Units"
           body="Units past expiration"
-          count={8}
+          count={0}
           icon={<FaTimesCircle size={24} className="text-white" />}
         />
         
@@ -49,7 +49,7 @@ export default function InventoryPage() {
           iconBgColor="#f97316"
           heading="Expiring Soon"
           body="Units expiring in 7 days"
-          count={45}
+          count={0}
           icon={<FaClock size={24} className="text-white" />}
         />
       </div>

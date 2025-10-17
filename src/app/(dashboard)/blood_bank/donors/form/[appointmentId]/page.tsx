@@ -1,30 +1,38 @@
 "use client";
 
-import { PreScreeningFormDisplay, MedicalOfficerEvaluation, AddBloodUnit } from "@/components";
+import {
+  PreScreeningFormDisplay,
+  MedicalOfficerEvaluation,
+  AddBloodUnit,
+} from "@/components";
 import { ReactElement, useState } from "react";
-import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi"; 
-import { useParams, useRouter } from "next/navigation"; 
+import { useGetDonationFormByAppointmentIdQuery } from "@/store/api/donationFormApi";
+import { useParams, useRouter } from "next/navigation";
 
 export default function Form(): ReactElement {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
-  const router = useRouter(); 
+  const router = useRouter();
 
   const { appointmentId } = useParams();
 
   // Make sure appointmentId is a string (pick the first if array)
-  const appointmentIdStr = Array.isArray(appointmentId) ? appointmentId[0] : appointmentId;
+  const appointmentIdStr = Array.isArray(appointmentId)
+    ? appointmentId[0]
+    : appointmentId;
 
   // Only call the query if we have a valid string
-  const { data: formsData, isLoading, error } = useGetDonationFormByAppointmentIdQuery(
-    appointmentIdStr || ""
-  );
+  const {
+    data: formsData,
+    isLoading,
+    error,
+  } = useGetDonationFormByAppointmentIdQuery(appointmentIdStr || "");
 
   const formData = formsData?.[0];
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((s) => s + 1);
     } else {
       router.push("/blood_bank/donors");
     }
@@ -32,14 +40,58 @@ export default function Form(): ReactElement {
 
   const handlePrevious = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep((s) => s - 1);
     }
   };
 
   const renderCurrentStep = () => {
-    if (isLoading) return <p>Loading form...</p>;
-    if (error) return <p className="text-red-500">Failed to load donation form</p>;
-    if (!formData) return <p>No form data found</p>;
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent mb-4"></div>
+            <p className="text-gray-600 text-lg">Loading form...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (error || !formData) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md">
+            <div className="mb-4">
+              <svg
+                className="mx-auto h-16 w-16 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              Form Not Available
+            </h3>
+            <p className="text-gray-600 mb-4">
+              The donation form hasnt been filled yet. Please refresh the page
+              once the form is completed.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      );
+    }
 
     switch (currentStep) {
       case 1:
