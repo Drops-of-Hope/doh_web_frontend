@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
-import { useGetAppointmentByIdQuery } from '@/store/api/appointmentsApi';
-import { useCreateHealthVitalMutation } from '@/store/api/healthVitalsApi';
-import { EvaluationData, ValidationErrors } from '../../../types';
-import { DonorFitnessAssessment } from '@/components';
-import { EvaluationForm } from '@/components';
+import { useGetAppointmentByIdQuery } from "@/store/api/appointmentsApi";
+import { useCreateHealthVitalMutation } from "@/store/api/healthVitalsApi";
+import { EvaluationData, ValidationErrors } from "../../../types";
+import { DonorFitnessAssessment } from "@/components";
+import { EvaluationForm } from "@/components";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Extended interfaces to properly type the API response
 interface ExtendedDonor {
@@ -45,81 +47,92 @@ interface AppointmentData {
 
 const MedicalOfficerEvaluation: React.FC = () => {
   const { appointmentId } = useParams();
-  
+
   // Fetch appointment data from API
-  const { 
-    data: appointmentData, 
-    isLoading, 
-    isError
+  const {
+    data: appointmentData,
+    isLoading,
+    isError,
   } = useGetAppointmentByIdQuery(appointmentId as string, {
-    skip: !appointmentId
+    skip: !appointmentId,
   });
-  
+
   // Type guard to ensure we have properly typed appointment data
   const typedAppointmentData = appointmentData as AppointmentData | undefined;
   const userId = typedAppointmentData?.donor.id;
 
   // Health Vitals Mutation
-  const [createHealthVital, { isLoading: isCreatingVital }] = useCreateHealthVitalMutation();
+  const [createHealthVital, { isLoading: isCreatingVital }] =
+    useCreateHealthVitalMutation();
 
   const [evaluationData, setEvaluationData] = useState<EvaluationData>({
-    donorFitness: '', 
-    fitnessReason: '',
-    weight: '',
-    systolicBP: '',
-    diastolicBP: '',
-    pulseRate: '',
-    temperature: '',
+    donorFitness: "",
+    fitnessReason: "",
+    weight: "",
+    systolicBP: "",
+    diastolicBP: "",
+    pulseRate: "",
+    temperature: "",
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const handleInputChange = (field: keyof EvaluationData, value: string): void => {
-    setEvaluationData(prev => ({
+  const handleInputChange = (
+    field: keyof EvaluationData,
+    value: string
+  ): void => {
+    setEvaluationData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: "",
       }));
     }
-    
+
     // Clear messages when user makes changes
-    setSuccessMessage('');
-    setErrorMessage('');
+    setErrorMessage("");
   };
 
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
-    
+
     if (!evaluationData.donorFitness) {
-      newErrors.donorFitness = 'Please select donor fitness status';
+      newErrors.donorFitness = "Please select donor fitness status";
     }
-    
-    if (evaluationData.donorFitness === 'unfit' && !evaluationData.fitnessReason) {
-      newErrors.fitnessReason = 'Please provide reason for unfitness';
+
+    if (
+      evaluationData.donorFitness === "unfit" &&
+      !evaluationData.fitnessReason
+    ) {
+      newErrors.fitnessReason = "Please provide reason for unfitness";
     }
-    
-    if (evaluationData.donorFitness === 'fit') {
+
+    if (evaluationData.donorFitness === "fit") {
       if (!evaluationData.weight || parseFloat(evaluationData.weight) <= 0) {
-        newErrors.weight = 'Please enter a valid weight';
+        newErrors.weight = "Please enter a valid weight";
       }
-      
-      if (!evaluationData.systolicBP || parseFloat(evaluationData.systolicBP) <= 0) {
-        newErrors.systolicBP = 'Please enter a valid blood pressure';
+
+      if (
+        !evaluationData.systolicBP ||
+        parseFloat(evaluationData.systolicBP) <= 0
+      ) {
+        newErrors.systolicBP = "Please enter a valid blood pressure";
       }
-      
-      if (!evaluationData.pulseRate || parseFloat(evaluationData.pulseRate) <= 0) {
-        newErrors.pulseRate = 'Please enter a valid pulse rate';
+
+      if (
+        !evaluationData.pulseRate ||
+        parseFloat(evaluationData.pulseRate) <= 0
+      ) {
+        newErrors.pulseRate = "Please enter a valid pulse rate";
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -130,13 +143,12 @@ const MedicalOfficerEvaluation: React.FC = () => {
     }
 
     if (!userId || !appointmentId) {
-      setErrorMessage('Missing user or appointment information');
+      setErrorMessage("Missing user or appointment information");
       return;
     }
 
     // Clear previous messages
-    setSuccessMessage('');
-    setErrorMessage('');
+    setErrorMessage("");
 
     try {
       // Create health vital record
@@ -148,31 +160,33 @@ const MedicalOfficerEvaluation: React.FC = () => {
         cvsPulse: parseFloat(evaluationData.pulseRate),
       }).unwrap();
 
-      setSuccessMessage('Health vitals added successfully and donor accepted!');
-      
+      // Show toast notification instead of rendering a success message
+      toast.success("Health vitals added successfully and donor accepted!");
+
       // TODO: Navigate to next step or update appointment status
       // router.push('/next-page');
-      
     } catch (error) {
-      console.error('Failed to save health vitals:', error);
-      setErrorMessage('Failed to save health vitals. Please try again.');
+      console.error("Failed to save health vitals:", error);
+      setErrorMessage("Failed to save health vitals. Please try again.");
     }
   };
 
   const handleRejectDonor = () => {
     if (!evaluationData.donorFitness) {
-      setErrors({ donorFitness: 'Please select donor fitness status' });
+      setErrors({ donorFitness: "Please select donor fitness status" });
       return;
     }
 
-    if (evaluationData.donorFitness === 'unfit' && !evaluationData.fitnessReason) {
-      setErrors({ fitnessReason: 'Please provide reason for rejection' });
+    if (
+      evaluationData.donorFitness === "unfit" &&
+      !evaluationData.fitnessReason
+    ) {
+      setErrors({ fitnessReason: "Please provide reason for rejection" });
       return;
     }
 
     // Clear previous messages
-    setSuccessMessage('');
-    setErrorMessage('');
+    setErrorMessage("");
 
     // TODO: Implement rejection logic (update appointment status, send notification, etc.)
     setErrorMessage(`Donor rejected. Reason: ${evaluationData.fitnessReason}`);
@@ -189,7 +203,9 @@ const MedicalOfficerEvaluation: React.FC = () => {
   if (isError) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-8">
-        <p className="text-red-600">Error loading appointment details. Please try again.</p>
+        <p className="text-red-600">
+          Error loading appointment details. Please try again.
+        </p>
       </div>
     );
   }
@@ -204,10 +220,12 @@ const MedicalOfficerEvaluation: React.FC = () => {
         {typedAppointmentData && (
           <div className="mt-4 p-4 bg-gray-50 rounded-md">
             <p className="text-sm text-gray-700">
-              <span className="font-medium">Donor:</span> {typedAppointmentData.donor.name}
+              <span className="font-medium">Donor:</span>{" "}
+              {typedAppointmentData.donor.name}
             </p>
             <p className="text-sm text-red-600">
-              <span className="font-medium">Blood Group:</span> {typedAppointmentData.donor.bloodGroup}
+              <span className="font-medium">Blood Group:</span>{" "}
+              {typedAppointmentData.donor.bloodGroup}
             </p>
           </div>
         )}
@@ -225,7 +243,6 @@ const MedicalOfficerEvaluation: React.FC = () => {
         <EvaluationForm
           evaluationData={evaluationData}
           errors={errors}
-          successMessage={successMessage}
           errorMessage={errorMessage}
           isCreatingVital={isCreatingVital}
           onInputChange={handleInputChange}
@@ -233,6 +250,18 @@ const MedicalOfficerEvaluation: React.FC = () => {
           onRejectDonor={handleRejectDonor}
         />
       </div>
+      {/* Toast container for react-toastify notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

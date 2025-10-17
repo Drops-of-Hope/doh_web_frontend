@@ -109,10 +109,16 @@ export default function BloodUnitTestingPage() {
       },
     ];
 
+    // Consider blood group typed if the bloodUnitData has a bloodDonation.user.bloodGroup
+    const bloodGroupExists = !!bloodUnitData?.bloodDonation?.user?.bloodGroup;
+
     if (bloodTestData) {
       // Map actual data to test statuses
       setTests([
-        defaultTests[0],
+        {
+          ...defaultTests[0],
+          status: bloodGroupExists ? "pass" : defaultTests[0].status,
+        },
         {
           ...defaultTests[1],
           status:
@@ -165,10 +171,14 @@ export default function BloodUnitTestingPage() {
         },
       ]);
     } else {
-      // No tests exist yet — show the default pending cards so user can create tests
-      setTests(defaultTests);
+      // No tests exist yet — but if blood group already typed, mark it pass
+      setTests(
+        defaultTests.map((t, i) =>
+          i === 0 ? { ...t, status: bloodGroupExists ? "pass" : t.status } : t
+        )
+      );
     }
-  }, [bloodTestData]);
+  }, [bloodTestData, bloodUnitData]);
 
   const handleTestCardClick = (testId: string) => {
     if (testId === "blood-group") {
