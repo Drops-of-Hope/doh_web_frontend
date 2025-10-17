@@ -21,7 +21,7 @@ export default function CampaignRequestDetailsById() {
   const [rejectReason, setRejectReason] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  const [setApproval, { isLoading: isApproving }] = useSetCampaignApprovalMutation();
+  const [setApproval] = useSetCampaignApprovalMutation();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -173,7 +173,7 @@ export default function CampaignRequestDetailsById() {
                 // Refresh data to reflect new status
                 // navigate back after a short delay
                 setTimeout(() => router.push('/blood_bank/campaigns'), 800);
-              } catch (e) {
+              } catch {
                 setFeedback({ type: 'error', message: 'Failed to reject the campaign. Please try again.' });
               }
             }}
@@ -183,7 +183,7 @@ export default function CampaignRequestDetailsById() {
                 setFeedback({ type: 'success', message: 'Campaign request has been accepted.' });
                 // navigate back after a short delay
                 setTimeout(() => router.push('/blood_bank/campaigns'), 800);
-              } catch (e) {
+              } catch {
                 setFeedback({ type: 'error', message: 'Failed to accept the campaign. Please try again.' });
               }
             }}

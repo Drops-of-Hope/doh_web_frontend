@@ -40,6 +40,20 @@ export interface CampaignDto {
   updatedAt?: string;
 }
 
+// Completed campaigns might use a single `date` and include additional statistics
+export interface CompletedCampaignDto {
+  id: string;
+  title: string;
+  status?: string;
+  date?: string; // completion or event date
+  unitsCollected?: number;
+  expectedDonors?: number;
+  actualDonors?: number;
+  location: string;
+  organizer?: string | OrganizerInfo; // API may return string or object
+  medicalEstablishment?: MedicalEstablishmentInfo;
+}
+
 export interface PaginationInfo {
   page: number;
   limit: number;
@@ -56,6 +70,27 @@ export interface PendingCampaignsResponse {
   };
 }
 
+export interface CompletedCampaignsResponse {
+  success: boolean;
+  campaigns?: CompletedCampaignDto[];
+  data?: {
+    campaigns: CompletedCampaignDto[];
+    pagination: PaginationInfo;
+  };
+}
+
+export interface CampaignsSummaryData {
+  pendingRequests: number;
+  upcomingCampaigns: number;
+  totalCampaignsHeld: number;
+  totalCampaignDonors: number;
+}
+
+export interface CampaignsSummaryResponse {
+  success: boolean;
+  data?: CampaignsSummaryData;
+}
+
 export const campaignsApi = createApi({
   reducerPath: "campaignsApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api/campaigns" }),
@@ -69,9 +104,32 @@ export const campaignsApi = createApi({
         `/pending/medical-establishment/${medicalEstablishmentId}?page=${page}&limit=${limit}`,
       providesTags: (result, error, arg) => [{ type: "Campaigns", id: arg.medicalEstablishmentId }],
     }),
+    getUpcomingCampaignsByMedicalEstablishment: builder.query<
+      PendingCampaignsResponse,
+      { medicalEstablishmentId: string; page?: number; limit?: number }
+    >({
+      query: ({ medicalEstablishmentId, page = 1, limit = 5 }) =>
+        `/upcoming/medical-establishment/${medicalEstablishmentId}?page=${page}&limit=${limit}`,
+      providesTags: (result, error, arg) => [{ type: "Campaigns", id: `upcoming-${arg.medicalEstablishmentId}` }],
+    }),
+    getCompletedCampaignsByMedicalEstablishment: builder.query<
+      CompletedCampaignsResponse,
+      { medicalEstablishmentId: string; page?: number; limit?: number }
+    >({
+      query: ({ medicalEstablishmentId, page = 1, limit = 5 }) =>
+        `/completed/medical-establishment/${medicalEstablishmentId}?page=${page}&limit=${limit}`,
+      providesTags: (result, error, arg) => [{ type: "Campaigns", id: `completed-${arg.medicalEstablishmentId}` }],
+    }),
     getCampaignById: builder.query<CampaignDto, string>({
       query: (campaignId) => `/${campaignId}`,
       providesTags: (result, error, id) => [{ type: "Campaigns", id }],
+    }),
+    getCampaignSummaryByMedicalEstablishment: builder.query<
+      CampaignsSummaryResponse,
+      { medicalEstablishmentId: string }
+    >({
+      query: ({ medicalEstablishmentId }) => `/medical-establishment/${medicalEstablishmentId}/summary`,
+      providesTags: (result, error, arg) => [{ type: "Campaigns", id: `summary-${arg.medicalEstablishmentId}` }],
     }),
     setCampaignApproval: builder.mutation<
       { success?: boolean } | CampaignDto,
@@ -92,6 +150,9 @@ export const campaignsApi = createApi({
 
 export const { 
   useGetPendingCampaignsByMedicalEstablishmentQuery,
+  useGetUpcomingCampaignsByMedicalEstablishmentQuery,
+  useGetCompletedCampaignsByMedicalEstablishmentQuery,
   useGetCampaignByIdQuery,
-  useSetCampaignApprovalMutation
+  useSetCampaignApprovalMutation,
+  useGetCampaignSummaryByMedicalEstablishmentQuery
 } = campaignsApi;
