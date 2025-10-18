@@ -59,12 +59,15 @@ export default function BloodInventoryTable({
   // UI state for sorting and filtering
   const [sortBy, setSortBy] = React.useState<
     "donation_desc" | "donation_asc" | "expiry_desc" | "expiry_asc"
-  >("donation_desc");
+  >("expiry_asc");
   const [expiredOnly, setExpiredOnly] =
     React.useState<boolean>(showOnlyExpired);
   const [selectedGroups, setSelectedGroups] = React.useState<string[]>([]);
 
   const allDisplayGroups = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+
+  // Consider units within this many days of expiry as "nearing expiry"
+  const NEARING_EXPIRY_DAYS = 7;
 
   React.useEffect(() => {
     // Trigger the POST call once on mount
@@ -76,6 +79,17 @@ export default function BloodInventoryTable({
   const isExpired = (expiryDate: string | undefined) => {
     if (!expiryDate) return false;
     return new Date(expiryDate) < new Date();
+  };
+
+  // Helper to check if a unit is nearing expiry (not yet expired, within threshold)
+  const isNearingExpiry = (expiryDate: string | undefined) => {
+    if (!expiryDate) return false;
+    const now = new Date();
+    const exp = new Date(expiryDate);
+    if (exp <= now) return false; // already expired
+    const diffMs = exp.getTime() - now.getTime();
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    return diffDays <= NEARING_EXPIRY_DAYS;
   };
 
   const bloodUnits = React.useMemo(() => {
@@ -100,6 +114,18 @@ export default function BloodInventoryTable({
     const toTime = (d: string | undefined) =>
       d ? new Date(d).getTime() : null;
     const sorted = [...filtered].sort((a, b) => {
+      // Priority groups: near-expiry first, then other valid units, then expired last (unless filtering expired only)
+      const priority = (u: BloodUnit) => {
+        if (expiredOnly) return 0; // don't re-order by status when viewing only expired
+        if (isNearingExpiry(u?.expiryDate)) return 0;
+        if (isExpired(u?.expiryDate)) return 2;
+        return 1;
+      };
+
+      const prA = priority(a);
+      const prB = priority(b);
+      if (prA !== prB) return prA - prB;
+
       const aDonation = toTime(a?.bloodDonation?.startTime);
       const bDonation = toTime(b?.bloodDonation?.startTime);
       const aExpiry = toTime(a?.expiryDate);
@@ -353,11 +379,14 @@ export default function BloodInventoryTable({
             )}
             {bloodUnits.map((unit) => {
               const expired = isExpired(unit.expiryDate);
+              const nearing = isNearingExpiry(unit.expiryDate);
               return (
                 <tr
                   key={unit.id}
                   onClick={handleRowClick}
-                  className={`hover:bg-gray-50 ${expired ? "bg-red-50" : ""}`}
+                  className={`hover:bg-gray-50 ${
+                    expired ? "bg-red-50" : nearing ? "bg-yellow-50" : ""
+                  }`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                     {unit.id}
@@ -394,16 +423,32 @@ export default function BloodInventoryTable({
                           />
                         </svg>
                       )}
+                      {!expired && nearing && (
+                        <svg
+                          className="w-5 h-5 text-yellow-600 flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.59c.75 1.335-.213 2.99-1.743 2.99H3.482c-1.53 0-2.493-1.655-1.743-2.99l6.518-11.59zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-1-1V7a1 1 0 112 0v4a1 1 0 01-1 1z" />
+                        </svg>
+                      )}
                       <span
                         className={
                           expired
                             ? "text-red-600 font-semibold"
+                            : nearing
+                            ? "text-yellow-700 font-medium"
                             : "text-gray-700"
                         }
                       >
                         {formatDisplayDate(unit.expiryDate) || "-"}
                         {expired && (
                           <span className="ml-1 text-xs">Expired</span>
+                        )}
+                        {!expired && nearing && (
+                          <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 text-[10px] uppercase tracking-wide">
+                            Nearing expiry
+                          </span>
                         )}
                       </span>
                       {expired && (

@@ -74,6 +74,24 @@ export default function TestTable({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
 
+  // Helper: compute hours elapsed since donation start time
+  const getHoursSinceDonation = (startTime?: string): number | null => {
+    if (!startTime) return null;
+    const start = new Date(startTime).getTime();
+    if (Number.isNaN(start)) return null;
+    const now = Date.now();
+    const diffMs = Math.max(0, now - start);
+    return Math.floor(diffMs / (1000 * 60 * 60));
+  };
+
+  // Helper: determine priority level based on elapsed hours
+  const getPriorityLevel = (hours: number | null) => {
+    if (hours === null) return { level: "normal" as const, weight: 2 };
+    if (hours >= 72) return { level: "critical" as const, weight: 0 };
+    if (hours >= 48) return { level: "priority" as const, weight: 1 };
+    return { level: "normal" as const, weight: 2 };
+  };
+
   // Filter data based on search query
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const filteredBySearch: BloodUnit[] = normalizedQuery
@@ -103,9 +121,21 @@ export default function TestTable({
         })
       : filteredBySearch;
 
-  // Sort data
+  // Sort data — prioritize by elapsed time (>=72h critical, >=48h priority), then secondary sort
   const sortedData: BloodUnit[] = [...filteredData].sort(
     (a: BloodUnit, b: BloodUnit) => {
+      const hoursA = getHoursSinceDonation(
+        a.bloodDonation?.startTime ?? undefined
+      );
+      const hoursB = getHoursSinceDonation(
+        b.bloodDonation?.startTime ?? undefined
+      );
+      const prA = getPriorityLevel(hoursA).weight;
+      const prB = getPriorityLevel(hoursB).weight;
+
+      if (prA !== prB) return prA - prB; // lower weight first (critical -> priority -> normal)
+
+      // Secondary sort as per existing sortBy
       switch (sortBy) {
         case "collectionDate": {
           const da = a.bloodDonation?.startTime
@@ -204,6 +234,9 @@ export default function TestTable({
                 Collection Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Elapsed (hrs)
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Expiry Date
               </th>
             </tr>
@@ -212,7 +245,7 @@ export default function TestTable({
             {currentData.length === 0 ? (
               <tr>
                 <td
-                  colSpan={4}
+                  colSpan={5}
                   className="px-6 py-8 text-center text-sm text-gray-500"
                 >
                   {normalizedQuery
@@ -221,42 +254,76 @@ export default function TestTable({
                 </td>
               </tr>
             ) : (
-              currentData.map((item: BloodUnit) => (
-                <tr
-                  key={item.id}
-                  onClick={() => handleRowClick(item.id)}
-                  className="hover:bg-gray-50 cursor-pointer transition-colors duration-150"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
-                    {item.id}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.bloodDonation?.user?.bloodGroup ? (
-                      <span
-                        className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full border ${getBloodTypeBadgeColor(
-                          mapBloodGroupToDisplay(
+              currentData.map((item: BloodUnit) => {
+                const hours = getHoursSinceDonation(
+                  item.bloodDonation?.startTime
+                );
+                const { level } = getPriorityLevel(hours);
+                const rowClass =
+                  level === "critical"
+                    ? "bg-red-50 hover:bg-red-100"
+                    : level === "priority"
+                    ? "bg-yellow-50 hover:bg-yellow-100"
+                    : "hover:bg-gray-50";
+
+                return (
+                  <tr
+                    key={item.id}
+                    onClick={() => handleRowClick(item.id)}
+                    className={`${rowClass} cursor-pointer transition-colors duration-150`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700">
+                      {item.id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.bloodDonation?.user?.bloodGroup ? (
+                        <span
+                          className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full border ${getBloodTypeBadgeColor(
+                            mapBloodGroupToDisplay(
+                              item.bloodDonation.user.bloodGroup
+                            )
+                          )}`}
+                        >
+                          {mapBloodGroupToDisplay(
                             item.bloodDonation.user.bloodGroup
-                          )
-                        )}`}
-                      >
-                        {mapBloodGroupToDisplay(
-                          item.bloodDonation.user.bloodGroup
-                        )}
-                      </span>
-                    ) : (
-                      "N/A"
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.bloodDonation
-                      ? formatDisplayDate(item.bloodDonation.startTime)
-                      : "N/A"}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDisplayDate(item.expiryDate)}
-                  </td>
-                </tr>
-              ))
+                          )}
+                        </span>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.bloodDonation
+                        ? formatDisplayDate(item.bloodDonation.startTime)
+                        : "N/A"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {hours === null ? (
+                        <span className="text-gray-500">N/A</span>
+                      ) : (
+                        <div className="flex flex-col">
+                          <span className="text-gray-800 font-medium">
+                            {hours}h
+                          </span>
+                          {level === "priority" && (
+                            <span className="mt-1 inline-flex w-fit items-center px-2 py-0.5 text-[10px] font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+                              Priority: Test now
+                            </span>
+                          )}
+                          {level === "critical" && (
+                            <span className="mt-1 inline-flex w-fit items-center px-2 py-0.5 text-[10px] font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">
+                              Time passed limit: Not safe, discard
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatDisplayDate(item.expiryDate)}
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
