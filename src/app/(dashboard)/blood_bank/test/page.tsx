@@ -11,7 +11,7 @@ import { useGetBloodTestCountsMutation } from "@/store/api/bloodTestApi";
 import { useEffect, useState } from "react";
 
 export default function TestPage() {
-  const [fetchCounts, { data, isLoading, isError }] =
+  const [fetchCounts, { data }] =
     useGetBloodTestCountsMutation();
   const [query, setQuery] = useState<string>("");
   const [bloodType, setBloodType] = useState<string>("all");
