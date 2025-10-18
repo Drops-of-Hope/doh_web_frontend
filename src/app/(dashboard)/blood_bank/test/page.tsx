@@ -8,11 +8,12 @@ import {
   FaClipboardCheck,
 } from "react-icons/fa";
 import { useGetBloodTestCountsMutation } from "@/store/api/bloodTestApi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function TestPage() {
   const [fetchCounts, { data, isLoading, isError }] =
     useGetBloodTestCountsMutation();
+  const [query, setQuery] = useState<string>("");
 
   useEffect(() => {
     // Fetch counts on mount
@@ -61,7 +62,11 @@ export default function TestPage() {
         <div className="flex flex-col lg:flex-row gap-4 items-center">
           {/* Search Bar */}
           <div className="flex-1 relative">
-            <SearchBar title="Search by blood unit id, donor id..." />
+            <SearchBar
+              title="Search by blood unit id, donor id..."
+              value={query}
+              onSearch={setQuery}
+            />
           </div>
 
           {/* Filter Buttons */}
@@ -84,15 +89,14 @@ export default function TestPage() {
             <div className="flex items-center gap-2">
               <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400">
                 <option value="id">Sort by ID</option>
-                <option value="bloodType">Sort by Blood Type</option>
-                <option value="status">Sort by Status</option>
-                <option value="testDate">Sort by Date</option>
+                <option value="status">Sort by Collection Date</option>
+                <option value="testDate">Sort by Expiry Date</option>
               </select>
             </div>
           </div>
         </div>
       </div>
-      <TestTable />
+      <TestTable searchQuery={query} />
     </div>
   );
 }
