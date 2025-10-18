@@ -52,6 +52,14 @@ export interface BloodTestResult {
   malaria: boolean | null;
 }
 
+// Counts response interface (matches API response keys)
+export interface BloodTestCounts {
+  untested_units: number;
+  tests_done_this_month: number;
+  tests_passed_this_month: number;
+  failed_tests_this_month: number;
+}
+
 export const bloodTestApi = createApi({
   reducerPath: "bloodTestApi",
   baseQuery: fetchBaseQuery({
@@ -207,6 +215,11 @@ export const bloodTestApi = createApi({
         { type: "BloodTests", id: bloodId },
       ],
     }),
+
+    // Get counts for blood tests (GET /counts) as a mutation for on-demand fetch
+    getBloodTestCounts: builder.mutation<BloodTestCounts, void>({
+      query: () => ({ url: "/counts", method: "GET" }),
+    }),
   }),
 });
 
@@ -221,4 +234,5 @@ export const {
   useUpdateMalariaTestMutation,
   useUpdateHemoglobinTestMutation,
   usePassBloodUnitMutation,
+  useGetBloodTestCountsMutation,
 } = bloodTestApi;

@@ -88,7 +88,7 @@ export const TestBadge = ({
     },
   };
 
-  const config = badgeConfig[status];
+  const config = badgeConfig[status] ?? badgeConfig["pending"];
 
   return (
     <span
@@ -101,6 +101,19 @@ export const TestBadge = ({
 };
 
 export const BloodUnitInfo = ({ bloodUnit }: { bloodUnit: BloodUnit }) => {
+  // Normalize status coming from server/UI to ensure it's one of the expected values
+  const normalizeStatus = (s: unknown): "pending" | "pass" | "fail" => {
+    const v = typeof s === "string" ? s.toLowerCase() : "";
+    if (v === "pass" || v === "fail" || v === "pending") return v;
+    // Map common backend synonyms to our canonical set
+    if (["approved", "accepted", "safe", "passed", "success"].includes(v))
+      return "pass";
+    if (["rejected", "unsafe", "failed", "discarded", "danger"].includes(v))
+      return "fail";
+    if (["in-progress", "processing", "queued", "waiting"].includes(v))
+      return "pending";
+    return "pending";
+  };
   // Blood type badge component
   const BloodTypeBadge = ({ bloodGroup }: { bloodGroup: string }) => {
     return (
@@ -144,7 +157,8 @@ export const BloodUnitInfo = ({ bloodUnit }: { bloodUnit: BloodUnit }) => {
       },
     };
 
-    const config = statusConfig[status];
+    // Defensive fallback in case an unexpected status sneaks through at runtime
+    const config = statusConfig[status] ?? statusConfig["pending"];
 
     return (
       <span
@@ -162,7 +176,7 @@ export const BloodUnitInfo = ({ bloodUnit }: { bloodUnit: BloodUnit }) => {
         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
           Blood Unit Information
         </h2>
-        <StatusBadge status={bloodUnit.status} />
+        <StatusBadge status={normalizeStatus(bloodUnit.status)} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
