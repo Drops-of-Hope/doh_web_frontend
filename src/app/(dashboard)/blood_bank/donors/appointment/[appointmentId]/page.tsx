@@ -252,7 +252,7 @@ export default function Appointment() {
               
               <button
                 onClick={handleViewForm}
-                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-4 transition-colors duration-200 hover:underline"
+                className="ml-4 inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-4 transition-colors duration-200 hover:underline"
               >
                 View Form
                 <FaExternalLinkAlt className="w-3 h-3" />

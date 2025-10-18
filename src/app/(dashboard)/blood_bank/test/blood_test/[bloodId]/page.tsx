@@ -204,7 +204,9 @@ export default function BloodUnitTestingPage() {
     }
   };
 
-  if (isUnitLoading || isTestLoading) return <div>Loading blood unit...</div>;
+  if (isUnitLoading || isTestLoading) return <div><div className="flex items-center justify-center h-64">
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent mb-4"></div>
+        </div></div>;
   if (isUnitError || !bloodUnit) return <div>Failed to load blood unit.</div>;
 
   return (

@@ -1,14 +1,32 @@
-import React from 'react';
-import { MetricCardProps } from '../../../types';
+import React from "react";
+import { MetricCardProps } from "../../../types";
 
-const MetricCard = ({ iconBgColor, heading, body, count, icon }: MetricCardProps) => {
+const MetricCard = ({
+  iconBgColor,
+  heading,
+  body,
+  count,
+  icon,
+  onClick,
+}: MetricCardProps) => {
   return (
-    <div className="bg-[#FFFFFF] rounded-2xl shadow-sm p-4 text-center max-w-xs">
-      <div className="w-12 h-12 mx-auto flex items-center justify-center rounded-xl" style={{ backgroundColor: iconBgColor }}>
+    <div
+      className={
+        "bg-[#FFFFFF] rounded-2xl shadow-sm p-4 text-center max-w-xs " +
+        (onClick ? "cursor-pointer hover:shadow-md transition-shadow" : "")
+      }
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
+      <div
+        className="w-12 h-12 mx-auto flex items-center justify-center rounded-xl"
+        style={{ backgroundColor: iconBgColor }}
+      >
         {icon}
       </div>
       <h3 className="text-gray-500 font-semibold font-Helvetica text-xl mt-2">
-        {heading.split('\n').map((line, idx) => (
+        {heading.split("\n").map((line, idx) => (
           <span key={idx}>
             {line}
             <br />

@@ -46,6 +46,28 @@ export interface BloodByInventoryResponse {
   data: BloodUnit[];
 }
 
+// Request/Response types for POST /blood/discard-unit
+export interface DiscardBloodUnitRequest {
+  blood_id: string;
+}
+
+export interface DiscardBloodUnitResponse {
+  message: string;
+}
+
+// Request/Response types for POST /blood/stock-counts
+export interface StockCountsRequest {
+  inventory_id: string;
+}
+
+export interface StockCountsResponse {
+  message: string;
+  totalStock: number;
+  safeUnits: number;
+  expiredUnits: number;
+  nearingExpiryUnits: number;
+}
+
 export const inventoryApi = createApi({
   reducerPath: "inventoryApi",
   baseQuery: fetchBaseQuery({
@@ -78,6 +100,30 @@ export const inventoryApi = createApi({
         body,
       }),
     }),
+    // POST: /blood/discard-unit
+    discardBloodUnit: builder.mutation<
+      DiscardBloodUnitResponse,
+      DiscardBloodUnitRequest
+    >({
+      query: (body) => ({
+        url: "/blood/discard-unit",
+        method: "POST",
+        body,
+      }),
+      // Invalidate all Inventory queries since we don't have the specific inventory id here
+      invalidatesTags: ["Inventory"],
+    }),
+    // POST: /blood/stock-counts
+    getStockCountsByInventory: builder.mutation<
+      StockCountsResponse,
+      StockCountsRequest
+    >({
+      query: (body) => ({
+        url: "/blood/stock-counts",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -85,4 +131,6 @@ export const {
   useGetInventoryByEstablishmentIdQuery,
   useGetSafeUnitsByInventoryIdQuery,
   useGetBloodByInventoryMutation,
+  useDiscardBloodUnitMutation,
+  useGetStockCountsByInventoryMutation,
 } = inventoryApi;

@@ -1,21 +1,48 @@
 "use client";
-import React from 'react';
-import { FaBoxes, FaExclamationTriangle, FaTimesCircle, FaClock, FaFileExport } from 'react-icons/fa';
-import { MetricCard, BloodInventoryTable, PieChartWithLegend, BloodUsage, DonationUsageChart } from '@/components';
+import React from "react";
+import {
+  FaBoxes,
+  FaExclamationTriangle,
+  FaTimesCircle,
+  FaClock,
+  FaFileExport,
+} from "react-icons/fa";
+import {
+  MetricCard,
+  BloodInventoryTable,
+  PieChartWithLegend,
+  BloodUsage,
+  DonationUsageChart,
+} from "@/components";
+import { useGetStockCountsByInventoryMutation } from "@/store/api/inventoryApi";
 
 export default function InventoryPage() {
+  const [showOnlyExpired, setShowOnlyExpired] = React.useState(false);
+  const inventory_id = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+
+  // Fetch stock counts on mount
+  const [getStockCounts, { data: stockCounts, isLoading }] =
+    useGetStockCountsByInventoryMutation();
+
+  React.useEffect(() => {
+    getStockCounts({ inventory_id })
+      .unwrap()
+      .catch((e) => {
+        console.error("Failed to fetch stock counts", e);
+      });
+  }, [getStockCounts]);
 
   const bloodTypeData = [
-    { name: 'O+', value: 45 },
-    { name: 'A+', value: 38 },
-    { name: 'B+', value: 28 },
-    { name: 'AB+', value: 15 },
-    { name: 'O-', value: 22 },
-    { name: 'A-', value: 18 }
+    { name: "O+", value: 45 },
+    { name: "A+", value: 38 },
+    { name: "B+", value: 28 },
+    { name: "AB+", value: 15 },
+    { name: "O-", value: 22 },
+    { name: "A-", value: 18 },
   ];
 
   const handleExportReport = () => {
-    console.log('Exporting inventory report...');
+    console.log("Exporting inventory report...");
   };
 
   return (
@@ -25,63 +52,67 @@ export default function InventoryPage() {
           iconBgColor="#3B82F6"
           heading="Total Units"
           body="Blood units in stock"
-          count={54}
+          count={isLoading ? 0 : stockCounts?.totalStock ?? 0}
           icon={<FaBoxes size={24} className="text-white" />}
+          onClick={() => setShowOnlyExpired(false)}
         />
-        
+
         <MetricCard
           iconBgColor="#28A745"
           heading="Safe Blood Units"
           body="Units ready for transfusion"
-          count={23}
+          count={isLoading ? 0 : stockCounts?.safeUnits ?? 0}
           icon={<FaExclamationTriangle size={24} className="text-white" />}
+          onClick={() => setShowOnlyExpired(false)}
         />
-        
+
         <MetricCard
           iconBgColor="#DC2626"
           heading="Expired Units"
           body="Units past expiration"
-          count={0}
+          count={isLoading ? 0 : stockCounts?.expiredUnits ?? 0}
           icon={<FaTimesCircle size={24} className="text-white" />}
+          onClick={() => setShowOnlyExpired(true)}
         />
-        
+
         <MetricCard
           iconBgColor="#f97316"
           heading="Expiring Soon"
           body="Units expiring in 7 days"
-          count={0}
+          count={isLoading ? 0 : stockCounts?.nearingExpiryUnits ?? 0}
           icon={<FaClock size={24} className="text-white" />}
+          onClick={() => setShowOnlyExpired(false)}
         />
       </div>
 
-      <div className=''>
-        <BloodInventoryTable />
+      <div className="">
+        <BloodInventoryTable showOnlyExpired={showOnlyExpired} />
       </div>
 
-      <div className='mt-4 w-full flex justify-between gap-3'>
-        <div className='w-1/2'>
-          <PieChartWithLegend 
+      <div className="mt-4 w-full flex justify-between gap-3">
+        <div className="w-1/2">
+          <PieChartWithLegend
             title="Available Blood Packets"
             data={bloodTypeData}
           />
         </div>
-        <div className='w-1/2'>
+        <div className="w-1/2">
           <BloodUsage />
         </div>
       </div>
 
-      <div className='mt-4 w-full flex'>
+      <div className="mt-4 w-full flex">
         <DonationUsageChart />
       </div>
 
-      <div className='mt-8 mb-6 w-full flex justify-center'>
-        <div className='bg-white rounded-lg shadow-md p-6 w-full flex justify-between'>
-          <h3 className='text-lg font-semibold text-gray-800 mb-4 text-center'>
+      <div className="mt-8 mb-6 w-full flex justify-center">
+        <div className="bg-white rounded-lg shadow-md p-6 w-full flex justify-between">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
             Export Inventory Report
           </h3>
-          <button 
+          <button
             onClick={handleExportReport}
-            className='bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2'
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <FaFileExport size={18} />
             Export Report
