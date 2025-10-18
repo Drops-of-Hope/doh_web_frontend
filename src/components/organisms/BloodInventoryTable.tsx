@@ -16,6 +16,7 @@ import { Button } from "@/components";
 import ConfirmModal from "@/components/molecules/ConfirmModal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ArrowDownNarrowWide } from "lucide-react";
 
 interface Props {
   showOnlyExpired?: boolean;
@@ -170,64 +171,115 @@ export default function BloodInventoryTable({
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
         {/* Controls: sort and filters */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="text-sm text-gray-600">Sort by</label>
-            <select
-              className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-            >
-              <option value="donation_desc">Latest donation</option>
-              <option value="donation_asc">Earliest donation</option>
-              <option value="expiry_desc">Latest expiry</option>
-              <option value="expiry_asc">Earliest expiry</option>
-            </select>
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-br from-gray-50 to-white">
+          <div className="flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between">
+            {/* Left side: Sort and Filter controls */}
+            <div className="flex flex-col gap-4 flex-1">
+              {/* Sort Section */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  Sort By
+                </label>
+                <div className="relative">
+                  <select
+                    className="w-full sm:w-64 text-sm border-2 border-gray-300 rounded-lg px-4 py-2.5 pr-10 bg-white hover:border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all cursor-pointer font-medium text-gray-700"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                  >
+                    <option value="donation_desc">Latest donation first</option>
+                    <option value="donation_asc">Earliest donation first</option>
+                    <option value="expiry_desc">Latest expiry first</option>
+                    <option value="expiry_asc">Earliest expiry first</option>
+                  </select>
+                  
+                </div>
+              </div>
 
-            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                className="rounded border-gray-300"
-                checked={expiredOnly}
-                onChange={(e) => setExpiredOnly(e.target.checked)}
-              />
-              Show expired only
-            </label>
+              {/* Filters Section */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Expired Filter */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Status
+                  </label>
+                  <label className="inline-flex items-center gap-3 px-4 py-2.5 bg-white border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all group">
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4 rounded border-gray-300 text-gray-600 focus:ring-2 focus:ring-blue-500"
+                      checked={expiredOnly}
+                      onChange={(e) => setExpiredOnly(e.target.checked)}
+                    />
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-700">
+                      Show expired only
+                    </span>
+                  </label>
+                </div>
 
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Blood groups</label>
-              <select
-                multiple
-                className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white min-w-[140px]"
-                value={selectedGroups}
-                onChange={(e) => {
-                  const opts = Array.from(e.target.selectedOptions).map(
-                    (o) => o.value
-                  );
-                  setSelectedGroups(opts);
-                }}
-              >
-                {allDisplayGroups.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </select>
+                {/* Blood Groups Filter */}
+                <div className="flex flex-col gap-2 flex-1">
+                  <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Blood Groups
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {allDisplayGroups.map((g) => {
+                      const isSelected = selectedGroups.includes(g);
+                      return (
+                        <button
+                          key={g}
+                          type="button"
+                          onClick={() => {
+                            setSelectedGroups((prev) =>
+                              isSelected
+                                ? prev.filter((bg) => bg !== g)
+                                : [...prev, g]
+                            );
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all border-2 ${
+                            isSelected
+                              ? "bg-red-500 text-white border-red-600 shadow-md scale-105"
+                              : "bg-white text-gray-700 border-gray-300 hover:border-red-400 hover:bg-red-50"
+                          }`}
+                        >
+                          {g}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side: Active filters and reset */}
+            <div className="flex flex-col gap-2 items-start lg:items-end">
+              {(selectedGroups.length > 0 || expiredOnly) && (
+                <>
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <span className="text-xs font-semibold text-gray-600">
+                      Active filters:
+                    </span>
+                    <span className="px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
+                      {selectedGroups.length > 0 && `${selectedGroups.length} group${selectedGroups.length > 1 ? 's' : ''}`}
+                      {selectedGroups.length > 0 && expiredOnly && ' • '}
+                      {expiredOnly && 'Expired'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-red-400 transition-all flex items-center gap-2"
+                    onClick={() => {
+                      setSelectedGroups([]);
+                      setExpiredOnly(showOnlyExpired);
+                    }}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Reset filters
+                  </button>
+                </>
+              )}
             </div>
           </div>
-
-          {selectedGroups.length > 0 || expiredOnly ? (
-            <button
-              type="button"
-              className="text-xs text-gray-600 hover:text-gray-800 underline self-start sm:self-auto"
-              onClick={() => {
-                setSelectedGroups([]);
-                setExpiredOnly(showOnlyExpired);
-              }}
-            >
-              Reset filters
-            </button>
-          ) : null}
         </div>
         <ConfirmModal
           open={confirmOpen}
