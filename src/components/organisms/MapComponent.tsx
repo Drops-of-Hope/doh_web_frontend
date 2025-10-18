@@ -7,25 +7,8 @@ import {
   CircleMarker as LeafletCircleMarker, 
   Popup as LeafletPopup 
 } from 'react-leaflet';
-
-// Dummy coordinates for Sri Lankan cities (donors locations)
-const donorLocations = [
-  { id: 1, name: "Colombo", lat: 6.9271, lng: 79.8612, donors: 45 },
-  { id: 2, name: "Kandy", lat: 7.2906, lng: 80.6337, donors: 32 },
-  { id: 3, name: "Galle", lat: 6.0329, lng: 80.2168, donors: 28 },
-  { id: 4, name: "Matara", lat: 5.9549, lng: 80.5550, donors: 19 },
-  { id: 5, name: "Negombo", lat: 7.2083, lng: 79.8358, donors: 24 },
-  { id: 6, name: "Anuradhapura", lat: 8.3114, lng: 80.4037, donors: 21 },
-  { id: 7, name: "Jaffna", lat: 9.6615, lng: 80.0255, donors: 18 },
-  { id: 8, name: "Batticaloa", lat: 7.7102, lng: 81.7088, donors: 16 },
-  { id: 9, name: "Kurunegala", lat: 7.4818, lng: 80.3609, donors: 22 },
-  { id: 10, name: "Ratnapura", lat: 6.6828, lng: 80.4126, donors: 15 },
-  { id: 11, name: "Badulla", lat: 6.9934, lng: 81.0550, donors: 14 },
-  { id: 12, name: "Polonnaruwa", lat: 7.9403, lng: 81.0188, donors: 12 },
-  { id: 13, name: "Trincomalee", lat: 8.5874, lng: 81.2152, donors: 11 },
-  { id: 14, name: "Hambantota", lat: 6.1241, lng: 81.1185, donors: 13 },
-  { id: 15, name: "Kalutara", lat: 6.5854, lng: 79.9607, donors: 17 }
-];
+import { useGetDonorLocationCountsQuery } from '@/store/api/donorsApi';
+import { getDistrictCoordinates } from '@/constants/districtCoordinates';
 
 type MapComponents = {
   MapContainer: typeof LeafletMapContainer;
@@ -34,9 +17,25 @@ type MapComponents = {
   Popup: typeof LeafletPopup;
 };
 
+interface DonorLocation {
+  district: string;
+  displayName: string;
+  lat: number;
+  lng: number;
+  donorCount: number;
+}
+
 export default function MapComponent() {
   const [mapComponents, setMapComponents] = useState<MapComponents | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isMapLoading, setIsMapLoading] = useState(true);
+  
+  // Fetch donor location counts from API
+  const { 
+    data: donorLocationData = [], 
+    isLoading: isDataLoading, 
+    isError: isDataError,
+    error: dataError
+  } = useGetDonorLocationCountsQuery();
 
   useEffect(() => {
     // Only import on client side
@@ -51,21 +50,85 @@ export default function MapComponent() {
           CircleMarker: reactLeaflet.CircleMarker,
           Popup: reactLeaflet.Popup
         });
-        setIsLoading(false);
+        setIsMapLoading(false);
       }).catch((error) => {
         console.error('Failed to load map components:', error);
-        setIsLoading(false);
+        setIsMapLoading(false);
       });
     }
   }, []);
 
-  // Show loading state during SSR and while loading components
-  if (typeof window === 'undefined' || isLoading || !mapComponents) {
+  // Transform API data to include coordinates
+  const donorLocations: DonorLocation[] = donorLocationData
+    .map((item) => {
+      const coords = getDistrictCoordinates(item.district);
+      if (!coords) {
+        console.warn(`No coordinates found for district: ${item.district}`);
+        return null;
+      }
+      return {
+        district: item.district,
+        displayName: coords.displayName,
+        lat: coords.lat,
+        lng: coords.lng,
+        donorCount: item.donorCount,
+      };
+    })
+    .filter((item): item is DonorLocation => item !== null);
+
+  // Show loading state during SSR and while loading components or data
+  if (typeof window === 'undefined' || isMapLoading || !mapComponents) {
     return (
       <div className="h-96 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
         <div className="text-gray-500 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
           <p>Loading map...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while fetching data
+  if (isDataLoading) {
+    return (
+      <div className="h-96 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+        <div className="text-gray-500 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <p>Loading donor data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isDataError) {
+    return (
+      <div className="h-96 rounded-xl overflow-hidden bg-red-50 border border-red-200 flex items-center justify-center">
+        <div className="text-red-600 text-center p-4">
+          <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="font-semibold">Failed to load donor location data</p>
+          <p className="text-sm mt-1">
+            {dataError && 'status' in dataError 
+              ? `Error ${dataError.status}: Unable to fetch data from server`
+              : 'Please check your connection and try again'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no data
+  if (donorLocations.length === 0) {
+    return (
+      <div className="h-96 rounded-xl overflow-hidden bg-gray-50 border border-gray-200 flex items-center justify-center">
+        <div className="text-gray-500 text-center p-4">
+          <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>
+          <p className="font-semibold">No donor location data available</p>
+          <p className="text-sm mt-1">Donor locations will appear here when data is available</p>
         </div>
       </div>
     );
@@ -87,9 +150,9 @@ export default function MapComponent() {
         />
         {donorLocations.map((location) => (
           <CircleMarker
-            key={location.id}
+            key={location.district}
             center={[location.lat, location.lng] as [number, number]}
-            radius={Math.max(location.donors / 3, 5)}
+            radius={Math.max(location.donorCount * 3, 8)}
             fillColor="#ef4444"
             color="#dc2626"
             weight={2}
@@ -98,9 +161,9 @@ export default function MapComponent() {
           >
             <Popup>
               <div className="text-center p-2">
-                <h3 className="font-semibold text-gray-900">{location.name}</h3>
+                <h3 className="font-semibold text-gray-900">{location.displayName}</h3>
                 <p className="text-sm text-gray-600 mt-1">
-                  <span className="font-medium text-red-600">{location.donors}</span> donors
+                  <span className="font-medium text-red-600">{location.donorCount}</span> {location.donorCount === 1 ? 'donor' : 'donors'}
                 </p>
               </div>
             </Popup>
