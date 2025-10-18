@@ -7,6 +7,7 @@ import {
   useGetBloodByInventoryMutation,
   useDiscardBloodUnitMutation,
 } from "@/store/api/inventoryApi";
+import type { BloodUnit } from "@/store/api/inventoryApi";
 import {
   mapBloodGroupToDisplay,
   getBloodGroupColor,
@@ -78,7 +79,7 @@ export default function BloodInventoryTable({
   };
 
   const bloodUnits = React.useMemo(() => {
-    const units = (bloodResp?.data ?? []) as any[];
+    const units: BloodUnit[] = bloodResp?.data ?? [];
 
     // Filter by expired
     let filtered = expiredOnly
@@ -186,11 +187,12 @@ export default function BloodInventoryTable({
                     onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                   >
                     <option value="donation_desc">Latest donation first</option>
-                    <option value="donation_asc">Earliest donation first</option>
+                    <option value="donation_asc">
+                      Earliest donation first
+                    </option>
                     <option value="expiry_desc">Latest expiry first</option>
                     <option value="expiry_asc">Earliest expiry first</option>
                   </select>
-                  
                 </div>
               </div>
 
@@ -257,9 +259,12 @@ export default function BloodInventoryTable({
                       Active filters:
                     </span>
                     <span className="px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium">
-                      {selectedGroups.length > 0 && `${selectedGroups.length} group${selectedGroups.length > 1 ? 's' : ''}`}
-                      {selectedGroups.length > 0 && expiredOnly && ' • '}
-                      {expiredOnly && 'Expired'}
+                      {selectedGroups.length > 0 &&
+                        `${selectedGroups.length} group${
+                          selectedGroups.length > 1 ? "s" : ""
+                        }`}
+                      {selectedGroups.length > 0 && expiredOnly && " • "}
+                      {expiredOnly && "Expired"}
                     </span>
                   </div>
                   <button
@@ -270,8 +275,18 @@ export default function BloodInventoryTable({
                       setExpiredOnly(showOnlyExpired);
                     }}
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                     Reset filters
                   </button>
@@ -395,7 +410,9 @@ export default function BloodInventoryTable({
                         <Button
                           title="Dispose Unit"
                           containerStyles="ml-auto border border-red-500 text-red-500 bg-red-50 hover:bg-red-100 rounded-md"
-                          handleClick={(e) => handleDispose(e as any, unit.id)}
+                          handleClick={(
+                            e: React.MouseEvent<HTMLButtonElement>
+                          ) => handleDispose(e, unit.id)}
                         />
                       )}
                     </div>
