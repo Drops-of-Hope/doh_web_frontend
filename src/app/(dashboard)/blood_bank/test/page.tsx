@@ -14,6 +14,10 @@ export default function TestPage() {
   const [fetchCounts, { data, isLoading, isError }] =
     useGetBloodTestCountsMutation();
   const [query, setQuery] = useState<string>("");
+  const [bloodType, setBloodType] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"id" | "collectionDate" | "expiryDate">(
+    "id"
+  );
 
   useEffect(() => {
     // Fetch counts on mount
@@ -72,7 +76,11 @@ export default function TestPage() {
           {/* Filter Buttons */}
           <div className="flex gap-3 items-center">
             <div className="flex items-center gap-2">
-              <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400">
+              <select
+                value={bloodType}
+                onChange={(e) => setBloodType(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400"
+              >
                 <option value="all">All Blood Types</option>
                 <option value="O+">O+</option>
                 <option value="O-">O-</option>
@@ -87,16 +95,24 @@ export default function TestPage() {
 
             {/* Sort Options */}
             <div className="flex items-center gap-2">
-              <select className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400">
+              <select
+                value={sortBy}
+                onChange={(e) =>
+                  setSortBy(
+                    e.target.value as "id" | "collectionDate" | "expiryDate"
+                  )
+                }
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-400"
+              >
                 <option value="id">Sort by ID</option>
-                <option value="status">Sort by Collection Date</option>
-                <option value="testDate">Sort by Expiry Date</option>
+                <option value="collectionDate">Sort by Collection Date</option>
+                <option value="expiryDate">Sort by Expiry Date</option>
               </select>
             </div>
           </div>
         </div>
       </div>
-      <TestTable searchQuery={query} />
+      <TestTable searchQuery={query} bloodType={bloodType} sortBy={sortBy} />
     </div>
   );
 }

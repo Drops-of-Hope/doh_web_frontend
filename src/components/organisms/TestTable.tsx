@@ -42,9 +42,17 @@ interface BloodUnit {
 interface TestTableProps {
   // Free-text search across unit id, donation id, donor id, and blood type
   searchQuery?: string;
+  // Filter by blood type display value (e.g., "O+", "A-"), or 'all'
+  bloodType?: string;
+  // Sort option: id | collectionDate | expiryDate
+  sortBy?: "id" | "collectionDate" | "expiryDate";
 }
 
-export default function TestTable({ searchQuery = "" }: TestTableProps) {
+export default function TestTable({
+  searchQuery = "",
+  bloodType = "all",
+  sortBy = "id",
+}: TestTableProps) {
   const router = useRouter();
   // const { data: session } = useSession();
   // const medicalEstablishmentId = session?.decodedIdToken?.sub;
@@ -68,31 +76,72 @@ export default function TestTable({ searchQuery = "" }: TestTableProps) {
 
   // Filter data based on search query
   const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filteredData: BloodUnit[] = normalizedQuery
+  const filteredBySearch: BloodUnit[] = normalizedQuery
     ? bloodUnitsData.filter((item: BloodUnit) => {
         const unitId = item.id?.toLowerCase() || "";
         const donationId = item.donationId?.toLowerCase() || "";
         const donorId = item.bloodDonation?.userId?.toLowerCase() || "";
-        const bloodType = item.bloodDonation?.user?.bloodGroup
+        const displayType = item.bloodDonation?.user?.bloodGroup
           ? mapBloodGroupToDisplay(
               item.bloodDonation.user.bloodGroup
             ).toLowerCase()
           : "";
-        return [unitId, donationId, donorId, bloodType].some((field) =>
+        return [unitId, donationId, donorId, displayType].some((field) =>
           field.includes(normalizedQuery)
         );
       })
     : bloodUnitsData;
 
-  // Reset to first page whenever the search changes
+  // Apply blood type filter
+  const filteredData: BloodUnit[] =
+    bloodType && bloodType !== "all"
+      ? filteredBySearch.filter((item: BloodUnit) => {
+          const displayType = item.bloodDonation?.user?.bloodGroup
+            ? mapBloodGroupToDisplay(item.bloodDonation.user.bloodGroup)
+            : "";
+          return displayType === bloodType;
+        })
+      : filteredBySearch;
+
+  // Sort data
+  const sortedData: BloodUnit[] = [...filteredData].sort(
+    (a: BloodUnit, b: BloodUnit) => {
+      switch (sortBy) {
+        case "collectionDate": {
+          const da = a.bloodDonation?.startTime
+            ? new Date(a.bloodDonation.startTime).getTime()
+            : 0;
+          const db = b.bloodDonation?.startTime
+            ? new Date(b.bloodDonation.startTime).getTime()
+            : 0;
+          return da - db; // ascending
+        }
+        case "expiryDate": {
+          const da = a.expiryDate ? new Date(a.expiryDate).getTime() : 0;
+          const db = b.expiryDate ? new Date(b.expiryDate).getTime() : 0;
+          return da - db; // ascending
+        }
+        case "id":
+        default: {
+          const ia = (a.id || "").toLowerCase();
+          const ib = (b.id || "").toLowerCase();
+          if (ia < ib) return -1;
+          if (ia > ib) return 1;
+          return 0;
+        }
+      }
+    }
+  );
+
+  // Reset to first page whenever the search or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [normalizedQuery]);
+  }, [normalizedQuery, bloodType, sortBy]);
 
-  const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage) || 1;
+  const totalPages = Math.ceil((sortedData?.length || 0) / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentData = filteredData.slice(startIndex, endIndex);
+  const currentData = sortedData.slice(startIndex, endIndex);
 
   const handlePreviousPage = () =>
     setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -133,11 +182,11 @@ export default function TestTable({ searchQuery = "" }: TestTableProps) {
             Blood units available for testing
           </h2>
           <p className="text-sm text-gray-600">
-            {filteredData.length > 0
+            {sortedData.length > 0
               ? `Showing ${startIndex + 1} to ${Math.min(
                   endIndex,
-                  filteredData.length
-                )} of ${filteredData.length} entries`
+                  sortedData.length
+                )} of ${sortedData.length} entries`
               : `No entries found`}
           </p>
         </div>
