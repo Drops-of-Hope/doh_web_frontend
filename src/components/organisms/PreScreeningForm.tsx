@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { PreScreeningFormDisplayProps } from '../../../types';
-import { QuestionDisplay, PreScreeningComparisonPanel } from '@/components';
+import { QuestionDisplay, PreScreeningComparisonPanel, PreScreeningSummary } from '@/components';
 import { mockPreviousResponses, screeningQuestions } from '@/constants/ScreeningData';
 
 const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formData }) => {
@@ -80,7 +80,7 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
           {showComparison ? 'Hide Comparison' : 'Compare with Recent Responses'}
         </button>
       </div>
-
+      <PreScreeningSummary formData={formData} />
       <div className={`flex ${showComparison ? 'mr-80' : ''} transition-all duration-300`}>
         <div className="flex-1">
           {/* Section 1 */}

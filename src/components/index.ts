@@ -67,6 +67,7 @@ import { RejectionSection } from "./organisms/RejectionSection";
 import { RequestDetailsCard } from "./organisms/RequestDetailsCard";
 import PreScreeningComparisonPanel from "./organisms/ComparisionPanel";
 import AppointmentTableRow from "./molecules/AppointmentTableRow";
+import PreScreeningSummary from "./organisms/PreScreeningSummary";
 import { EvaluationForm } from "./organisms/EvaluationForm";
 import { TestModals } from "./organisms/TestModals";
 
@@ -144,6 +145,7 @@ export {
     RequestDetailsCard,
     PreScreeningComparisonPanel,
     AppointmentTableRow,
+    PreScreeningSummary,
     EvaluationForm,
     TestModals
 }
