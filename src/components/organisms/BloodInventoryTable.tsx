@@ -55,6 +55,16 @@ export default function BloodInventoryTable({
     null
   );
 
+  // UI state for sorting and filtering
+  const [sortBy, setSortBy] = React.useState<
+    "donation_desc" | "donation_asc" | "expiry_desc" | "expiry_asc"
+  >("donation_desc");
+  const [expiredOnly, setExpiredOnly] =
+    React.useState<boolean>(showOnlyExpired);
+  const [selectedGroups, setSelectedGroups] = React.useState<string[]>([]);
+
+  const allDisplayGroups = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
+
   React.useEffect(() => {
     // Trigger the POST call once on mount
     getBloodByInventory({ inventory_id: inventoryId });
@@ -68,10 +78,63 @@ export default function BloodInventoryTable({
   };
 
   const bloodUnits = React.useMemo(() => {
-    const units = bloodResp?.data ?? [];
-    if (!showOnlyExpired) return units;
-    return units.filter((u: any) => isExpired(u?.expiryDate));
-  }, [bloodResp, showOnlyExpired]);
+    const units = (bloodResp?.data ?? []) as any[];
+
+    // Filter by expired
+    let filtered = expiredOnly
+      ? units.filter((u) => isExpired(u?.expiryDate))
+      : units;
+
+    // Filter by blood groups (using display values)
+    if (selectedGroups.length > 0) {
+      filtered = filtered.filter((u) => {
+        const displayGroup = mapBloodGroupToDisplay(
+          u?.bloodDonation?.user?.bloodGroup
+        );
+        return displayGroup && selectedGroups.includes(displayGroup);
+      });
+    }
+
+    // Sort according to selected option
+    const toTime = (d: string | undefined) =>
+      d ? new Date(d).getTime() : null;
+    const sorted = [...filtered].sort((a, b) => {
+      const aDonation = toTime(a?.bloodDonation?.startTime);
+      const bDonation = toTime(b?.bloodDonation?.startTime);
+      const aExpiry = toTime(a?.expiryDate);
+      const bExpiry = toTime(b?.expiryDate);
+
+      switch (sortBy) {
+        case "donation_asc":
+          return (
+            (aDonation ?? Number.POSITIVE_INFINITY) -
+            (bDonation ?? Number.POSITIVE_INFINITY)
+          ); // earliest donation first
+        case "donation_desc":
+          return (
+            (bDonation ?? Number.NEGATIVE_INFINITY) -
+            (aDonation ?? Number.NEGATIVE_INFINITY)
+          ); // latest donation first
+        case "expiry_asc":
+          return (
+            (aExpiry ?? Number.POSITIVE_INFINITY) -
+            (bExpiry ?? Number.POSITIVE_INFINITY)
+          ); // earliest expiry first
+        case "expiry_desc":
+          return (
+            (bExpiry ?? Number.NEGATIVE_INFINITY) -
+            (aExpiry ?? Number.NEGATIVE_INFINITY)
+          ); // latest expiry first
+        default:
+          return (
+            (bDonation ?? Number.NEGATIVE_INFINITY) -
+            (aDonation ?? Number.NEGATIVE_INFINITY)
+          );
+      }
+    });
+
+    return sorted;
+  }, [bloodResp, expiredOnly, selectedGroups, sortBy]);
 
   const handleRowClick = () => {
     router.push("/blood_bank/inventory/blood_group");
@@ -106,6 +169,66 @@ export default function BloodInventoryTable({
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="overflow-x-auto">
+        {/* Controls: sort and filters */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="text-sm text-gray-600">Sort by</label>
+            <select
+              className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+            >
+              <option value="donation_desc">Latest donation</option>
+              <option value="donation_asc">Earliest donation</option>
+              <option value="expiry_desc">Latest expiry</option>
+              <option value="expiry_asc">Earliest expiry</option>
+            </select>
+
+            <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                className="rounded border-gray-300"
+                checked={expiredOnly}
+                onChange={(e) => setExpiredOnly(e.target.checked)}
+              />
+              Show expired only
+            </label>
+
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Blood groups</label>
+              <select
+                multiple
+                className="text-sm border border-gray-300 rounded-md px-2 py-1 bg-white min-w-[140px]"
+                value={selectedGroups}
+                onChange={(e) => {
+                  const opts = Array.from(e.target.selectedOptions).map(
+                    (o) => o.value
+                  );
+                  setSelectedGroups(opts);
+                }}
+              >
+                {allDisplayGroups.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {selectedGroups.length > 0 || expiredOnly ? (
+            <button
+              type="button"
+              className="text-xs text-gray-600 hover:text-gray-800 underline self-start sm:self-auto"
+              onClick={() => {
+                setSelectedGroups([]);
+                setExpiredOnly(showOnlyExpired);
+              }}
+            >
+              Reset filters
+            </button>
+          ) : null}
+        </div>
         <ConfirmModal
           open={confirmOpen}
           title="Dispose blood unit?"
