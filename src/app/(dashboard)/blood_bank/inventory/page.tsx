@@ -21,7 +21,7 @@ export default function InventoryPage() {
   const inventory_id = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
 
   // Fetch stock counts on mount
-  const [getStockCounts, { data: stockCounts, isLoading, error }] =
+  const [getStockCounts, { data: stockCounts, isLoading }] =
     useGetStockCountsByInventoryMutation();
 
   React.useEffect(() => {

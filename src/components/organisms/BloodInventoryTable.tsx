@@ -16,7 +16,6 @@ import { Button } from "@/components";
 import ConfirmModal from "@/components/molecules/ConfirmModal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ArrowDownNarrowWide } from "lucide-react";
 
 interface Props {
   showOnlyExpired?: boolean;
