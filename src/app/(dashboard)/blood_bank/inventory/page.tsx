@@ -14,15 +14,23 @@ import {
   BloodUsage,
   DonationUsageChart,
 } from "@/components";
-import { useGetStockCountsByInventoryMutation } from "@/store/api/inventoryApi";
+import {
+  useGetStockCountsByInventoryMutation,
+  useGetBloodByBloodGroupMutation,
+} from "@/store/api/inventoryApi";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function InventoryPage() {
   const [showOnlyExpired, setShowOnlyExpired] = React.useState(false);
   const inventory_id = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+  const router = useRouter();
 
   // Fetch stock counts on mount
   const [getStockCounts, { data: stockCounts, isLoading }] =
     useGetStockCountsByInventoryMutation();
+  const [getBloodByBloodGroup, { data: bloodGroupBuckets }] =
+    useGetBloodByBloodGroupMutation();
 
   React.useEffect(() => {
     getStockCounts({ inventory_id })
@@ -32,14 +40,105 @@ export default function InventoryPage() {
       });
   }, [getStockCounts]);
 
-  const bloodTypeData = [
-    { name: "O+", value: 45 },
-    { name: "A+", value: 38 },
-    { name: "B+", value: 28 },
-    { name: "AB+", value: 15 },
-    { name: "O-", value: 22 },
-    { name: "A-", value: 18 },
+  // Fetch blood grouped data on mount
+  React.useEffect(() => {
+    getBloodByBloodGroup({ inventory_id })
+      .unwrap()
+      .catch((e) => {
+        console.error("Failed to fetch blood by blood group", e);
+      });
+  }, [getBloodByBloodGroup]);
+
+  // Map API blood group keys to chart labels
+  const GROUP_LABELS: Record<string, string> = {
+    O_POSITIVE: "O+",
+    A_POSITIVE: "A+",
+    B_POSITIVE: "B+",
+    AB_POSITIVE: "AB+",
+    O_NEGATIVE: "O-",
+    A_NEGATIVE: "A-",
+    B_NEGATIVE: "B-",
+    AB_NEGATIVE: "AB-",
+  };
+
+  // Threshold values for minimum safe stock levels per blood group
+  const GROUP_THRESHOLDS: Record<string, number> = {
+    O_POSITIVE: 30,
+    A_POSITIVE: 25,
+    B_POSITIVE: 20,
+    AB_POSITIVE: 10,
+    O_NEGATIVE: 15,
+    A_NEGATIVE: 8,
+    B_NEGATIVE: 8,
+    AB_NEGATIVE: 5,
+  };
+
+  const GROUP_ORDER = [
+    "O_POSITIVE",
+    "A_POSITIVE",
+    "B_POSITIVE",
+    "AB_POSITIVE",
+    "O_NEGATIVE",
+    "A_NEGATIVE",
+    "B_NEGATIVE",
+    "AB_NEGATIVE",
   ];
+
+  const bloodTypeData = React.useMemo(() => {
+    const counts = new Map<string, number>();
+    bloodGroupBuckets?.data?.forEach((bucket) => {
+      counts.set(bucket.blood_group, bucket.available_units ?? 0);
+    });
+
+    return GROUP_ORDER.map((key) => ({
+      name: GROUP_LABELS[key] ?? key,
+      value: counts.get(key) ?? 0,
+    }));
+  }, [bloodGroupBuckets]);
+
+  // Show a low-stock toast once per page load when any group is below its threshold
+  const lowStockToastShownRef = React.useRef(false);
+  React.useEffect(() => {
+    if (lowStockToastShownRef.current) return;
+    const buckets = bloodGroupBuckets?.data;
+    if (!Array.isArray(buckets) || buckets.length === 0) return;
+
+    // Build a map of group -> available units
+    const counts = new Map<string, number>();
+    buckets.forEach((b) => counts.set(b.blood_group, b.available_units ?? 0));
+
+    // Determine which groups are below threshold
+    const lowGroups: string[] = [];
+    for (const key of GROUP_ORDER) {
+      const available = counts.get(key) ?? 0;
+      const threshold = GROUP_THRESHOLDS[key] ?? 0;
+      if (available < threshold) {
+        const label = GROUP_LABELS[key] ?? key;
+        lowGroups.push(`${label} (${available}/${threshold})`);
+      }
+    }
+
+    if (lowGroups.length > 0) {
+      const content = (
+        <div className="flex flex-col gap-2">
+          <div className="font-semibold">Low stock alert</div>
+          <div className="text-sm">{lowGroups.join(", ")}</div>
+          <div className="mt-1">
+            <button
+              onClick={() => {
+                router.push("/blood_bank/requests/request_form");
+              }}
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-1.5 transition-colors"
+            >
+              Restock now
+            </button>
+          </div>
+        </div>
+      );
+      toast.warn(content, { autoClose: false, closeOnClick: false });
+      lowStockToastShownRef.current = true;
+    }
+  }, [bloodGroupBuckets]);
 
   const handleExportReport = () => {
     console.log("Exporting inventory report...");

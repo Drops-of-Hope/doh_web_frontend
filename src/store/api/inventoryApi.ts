@@ -68,6 +68,29 @@ export interface StockCountsResponse {
   nearingExpiryUnits: number;
 }
 
+// Request/Response types for POST /blood/by-blood-group
+export interface BloodByBloodGroupRequest {
+  inventory_id: string;
+}
+
+export interface BloodUnitWithTests extends BloodUnit {
+  bloodTests: BloodTestResult[];
+}
+
+export interface BloodGroupBucket {
+  blood_group: string;
+  count: number;
+  available_units: number;
+  items: BloodUnitWithTests[];
+}
+
+export interface BloodByBloodGroupResponse {
+  message: string;
+  available_units: number;
+  count: number;
+  data: BloodGroupBucket[];
+}
+
 export const inventoryApi = createApi({
   reducerPath: "inventoryApi",
   baseQuery: fetchBaseQuery({
@@ -124,6 +147,17 @@ export const inventoryApi = createApi({
         body,
       }),
     }),
+    // POST: /blood/by-blood-group
+    getBloodByBloodGroup: builder.mutation<
+      BloodByBloodGroupResponse,
+      BloodByBloodGroupRequest
+    >({
+      query: (body) => ({
+        url: "/blood/by-blood-group",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -133,4 +167,5 @@ export const {
   useGetBloodByInventoryMutation,
   useDiscardBloodUnitMutation,
   useGetStockCountsByInventoryMutation,
+  useGetBloodByBloodGroupMutation,
 } = inventoryApi;
