@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from "next/navigation";
 import { useGetAppointmentByIdQuery } from '@/store/api/appointmentsApi';
-import { useCreateHealthVitalMutation } from '@/store/api/healthVitalsApi';
+import { useCreateHealthVitalMutation, useGetHealthVitalsByAppointmentIdQuery } from '@/store/api/healthVitalsApi';
 import { EvaluationData, ValidationErrors } from '../../../types';
 import { DonorFitnessAssessment } from '@/components';
 import { EvaluationForm } from '@/components';
@@ -54,6 +54,15 @@ const MedicalOfficerEvaluation: React.FC = () => {
   } = useGetAppointmentByIdQuery(appointmentId as string, {
     skip: !appointmentId
   });
+
+  // Fetch existing health vitals for this appointment
+  const {
+    data: healthVitalsData,
+    isLoading: isLoadingVitals,
+    isError: isErrorVitals
+  } = useGetHealthVitalsByAppointmentIdQuery(appointmentId as string, {
+    skip: !appointmentId
+  });
   
   // Type guard to ensure we have properly typed appointment data
   const typedAppointmentData = appointmentData as AppointmentData | undefined;
@@ -75,6 +84,20 @@ const MedicalOfficerEvaluation: React.FC = () => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [successMessage, setSuccessMessage] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  // Pre-populate form with existing health vitals data
+  useEffect(() => {
+    if (healthVitalsData && healthVitalsData.length > 0) {
+      const latestVital = healthVitalsData[0];
+      setEvaluationData(prev => ({
+        ...prev,
+        weight: latestVital.weight.toString(),
+        systolicBP: latestVital.bp.toString(),
+        pulseRate: latestVital.cvsPulse.toString(),
+        donorFitness: 'fit', // If vitals exist, donor was previously marked as fit
+      }));
+    }
+  }, [healthVitalsData]);
 
   const handleInputChange = (field: keyof EvaluationData, value: string): void => {
     setEvaluationData(prev => ({
@@ -178,7 +201,7 @@ const MedicalOfficerEvaluation: React.FC = () => {
     setErrorMessage(`Donor rejected. Reason: ${evaluationData.fitnessReason}`);
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingVitals) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-8">
         <p className="text-gray-600">Loading appointment details...</p>
@@ -186,7 +209,7 @@ const MedicalOfficerEvaluation: React.FC = () => {
     );
   }
 
-  if (isError) {
+  if (isError || isErrorVitals) {
     return (
       <div className="bg-white rounded-lg shadow-sm p-8">
         <p className="text-red-600">Error loading appointment details. Please try again.</p>
@@ -209,6 +232,37 @@ const MedicalOfficerEvaluation: React.FC = () => {
             <p className="text-sm text-red-600">
               <span className="font-medium">Blood Group:</span> {typedAppointmentData.donor.bloodGroup}
             </p>
+          </div>
+        )}
+
+        {/* Display existing health vitals if available */}
+        {healthVitalsData && healthVitalsData.length > 0 && (
+          <div className="mt-4 p-4 bg-blue-50 rounded-md border border-blue-200">
+            <h3 className="text-sm font-semibold text-blue-800 mb-3">Previously Recorded Health Vitals</h3>
+            {healthVitalsData.map((vital, index) => (
+              <div key={vital.id} className="mb-3 last:mb-0">
+                <p className="text-xs text-gray-500 mb-1">
+                  Recorded on: {new Date(vital.dateTime).toLocaleString()}
+                </p>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <p className="text-gray-700">
+                    <span className="font-medium">Weight:</span> {vital.weight} kg
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-medium">BP:</span> {vital.bp} mmHg
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-medium">CVS Pulse:</span> {vital.cvsPulse} /min
+                  </p>
+                </div>
+                {vital.user && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    User: {vital.user.name} ({vital.user.email})
+                  </p>
+                )}
+                {index < healthVitalsData.length - 1 && <hr className="mt-3 border-blue-200" />}
+              </div>
+            ))}
           </div>
         )}
       </div>

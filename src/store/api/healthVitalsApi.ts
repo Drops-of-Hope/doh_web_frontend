@@ -1,5 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+interface Appointment {
+  id: string;
+  appointmentDate: string;
+  scheduled: string;
+}
+
 interface HealthVital {
   id: string;
   userId: string;
@@ -8,6 +20,8 @@ interface HealthVital {
   bp: number;
   cvsPulse: number;
   dateTime: string;
+  user?: User;
+  appointment?: Appointment;
 }
 
 interface CreateHealthVitalPayload {
@@ -24,6 +38,13 @@ export const healthVitalsApi = createApi({
   tagTypes: ['HealthVitals'],
   
   endpoints: (builder) => ({
+    getHealthVitalsByAppointmentId: builder.query<HealthVital[], string>({
+      query: (appointmentId) => `/${appointmentId}`,
+      providesTags: (result, error, appointmentId) => [
+        { type: 'HealthVitals', id: appointmentId },
+      ],
+    }),
+    
     createHealthVital: builder.mutation<HealthVital, CreateHealthVitalPayload>({
       query: (newHealthVital) => ({
         url: '/',
@@ -39,5 +60,6 @@ export const healthVitalsApi = createApi({
 });
 
 export const {
+  useGetHealthVitalsByAppointmentIdQuery,
   useCreateHealthVitalMutation,
 } = healthVitalsApi;

@@ -69,6 +69,8 @@ import PreScreeningComparisonPanel from "./organisms/ComparisionPanel";
 import AppointmentTableRow from "./molecules/AppointmentTableRow";
 import { EvaluationForm } from "./organisms/EvaluationForm";
 import { TestModals } from "./organisms/TestModals";
+import HealthVitalsDisplay from "./organisms/HealthVitalsDisplay";
+import BloodEquipmentList from "./organisms/BloodEquipmentList";
 
 export {
     Button,
@@ -145,6 +147,9 @@ export {
     PreScreeningComparisonPanel,
     AppointmentTableRow,
     EvaluationForm,
-    TestModals
+    TestModals,
+    HealthVitalsDisplay,
+    BloodEquipmentList
 }
+
 

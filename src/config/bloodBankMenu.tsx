@@ -30,6 +30,7 @@ export const getBloodBankMenu = (pathname: string, handleSignOut: () => void): M
       pathname.includes('/inventory') ||
       pathname.includes('/blood_bank/test') ||
       pathname.includes('/blood_bank/requests') ||
+      pathname.includes('/blood_bank/equipment') ||
       pathname.includes('/transits') ||
       pathname.includes('/appointments'),
     position: 'top',
@@ -45,6 +46,12 @@ export const getBloodBankMenu = (pathname: string, handleSignOut: () => void): M
         href: '/blood_bank/test',
         icon: <FaFlask size={18} />,
         active: pathname.includes('/blood_bank/test'),
+      },
+      {
+        name: 'Equipment',
+        href: '/blood_bank/equipment',
+        icon: <FaTools size={18} />,
+        active: pathname.includes('/blood_bank/equipment'),
       },
       {
         name: 'Blood Requests',
