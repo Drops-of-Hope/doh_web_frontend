@@ -18,10 +18,13 @@ import {
   useGetStockCountsByInventoryMutation,
   useGetBloodByBloodGroupMutation,
 } from "@/store/api/inventoryApi";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function InventoryPage() {
   const [showOnlyExpired, setShowOnlyExpired] = React.useState(false);
   const inventory_id = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+  const router = useRouter();
 
   // Fetch stock counts on mount
   const [getStockCounts, { data: stockCounts, isLoading }] =
@@ -58,6 +61,18 @@ export default function InventoryPage() {
     AB_NEGATIVE: "AB-",
   };
 
+  // Threshold values for minimum safe stock levels per blood group
+  const GROUP_THRESHOLDS: Record<string, number> = {
+    O_POSITIVE: 30,
+    A_POSITIVE: 25,
+    B_POSITIVE: 20,
+    AB_POSITIVE: 10,
+    O_NEGATIVE: 15,
+    A_NEGATIVE: 8,
+    B_NEGATIVE: 8,
+    AB_NEGATIVE: 5,
+  };
+
   const GROUP_ORDER = [
     "O_POSITIVE",
     "A_POSITIVE",
@@ -79,6 +94,50 @@ export default function InventoryPage() {
       name: GROUP_LABELS[key] ?? key,
       value: counts.get(key) ?? 0,
     }));
+  }, [bloodGroupBuckets]);
+
+  // Show a low-stock toast once per page load when any group is below its threshold
+  const lowStockToastShownRef = React.useRef(false);
+  React.useEffect(() => {
+    if (lowStockToastShownRef.current) return;
+    const buckets = bloodGroupBuckets?.data;
+    if (!Array.isArray(buckets) || buckets.length === 0) return;
+
+    // Build a map of group -> available units
+    const counts = new Map<string, number>();
+    buckets.forEach((b) => counts.set(b.blood_group, b.available_units ?? 0));
+
+    // Determine which groups are below threshold
+    const lowGroups: string[] = [];
+    for (const key of GROUP_ORDER) {
+      const available = counts.get(key) ?? 0;
+      const threshold = GROUP_THRESHOLDS[key] ?? 0;
+      if (available < threshold) {
+        const label = GROUP_LABELS[key] ?? key;
+        lowGroups.push(`${label} (${available}/${threshold})`);
+      }
+    }
+
+    if (lowGroups.length > 0) {
+      const content = (
+        <div className="flex flex-col gap-2">
+          <div className="font-semibold">Low stock alert</div>
+          <div className="text-sm">{lowGroups.join(", ")}</div>
+          <div className="mt-1">
+            <button
+              onClick={() => {
+                router.push("/blood_bank/requests/request_form");
+              }}
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-3 py-1.5 transition-colors"
+            >
+              Restock now
+            </button>
+          </div>
+        </div>
+      );
+      toast.warn(content, { autoClose: false, closeOnClick: false });
+      lowStockToastShownRef.current = true;
+    }
   }, [bloodGroupBuckets]);
 
   const handleExportReport = () => {

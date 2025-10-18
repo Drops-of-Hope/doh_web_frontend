@@ -63,6 +63,8 @@ export default function BloodInventoryTable({
   const [expiredOnly, setExpiredOnly] =
     React.useState<boolean>(showOnlyExpired);
   const [selectedGroups, setSelectedGroups] = React.useState<string[]>([]);
+  // Number of rows to show initially and incrementally when clicking "See more"
+  const [visibleCount, setVisibleCount] = React.useState<number>(10);
 
   const allDisplayGroups = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
 
@@ -162,6 +164,15 @@ export default function BloodInventoryTable({
 
     return sorted;
   }, [bloodResp, expiredOnly, selectedGroups, sortBy]);
+
+  // Reset visible rows when filters or sorting change or new data arrives
+  React.useEffect(() => {
+    setVisibleCount(10);
+  }, [expiredOnly, selectedGroups, sortBy, bloodResp]);
+
+  const displayedUnits = React.useMemo(() => {
+    return bloodUnits.slice(0, visibleCount);
+  }, [bloodUnits, visibleCount]);
 
   const handleRowClick = () => {
     router.push("/blood_bank/inventory/blood_group");
@@ -377,7 +388,7 @@ export default function BloodInventoryTable({
                 </td>
               </tr>
             )}
-            {bloodUnits.map((unit) => {
+            {displayedUnits.map((unit) => {
               const expired = isExpired(unit.expiryDate);
               const nearing = isNearingExpiry(unit.expiryDate);
               return (
@@ -465,6 +476,19 @@ export default function BloodInventoryTable({
                 </tr>
               );
             })}
+            {bloodUnits.length > displayedUnits.length && (
+              <tr>
+                <td colSpan={4} className="px-6 py-4">
+                  <div className="w-full flex justify-center">
+                    <Button
+                      title="See more"
+                      containerStyles="border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 rounded-md px-4 py-2"
+                      handleClick={() => setVisibleCount((v) => v + 10)}
+                    />
+                  </div>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
         <ToastContainer
