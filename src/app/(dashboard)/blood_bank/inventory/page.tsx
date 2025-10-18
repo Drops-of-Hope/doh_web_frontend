@@ -14,9 +14,23 @@ import {
   BloodUsage,
   DonationUsageChart,
 } from "@/components";
+import { useGetStockCountsByInventoryMutation } from "@/store/api/inventoryApi";
 
 export default function InventoryPage() {
   const [showOnlyExpired, setShowOnlyExpired] = React.useState(false);
+  const inventory_id = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+
+  // Fetch stock counts on mount
+  const [getStockCounts, { data: stockCounts, isLoading, error }] =
+    useGetStockCountsByInventoryMutation();
+
+  React.useEffect(() => {
+    getStockCounts({ inventory_id })
+      .unwrap()
+      .catch((e) => {
+        console.error("Failed to fetch stock counts", e);
+      });
+  }, [getStockCounts]);
 
   const bloodTypeData = [
     { name: "O+", value: 45 },
@@ -38,7 +52,7 @@ export default function InventoryPage() {
           iconBgColor="#3B82F6"
           heading="Total Units"
           body="Blood units in stock"
-          count={54}
+          count={isLoading ? 0 : stockCounts?.totalStock ?? 0}
           icon={<FaBoxes size={24} className="text-white" />}
           onClick={() => setShowOnlyExpired(false)}
         />
@@ -47,7 +61,7 @@ export default function InventoryPage() {
           iconBgColor="#28A745"
           heading="Safe Blood Units"
           body="Units ready for transfusion"
-          count={23}
+          count={isLoading ? 0 : stockCounts?.safeUnits ?? 0}
           icon={<FaExclamationTriangle size={24} className="text-white" />}
           onClick={() => setShowOnlyExpired(false)}
         />
@@ -56,7 +70,7 @@ export default function InventoryPage() {
           iconBgColor="#DC2626"
           heading="Expired Units"
           body="Units past expiration"
-          count={2}
+          count={isLoading ? 0 : stockCounts?.expiredUnits ?? 0}
           icon={<FaTimesCircle size={24} className="text-white" />}
           onClick={() => setShowOnlyExpired(true)}
         />
@@ -65,7 +79,7 @@ export default function InventoryPage() {
           iconBgColor="#f97316"
           heading="Expiring Soon"
           body="Units expiring in 7 days"
-          count={0}
+          count={isLoading ? 0 : stockCounts?.nearingExpiryUnits ?? 0}
           icon={<FaClock size={24} className="text-white" />}
           onClick={() => setShowOnlyExpired(false)}
         />
