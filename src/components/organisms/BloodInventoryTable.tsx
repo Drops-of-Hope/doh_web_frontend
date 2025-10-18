@@ -14,6 +14,8 @@ import {
 import { formatDisplayDate } from "@/lib/appointmentUtils";
 import { Button } from "@/components";
 import ConfirmModal from "@/components/molecules/ConfirmModal";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Props {
   showOnlyExpired?: boolean;
@@ -91,8 +93,10 @@ export default function BloodInventoryTable({
       await discardBloodUnit({ blood_id: pendingDisposeId }).unwrap();
       // Refresh the list after successful discard
       await getBloodByInventory({ inventory_id: inventoryId }).unwrap();
+      toast.success("Blood unit discarded successfully");
     } catch (err) {
       console.error("Failed to discard blood unit", err);
+      toast.error("Failed to discard blood unit. Please try again.");
     } finally {
       setConfirmOpen(false);
       setPendingDisposeId(null);
@@ -227,6 +231,17 @@ export default function BloodInventoryTable({
             })}
           </tbody>
         </table>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </div>
   );
