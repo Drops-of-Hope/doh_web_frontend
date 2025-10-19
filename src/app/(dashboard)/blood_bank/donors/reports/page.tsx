@@ -1,24 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Download,
-  FileText,
-  Users,
-  Activity,
-  Calendar,
-  TrendingUp,
-  UserCheck,
-  UserX,
-  Clock,
-  MapPin,
-} from "lucide-react";
+import { FileText, Users, Activity } from "lucide-react";
 import { BackButton } from "@/components";
 
 export default function DonorReportsPage() {
-  const [dateRange, setDateRange] = useState("month");
-  const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const router = useRouter();
 
   const reports = [
@@ -68,8 +54,6 @@ export default function DonorReportsPage() {
                   router.push("/blood_bank/donors/reports/donation-history");
                 } else if (report.id === "active-inactive") {
                   router.push("/blood_bank/donors/reports/active-inactive");
-                } else {
-                  setSelectedReport(report.id);
                 }
               }}
             >
@@ -101,8 +85,6 @@ export default function DonorReportsPage() {
                           router.push(
                             "/blood_bank/donors/reports/donor-registration"
                           );
-                        } else {
-                          setSelectedReport(report.id);
                         }
                       }}
                     >

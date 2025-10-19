@@ -6,10 +6,7 @@ import {
   Search,
   UserCheck,
   UserX,
-  TrendingUp,
-  TrendingDown,
   Users,
-  Calendar,
   Activity,
   AlertCircle,
 } from "lucide-react";
@@ -22,19 +19,16 @@ import autoTable from "jspdf-autotable";
 
 export default function ActiveInactiveDonorsReportPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterStatus] = useState("all");
   const [filterBloodType, setFilterBloodType] = useState("all");
-  const [dateRange, setDateRange] = useState("year");
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit] = useState(20);
 
   // Fetch donor stats from API
   const [
     getDonorStats,
     {
       data: donorStatsResponse,
-      isLoading: isDonorStatsLoading,
-      isError: isDonorStatsError,
     },
   ] = useGetDonorStatsMutation();
 
@@ -362,7 +356,7 @@ export default function ActiveInactiveDonorsReportPage() {
             At Risk & Inactive Donors
           </h3>
           <p className="text-sm text-gray-600 mt-1">
-            Donors who haven't donated in 6+ months - prime candidates for
+            Donors who havent donated in 6+ months - prime candidates for
             re-engagement
           </p>
         </div>
@@ -394,7 +388,6 @@ export default function ActiveInactiveDonorsReportPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredDonors.map((donor) => {
-                    const statusBadge = getStatusBadge(donor.daysSince);
                     return (
                       <tr key={donor.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

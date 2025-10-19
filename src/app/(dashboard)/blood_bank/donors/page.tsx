@@ -13,7 +13,7 @@ import { useEffect } from "react";
 
 export default function BloodDonationDashboard() {
   const router = useRouter();
-  const [getCounts, { data, isLoading, isError }] = useGetDonorCountsMutation();
+  const [getCounts, { data, isLoading }] = useGetDonorCountsMutation();
 
   useEffect(() => {
     getCounts();

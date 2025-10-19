@@ -20,14 +20,10 @@ import { useGetBloodDonationsQuery } from "@/store/api/bloodDonationApi";
 export default function DonationHistoryReportPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterBloodType, setFilterBloodType] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [dateRange, setDateRange] = useState("month");
 
   // Fetch donation stats via RTK Query mutation (manually triggered on mount)
-  const [
-    getDonationStats,
-    { data: statsResponse, isLoading: statsLoading, isError: statsError },
-  ] = useGetDonationStatsMutation();
+  const [getDonationStats, { data: statsResponse, isLoading: statsLoading }] =
+    useGetDonationStatsMutation();
 
   useEffect(() => {
     // trigger fetch once on mount
@@ -35,11 +31,8 @@ export default function DonationHistoryReportPage() {
   }, [getDonationStats]);
 
   // Fetch all donations for charts and table
-  const {
-    data: donationsResp,
-    isLoading: donationsLoading,
-    isError: donationsError,
-  } = useGetBloodDonationsQuery();
+  const { data: donationsResp, isLoading: donationsLoading } =
+    useGetBloodDonationsQuery();
   const donations = useMemo(() => donationsResp?.data ?? [], [donationsResp]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
@@ -93,25 +86,23 @@ export default function DonationHistoryReportPage() {
   }
 
   // Sample data - replace with actual API calls
-  // Fallback sample data - used until API loads or if it fails
-  const fallbackStats = {
-    totalDonations: 0,
-    thisMonth: 0,
-    lastMonth: 0,
-    averagePerDay: 0,
-    completionRate: 0,
-  };
-
   // Map API response into UI stats shape
   const stats = useMemo(() => {
     const api = statsResponse?.data;
-    if (!api) return fallbackStats;
+    if (!api)
+      return {
+        totalDonations: 0,
+        thisMonth: 0,
+        lastMonth: 0,
+        averagePerDay: 0,
+        completionRate: 0,
+      };
     return {
-      totalDonations: fallbackStats.totalDonations, // not provided by endpoint; keep fallback if needed elsewhere
+      totalDonations: 0, // not provided by endpoint; keep fallback if needed elsewhere
       thisMonth: api.thisMonth,
       lastMonth: api.lastMonth,
       averagePerDay: api.last30DaysAvgPerDay,
-      completionRate: fallbackStats.completionRate, // not in endpoint
+      completionRate: 0, // not in endpoint
     };
   }, [statsResponse]);
 
@@ -158,16 +149,7 @@ export default function DonationHistoryReportPage() {
       .sort((a, b) => b.count - a.count);
   }, [filteredDonations]);
 
-  const COLORS = [
-    "#ef4444",
-    "#f97316",
-    "#f59e0b",
-    "#84cc16",
-    "#10b981",
-    "#06b6d4",
-    "#3b82f6",
-    "#8b5cf6",
-  ];
+  // colors for charts can be added when needed
 
   const mostDonatedFromApi = statsResponse?.data?.mostDonatedBloodType;
   const leastDonatedFromApi = statsResponse?.data?.leastDonatedBloodType;
@@ -255,11 +237,10 @@ export default function DonationHistoryReportPage() {
       if (typeof window !== "undefined") alert("No data to export.");
       return;
     }
-    const [{ jsPDF }, autoTableMod] = await Promise.all([
-      import("jspdf"),
-      import("jspdf-autotable"),
-    ]);
-    const autoTable = (autoTableMod as any).default ?? (autoTableMod as any);
+    const [{ jsPDF }, { default: autoTable }]: [
+      { jsPDF: typeof import("jspdf").jsPDF },
+      { default: (doc: import("jspdf").jsPDF, options: unknown) => void }
+    ] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
     const doc = new jsPDF({ orientation: "landscape", unit: "pt" });
     const head = [
       ["Donor Name", "Blood Type", "Date", "Time", "Units (ml)", "Status"],
@@ -278,7 +259,7 @@ export default function DonationHistoryReportPage() {
       styles: { fontSize: 10, cellPadding: 6 },
       headStyles: { fillColor: [239, 68, 68] },
       margin: { top: 40, left: 40, right: 40 },
-      didDrawPage: (data: any) => {
+      didDrawPage: () => {
         doc.setFontSize(14);
         doc.text("Blood Donations Report", 40, 24);
       },
@@ -293,8 +274,7 @@ export default function DonationHistoryReportPage() {
       if (typeof window !== "undefined") alert("No data to export.");
       return;
     }
-    const XLSXMod = await import("xlsx");
-    const XLSX = (XLSXMod as any).default ?? (XLSXMod as any);
+    const XLSX = await import("xlsx");
     const header = [
       "Donor Name",
       "Blood Type",
