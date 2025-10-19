@@ -13,7 +13,7 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
   nearbyBloodBanks,
 }) => {
   // Fetch medical establishments on mount; fall back to provided nearbyBloodBanks if none fetched
-  const [fetchAllEstablishments, { data, isLoading, isError, error }] =
+  const [fetchAllEstablishments, { data, isLoading, isError }] =
     useGetAllMedicalEstablishmentsMutation();
 
   React.useEffect(() => {

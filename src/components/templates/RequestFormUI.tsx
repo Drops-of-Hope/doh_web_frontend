@@ -46,6 +46,10 @@ export default function RequestFormUI({
   onSubmit,
   router,
 }: RequestFormUIProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _unusedSubmitting = isSubmitting;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _unusedRouter = router;
   return (
     <div className="min-h-[100vh] p-4">
       <div className="">
