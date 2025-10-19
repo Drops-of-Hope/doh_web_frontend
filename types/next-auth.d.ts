@@ -1,35 +1,38 @@
-import NextAuth from "next-auth";
+// File: next-auth.d.ts
 
+import { DefaultSession, DefaultUser } from "next-auth";
+import { JWT } from "next-auth/jwt";
+
+/**
+ * Extend the built-in types to include the `roles` property.
+ */
 declare module "next-auth" {
+  /**
+   * Extend the session to include the user's roles.
+   * This is the object returned by `useSession`, `auth`, etc.
+   */
   interface Session {
-    accessToken?: string;
-    idToken?: string;
-    refreshToken?: string;
-    expiresAt?: number;
-    decodedIdToken?: {
-      sub?: string;
-      birthdate?: string;
-      amr?: string[];
+    user: {
+      /** The user's custom roles. */
       roles?: string[];
-      given_name?: string;
-      family_name?: string;
-      exp?: number;
-      org_name?: string;
-      iat?: number;
-      email?: string;
-      org_handle?: string;
-      username?: string;
-      [key: string]: unknown;
-    };
-    user?: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      roles?: string[];
-      groups?: string[];
-      sub?: string;
-      aud?: string;
-      iss?: string;
-    };
+    } & DefaultSession["user"]; // This keeps the original properties like name, email, image
+  }
+
+  /**
+   * Extend the user object to include roles.
+   * This is the object passed to the `jwt` callback on initial sign-in.
+   */
+  interface User extends DefaultUser {
+    roles?: string[];
   }
 }
+
+/**
+ * Extend the JWT to include roles.
+ * This is the token that is encrypted in the cookie and passed to the `session` callback.
+ */
+declare module "next-auth/jwt" {
+  interface JWT {
+    /** The user's custom roles. */
+    roles?: string[];
+  }}

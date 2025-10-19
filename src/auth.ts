@@ -1,114 +1,47 @@
-import NextAuth, { Session } from "next-auth";
+import NextAuth from "next-auth";
 import Asgardeo from "next-auth/providers/asgardeo";
-import { jwtDecode } from "jwt-decode";
-
-// Define types for decoded ID token
-interface DecodedIdToken {
-  roles?: string[];
-  groups?: string[];
-  sub?: string;
-  aud?: string;
-  iss?: string;
-  [key: string]: unknown;
-}
-
-// Extend the token structure used by NextAuth
-interface ExtendedToken {
-  accessToken?: string;
-  idToken?: string;
-  refreshToken?: string;
-  expiresAt?: number;
-  decodedIdToken?: DecodedIdToken;
-  [key: string]: unknown;
-}
-
-// Extend the session object returned to client
-interface ExtendedSession extends Session {
-  accessToken?: string;
-  idToken?: string;
-  refreshToken?: string;
-  expiresAt?: number;
-  decodedIdToken?: DecodedIdToken;
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    roles?: string[];
-    groups?: string[];
-    sub?: string;
-    aud?: string;
-    iss?: string;
-  };
-}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Asgardeo({
+      // The client ID and secret are often read automatically from environment variables
+      // AUTH_ASGARDEO_CLIENT_ID and AUTH_ASGARDEO_CLIENT_SECRET
       issuer: process.env.AUTH_ASGARDEO_ISSUER,
       authorization: {
         params: {
-          scope: "openid email profile roles",
+          scope: "openid email profile roles", // Ensure 'profile' and 'roles' are requested
         },
+      },
+      // ✅ FIX: Add this profile callback to correctly create the user object.
+      // This is the main fix for the missing user.name issue.
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: `${profile.given_name} ${profile.family_name}`,
+          email: profile.email,
+          image: profile.picture ?? null,
+          // We also get the roles here directly from the Asgardeo profile
+          roles: profile.roles ?? [],
+        };
       },
     }),
   ],
 
   callbacks: {
-    async session({ session, token }): Promise<ExtendedSession> {
-      console.log("Session:", session);
-      console.log("Token:", token);
-
-      const extendedToken = token as ExtendedToken;
-
-      const extendedSession: ExtendedSession = {
-        ...session,
-        accessToken: extendedToken.accessToken,
-        idToken: extendedToken.idToken,
-        refreshToken: extendedToken.refreshToken,
-        expiresAt: extendedToken.expiresAt,
-        decodedIdToken: extendedToken.decodedIdToken,
-      };
-
-      if (extendedToken.decodedIdToken) {
-        extendedSession.user = {
-          ...session.user,
-          roles: extendedToken.decodedIdToken.roles || [],
-          groups: extendedToken.decodedIdToken.groups || [],
-          sub: extendedToken.decodedIdToken.sub,
-          aud: extendedToken.decodedIdToken.aud,
-          iss: extendedToken.decodedIdToken.iss,
-        };
+    // This callback adds the roles from the profile to the JWT token
+    async jwt({ token, user }) {
+      if (user && user.roles) {
+        token.roles = user.roles;
       }
-
-      return extendedSession;
+      return token;
     },
 
-    async jwt({ token, account }): Promise<ExtendedToken> {
-      const extendedToken: ExtendedToken = { ...token };
-
-      if (account) {
-        console.log("account found");
-
-        extendedToken.accessToken = account.access_token;
-        extendedToken.idToken = account.id_token;
-        extendedToken.refreshToken = account.refresh_token;
-        extendedToken.expiresAt = account.expires_at;
-
-        console.log("access token from asgardeo:", account.access_token);
-        console.log("id token from asgardeo:", account.id_token);
-
-        if (account.id_token) {
-          try {
-            const decodedIdToken: DecodedIdToken = jwtDecode(account.id_token);
-            extendedToken.decodedIdToken = decodedIdToken;
-            console.log("Decoded ID Token:", decodedIdToken);
-          } catch (error) {
-            console.error("Error decoding ID token:", error);
-          }
-        }
+    // This callback adds the roles from the JWT token to the final session object
+    async session({ session, token }) {
+      if (token && token.roles) {
+        session.user.roles = token.roles as string[];
       }
-
-      return extendedToken;
+      return session;
     },
   },
 });
