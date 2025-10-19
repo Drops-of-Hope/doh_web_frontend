@@ -1,38 +1,63 @@
-// File: next-auth.d.ts
-
 import { DefaultSession, DefaultUser } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
-/**
- * Extend the built-in types to include the `roles` property.
- */
+// The decoded ID token structure you defined
+interface DecodedIdToken {
+  sub?: string;
+  birthdate?: string;
+  amr?: string[];
+  roles?: string[];
+  groups?: string[];
+  given_name?: string;
+  family_name?: string;
+  exp?: number;
+  org_name?: string;
+  iat?: number;
+  email?: string;
+  org_handle?: string;
+  username?: string;
+  aud?: string;
+  iss?: string;
+  [key: string]: unknown;
+}
+
 declare module "next-auth" {
   /**
-   * Extend the session to include the user's roles.
-   * This is the object returned by `useSession`, `auth`, etc.
+   * Extend the built-in Session type
    */
   interface Session {
-    user: {
-      /** The user's custom roles. */
+    accessToken?: string;
+    idToken?: string;
+    refreshToken?: string;
+    expiresAt?: number;
+    decodedIdToken?: DecodedIdToken;
+    user?: {
       roles?: string[];
-    } & DefaultSession["user"]; // This keeps the original properties like name, email, image
+      groups?: string[];
+      sub?: string;
+      aud?: string;
+      iss?: string;
+    } & DefaultSession["user"];
   }
 
   /**
-   * Extend the user object to include roles.
-   * This is the object passed to the `jwt` callback on initial sign-in.
+   * Extend the built-in User type
    */
   interface User extends DefaultUser {
-    roles?: string[];
+    // This can be extended if you add custom properties to the `user`
+    // object in the `profile` callback, but is not needed for your current setup.
   }
 }
 
-/**
- * Extend the JWT to include roles.
- * This is the token that is encrypted in the cookie and passed to the `session` callback.
- */
 declare module "next-auth/jwt" {
+  /**
+   * Extend the built-in JWT type
+   */
   interface JWT {
-    /** The user's custom roles. */
-    roles?: string[];
-  }}
+    accessToken?: string;
+    idToken?: string;
+    refreshToken?: string;
+    expiresAt?: number;
+    decodedIdToken?: DecodedIdToken;
+  }
+}
