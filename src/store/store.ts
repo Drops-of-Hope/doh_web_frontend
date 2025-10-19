@@ -9,6 +9,8 @@ import { bloodTestApi } from "./api/bloodTestApi";
 import { campaignsApi } from "./api/campaignsApi";
 import { donorsApi } from "./api/DonorsApi";
 import { reportsApi } from "./api/ReportsApi";
+import { requestsApi } from "./api/RequestsApi";
+import { medicalEstablishmentsApi } from "./api/MedicalEstablishmentsApi";
 
 export const makeStore = () =>
   configureStore({
@@ -24,6 +26,8 @@ export const makeStore = () =>
       [campaignsApi.reducerPath]: campaignsApi.reducer,
       [donorsApi.reducerPath]: donorsApi.reducer,
       [reportsApi.reducerPath]: reportsApi.reducer,
+      [requestsApi.reducerPath]: requestsApi.reducer,
+      [medicalEstablishmentsApi.reducerPath]: medicalEstablishmentsApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
@@ -36,7 +40,9 @@ export const makeStore = () =>
         .concat(bloodTestApi.middleware)
         .concat(campaignsApi.middleware)
         .concat(donorsApi.middleware)
-        .concat(reportsApi.middleware),
+        .concat(reportsApi.middleware)
+        .concat(requestsApi.middleware)
+        .concat(medicalEstablishmentsApi.middleware),
   });
 
 // Export types for usage elsewhere
