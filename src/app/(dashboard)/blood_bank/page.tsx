@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { FaTint, FaClock, FaTruck } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 
+
 export default function HomePage() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -113,7 +114,7 @@ export default function HomePage() {
       </div>
 
       <div className="flex justify-between gap-4 mt-4">
-        <StatCard title="Blood Units" count="107" icon={<FaTint />} />
+        <StatCard title="Blood Units" count="54" icon={<FaTint />} />
         <StatCard title="Expiring Soon" count="9" icon={<FaClock />} />
         <StatCard title="In Transit" count="0" icon={<FaTruck />} />
       </div>

@@ -17,7 +17,7 @@ export default function BloodDonationDashboard() {
               iconBgColor="#EBF8FF"
               heading="No. of donors"
               body="Total registered blood donors"
-              count={109}
+              count={19}
               icon={<FaUser className="w-6 h-6 text-blue-600" />}
             />
           </div>
@@ -26,7 +26,7 @@ export default function BloodDonationDashboard() {
               iconBgColor="#F0FDF4"
               heading="Appointments today"
               body="Blood donation appointments scheduled"
-              count={5}
+              count={2}
               icon={<FaCalendarDay className="w-6 h-6 text-green-600" />}
             />
           </div>
@@ -35,7 +35,7 @@ export default function BloodDonationDashboard() {
               iconBgColor="#FEF2F2"
               heading="Active donors"
               body="Active donors this month"
-              count={21}
+              count={6}
               icon={<FaHeart className="w-6 h-6 text-red-600" />}
             />
           </div>

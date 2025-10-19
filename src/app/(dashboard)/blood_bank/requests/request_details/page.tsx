@@ -20,8 +20,8 @@ const mockRequestData: BloodRequest = {
   patientName: "John Smith",
   bloodGroup: "O+",
   quantity: 4,
-  requestedDate: "2024-01-20",
-  deadline: "2024-01-21 10:00 AM",
+  requestedDate: "2025-10-17",
+  deadline: "2025-10-18 10:00 AM",
   hospital: "City Hospital",
   contactDetails: {
     phone: "011-123-4567",
