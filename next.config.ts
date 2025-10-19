@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "export", // This tells Next.js to create static HTML files
 };
 
 export default nextConfig;
