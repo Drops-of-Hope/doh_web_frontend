@@ -1,6 +1,6 @@
 "use client";
 
-import { FaUser, FaCalendarDay, FaHeart } from "react-icons/fa";
+import { FaUser, FaCalendarDay, FaHeart, FaFileAlt } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import {
   MetricCard,
@@ -78,7 +78,16 @@ export default function BloodDonationDashboard() {
       </div>
 
       <AppointmentRequestsTable />
-
+            {/* Bottom action bar */}
+        <div className="mt-4 mb-4 flex justify-end">
+          <button
+            onClick={() => router.push("/blood_bank/donors/reports")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-sm flex items-center gap-2"
+          >
+            <FaFileAlt className="w-4 h-4" />
+            Generate Reports
+          </button>
+        </div>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
         <div className="p-8 border-b border-gray-100">
           <h2 className="text-2xl font-bold text-gray-900">
@@ -88,10 +97,12 @@ export default function BloodDonationDashboard() {
             Geographic distribution of registered donors across Sri Lanka
           </p>
         </div>
+        
         <div className="p-8">
           <MapComponent />
         </div>
       </div>
+
     </div>
   );
 }
