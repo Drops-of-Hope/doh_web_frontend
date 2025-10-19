@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useGetBloodEquipmentByIdQuery, useUpdateBloodEquipmentMutation } from '@/store/api/bloodEquipmentApi';
 import { BackButton } from '@/components';
 import { FaTools, FaEdit, FaSave, FaTimes, FaCalendarAlt, FaMapMarkerAlt, FaIndustry } from 'react-icons/fa';
 
 export default function EquipmentDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const equipmentId = params.id as string;
 
   const { data: equipment, isLoading, isError } = useGetBloodEquipmentByIdQuery(equipmentId, {

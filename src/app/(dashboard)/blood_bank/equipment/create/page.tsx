@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useCreateBloodEquipmentMutation } from '@/store/api/bloodEquipmentApi';
 import { BackButton } from '@/components';
 import { FaTools, FaSave, FaTimes } from 'react-icons/fa';
 
 export default function CreateEquipmentPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [createEquipment, { isLoading }] = useCreateBloodEquipmentMutation();
 
   const [formData, setFormData] = useState({
