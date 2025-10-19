@@ -9,6 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { FaTint, FaClock, FaTruck } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+import { useGetIncomingPendingRequestsQuery } from "@/store/api/RequestsApi";
 
 
 export default function HomePage() {
@@ -16,6 +17,7 @@ export default function HomePage() {
   const { data: session } = useSession();
   const given_name = session?.decodedIdToken?.given_name;
   const family_name = session?.decodedIdToken?.family_name;
+  const medicalEstablishmentId = session?.decodedIdToken?.sub;
   const handleRequestBlood = () => {
     router.push("/blood_bank/requests/request_form");
   };
@@ -29,44 +31,37 @@ export default function HomePage() {
     { name: "A-", value: 18 },
   ];
 
-  const bloodRequests = [
-    {
-      id: "#BR001",
-      patientName: "John Doe",
-      bloodType: "A+",
-      unitsNeeded: 2,
-      urgency: "High",
-      hospital: "City General Hospital",
-      location: "Downtown District",
-      contactNumber: "+94 77 123 4567",
-      requestTime: "2:15 PM",
-      status: "Pending",
-    },
-    {
-      id: "#BR002",
-      patientName: "Sarah Wilson",
-      bloodType: "O-",
-      unitsNeeded: 1,
-      urgency: "Critical",
-      hospital: "Emergency Medical Center",
-      location: "North Side",
-      contactNumber: "+94 71 987 6543",
-      requestTime: "1:45 PM",
-      status: "Pending",
-    },
-    {
-      id: "#BR003",
-      patientName: "Sarah Wilson",
-      bloodType: "O-",
-      unitsNeeded: 1,
-      urgency: "Critical",
-      hospital: "Emergency Medical Center",
-      location: "North Side",
-      contactNumber: "+94 71 987 6543",
-      requestTime: "1:45 PM",
-      status: "Pending",
-    },
-  ];
+  // Fetch incoming requests (received by this blood bank)
+  const { data: incomingData } = useGetIncomingPendingRequestsQuery(
+    { medicalEstablishmentId: medicalEstablishmentId ?? "" },
+    { skip: !medicalEstablishmentId }
+  );
+
+  const toDisplayBloodGroup = (bg?: string): string => {
+    if (!bg) return "";
+    return bg.replace("_", " ").replace("POSITIVE", "+").replace("NEGATIVE", "-").replace(/\s+/g, "");
+  };
+
+  const toDisplayUrgency = (u?: string): string => {
+    if (!u) return "";
+    const v = u.toUpperCase();
+    if (v === "HIGH") return "High";
+    if (v === "MEDIUM") return "Medium";
+    if (v === "LOW") return "Low";
+    return u;
+  };
+
+  const bloodRequests = (incomingData?.data ?? []).map((req) => ({
+    id: req.id,
+    bloodType: toDisplayBloodGroup(req.bloodGroup),
+    unitsNeeded: req.unitsRequired,
+    urgency: toDisplayUrgency(req.urgencyLevel),
+    hospital: req.requestingBloodBank?.name || req.medicalEstablishment?.name || "",
+    location: req.requestingBloodBank?.address || req.medicalEstablishment?.address || "",
+    contactNumber: "",
+    requestTime: req.createdAt ? new Date(req.createdAt).toLocaleString() : "",
+    status: req.status?.toUpperCase() === "PENDING" ? "Pending" : req.status || "Pending",
+  }));
 
   const emergencyRequests = [
     {
