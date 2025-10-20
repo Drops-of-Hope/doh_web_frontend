@@ -3,6 +3,8 @@ import { RequestFormSectionsProps } from "../../../types";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Clock } from "lucide-react";
 import { useGetAllMedicalEstablishmentsMutation } from "@/store/api/MedicalEstablishmentsApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
   formData,
@@ -29,6 +31,21 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
           location: e.address || e.region,
         }))
       : nearbyBloodBanks;
+
+  const handleSubmitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    toast.success(
+      "Form submitted successfully! Your blood request has been processed.",
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      }
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -228,14 +245,28 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         />
         <div className="mt-6 flex justify-end gap-3">
           <button
-            type="submit"
-            form="blood-request-form"
+            type="button"
+            onClick={handleSubmitClick}
             className="bg-[#FB7373] hover:bg-red-400 text-white font-medium rounded-lg transition-colors duration-200 px-6 py-2"
           >
             Submit Request
           </button>
         </div>
       </div>
+
+      {/* Toast container for notifications */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
