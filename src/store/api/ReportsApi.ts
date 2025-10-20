@@ -78,6 +78,61 @@ export interface InactiveDonorsResponse {
   data: InactiveDonorsData;
 }
 
+// Types for campaign reports
+export interface CampaignPerformanceData {
+  totalCampaigns: number;
+  activeCampaigns: number;
+  completedCampaigns: number;
+  pendingApproval: number;
+  totalDonorsReached: number;
+  totalBloodUnitsCollected: number;
+  averageDonorsPerCampaign: number;
+  campaignSuccessRate: number;
+  topPerformingCampaign: {
+    id: string;
+    title: string;
+    donorsReached: number;
+    unitsCollected: number;
+  };
+  monthlyPerformance: {
+    month: string;
+    campaigns: number;
+    donors: number;
+    unitsCollected: number;
+  }[];
+}
+
+export interface CampaignPerformanceResponse {
+  success: boolean;
+  data: CampaignPerformanceData;
+}
+
+export interface DonorEngagementData {
+  totalRegistrations: number;
+  actualParticipants: number;
+  participationRate: number;
+  repeatDonors: number;
+  newDonors: number;
+  retentionRate: number;
+  averageParticipationPerCampaign: number;
+  topEngagedDonors: {
+    id: string;
+    name: string;
+    totalParticipations: number;
+    lastParticipation: string;
+  }[];
+  engagementTrend: {
+    date: string;
+    registrations: number;
+    participations: number;
+  }[];
+}
+
+export interface DonorEngagementResponse {
+  success: boolean;
+  data: DonorEngagementData;
+}
+
 export const reportsApi = createApi({
   reducerPath: "reportsApi",
   baseQuery: fetchBaseQuery({
@@ -111,6 +166,13 @@ export const reportsApi = createApi({
         };
       },
     }),
+    // Campaign reports endpoints
+    getCampaignPerformanceStats: builder.mutation<CampaignPerformanceResponse, void>({
+      query: () => ({ url: "/campaigns/performance", method: "GET" }),
+    }),
+    getDonorEngagementStats: builder.mutation<DonorEngagementResponse, void>({
+      query: () => ({ url: "/campaigns/donor-engagement", method: "GET" }),
+    }),
   }),
 });
 
@@ -118,4 +180,6 @@ export const {
   useGetDonationStatsMutation,
   useGetDonorStatsMutation,
   useGetInactiveDonorsMutation,
+  useGetCampaignPerformanceStatsMutation,
+  useGetDonorEngagementStatsMutation,
 } = reportsApi;
