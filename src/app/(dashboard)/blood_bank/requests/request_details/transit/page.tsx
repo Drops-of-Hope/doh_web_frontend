@@ -111,8 +111,13 @@ export default function TransitFormPage() {
         );
       }
 
-      // Redirect back to request details page
-      router.push("/blood_bank/requests/request_details");
+      // Redirect to request details summary page with transit info
+      const params = new URLSearchParams();
+      if (typeof window !== "undefined") {
+        const id = new URLSearchParams(window.location.search).get("id");
+        if (id) params.set("id", id);
+      }
+      router.push(`/blood_bank/requests/request_details/summary${params.toString() ? `?${params.toString()}` : ""}`);
     } catch (error) {
       console.error("Error submitting transit form:", error);
     } finally {

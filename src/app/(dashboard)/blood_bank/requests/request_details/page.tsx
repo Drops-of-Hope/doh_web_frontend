@@ -108,7 +108,8 @@ function RequestDetailsContent() {
     setShowAvailability(false);
     setTransitStatus("ongoing");
     // Redirect to transit form page
-    router.push("/blood_bank/requests/request_details/transit");
+    const query = requestId ? `?id=${encodeURIComponent(requestId)}` : "";
+    router.push(`/blood_bank/requests/request_details/transit${query}`);
   };
 
   const handleRejectClick = () => {
@@ -177,19 +178,7 @@ function RequestDetailsContent() {
       <RequestDetailsCard
         request={requestView}
         requestStatus={requestStatus}
-        transitStatus={transitStatus}
-        transitDetails={transitDetails}
       />
-
-      {/* Transit Status Section */}
-      {requestStatus === "accepted" && (
-        <div className="my-4 p-4 bg-blue-50 border border-blue-200 rounded text-gray-600">
-          <span className="font-semibold">Transit Status: </span>
-          {transitStatus === "not_started" && "Not started"}
-          {transitStatus === "ongoing" && "Ongoing"}
-          {transitStatus === "completed" && "Completed"}
-        </div>
-      )}
 
       {showRejectionSection && <RejectionSection onReject={handleReject} />}
 
