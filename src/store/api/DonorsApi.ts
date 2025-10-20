@@ -13,19 +13,7 @@ export interface DonorCountsResponse {
   message: string;
 }
 
-// Response shape for GET /donors/location-counts
-export interface DonorLocationData {
-  district: string;
-  donorCount: number;
-}
-
-export interface DonorLocationCountsResponse {
-  success: boolean;
-  data: DonorLocationData[];
-  message: string;
-}
-
-export const DonorsApi = createApi({
+export const donorsApi = createApi({
   reducerPath: "donorsApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:5000/api",
@@ -38,14 +26,7 @@ export const DonorsApi = createApi({
         method: "GET",
       }),
     }),
-    // GET endpoint for donor location counts
-    getDonorLocationCounts: builder.query<DonorLocationData[], void>({
-      query: () => "/donors/location-counts",
-      transformResponse: (response: DonorLocationCountsResponse) =>
-        response.data,
-    }),
   }),
 });
 
-export const { useGetDonorCountsMutation, useGetDonorLocationCountsQuery } =
-  DonorsApi;
+export const { useGetDonorCountsMutation } = donorsApi;

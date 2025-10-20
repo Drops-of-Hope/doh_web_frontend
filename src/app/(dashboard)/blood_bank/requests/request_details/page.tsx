@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   AvailabilityChecker,
   ActionButtons,
@@ -9,31 +9,27 @@ import {
   BackButton,
   RequestDetailsCard,
 } from "@/components";
-import {
-  BloodRequest,
-  AvailabilityData,
-  RequestStatus,
-} from "../../../../../../types";
+import { AvailabilityData, RequestStatus } from "../../../../../../types";
+import { useGetRequestByIdQuery } from "@/store/api/RequestsApi";
 
-const mockRequestData: BloodRequest = {
-  id: "1",
-  patientName: "John Smith",
-  bloodGroup: "O+",
-  quantity: 4,
-  requestedDate: "2025-10-17",
-  deadline: "2025-10-18 10:00 AM",
-  hospital: "City Hospital",
-  contactDetails: {
-    phone: "011-123-4567",
-    email: "emergency@cityhospital.com",
-  },
-  priority: "High",
-  requestTime: "2 hours ago",
-  reason: "Emergency surgery required",
+// Helper formatters
+const formatBloodGroup = (bg?: string): string =>
+  bg ? bg.replace("_", " ").replace("POSITIVE", "+").replace("NEGATIVE", "-").replace(/\s+/g, "") : "";
+const toUrgency = (u?: string): "High" | "Medium" | "Low" => {
+  const v = (u || "").toUpperCase();
+  if (v === "CRITICAL" || v === "HIGH") return "High";
+  if (v === "MEDIUM") return "Medium";
+  return "Low";
 };
 
 export default function RequestDetailsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestId = searchParams.get("id") ?? "";
+  const { data: requestData, isLoading, isError } = useGetRequestByIdQuery(
+    { requestId },
+    { skip: !requestId }
+  );
   const [showAvailability, setShowAvailability] = useState(false);
   const [availabilityData, setAvailabilityData] =
     useState<AvailabilityData | null>(null);
@@ -91,11 +87,13 @@ export default function RequestDetailsPage() {
   }, []);
 
   const handleCheckAvailability = async () => {
+    const unitsRequested = requestData?.data?.unitsRequired ?? 0;
+    const bloodGroup = formatBloodGroup(requestData?.data?.bloodGroup);
     const mockAvailability: AvailabilityData = {
       available: Math.random() > 0.3,
       currentStock: Math.floor(Math.random() * 10) + 1,
-      requestedQuantity: mockRequestData.quantity,
-      bloodType: mockRequestData.bloodGroup,
+      requestedQuantity: unitsRequested,
+      bloodType: bloodGroup,
       estimatedDeliveryTime: "2-4 hours",
     };
 
@@ -121,20 +119,63 @@ export default function RequestDetailsPage() {
   const handleReject = (reason: string) => {
     setRequestStatus("rejected");
     setShowRejectionSection(false);
-    console.log("Request rejected:", mockRequestData.id, "Reason:", reason);
+    console.log("Request rejected:", requestId, "Reason:", reason);
   };
+
+  const requestView = useMemo(() => {
+    const d = requestData?.data;
+    if (!d) return null;
+    return {
+      id: d.id,
+      patientName: d.requestReason || "Request",
+      bloodGroup: formatBloodGroup(d.bloodGroup),
+      quantity: d.unitsRequired,
+      requestedDate: d.requestDeliveryDate ? new Date(d.requestDeliveryDate).toLocaleDateString() : "",
+      deadline: d.requestDeliveryTime || "",
+      hospital: d.requestingBloodBank?.name || d.medicalEstablishment?.name || "",
+      contactDetails: {
+        phone: "",
+        email: "",
+      },
+      priority: toUrgency(d.urgencyLevel),
+      requestTime: d.createdAt ? new Date(d.createdAt).toLocaleString() : "",
+      reason: d.requestReason || "",
+    };
+  }, [requestData]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">
+        <div className="mb-6">
+          <BackButton fallbackUrl="/blood_bank/requests" className="hover:shadow-md" />
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6">Loading request details...</div>
+      </div>
+    );
+  }
+
+  if (isError || !requestView) {
+    return (
+      <div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">
+        <div className="mb-6">
+          <BackButton fallbackUrl="/blood_bank/requests" className="hover:shadow-md" />
+        </div>
+        <div className="bg-white rounded-lg shadow-sm p-6 text-red-600">Failed to load request details.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">
       <div className="mb-6">
         <BackButton
-          fallbackUrl="/blood_bank/requests/request_details"
+          fallbackUrl="/blood_bank/requests"
           className="hover:shadow-md"
         />
       </div>
 
       <RequestDetailsCard
-        request={mockRequestData}
+        request={requestView}
         requestStatus={requestStatus}
         transitStatus={transitStatus}
         transitDetails={transitDetails}
