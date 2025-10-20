@@ -118,7 +118,18 @@ export default function HomePage() {
         />
       </div>
       <div className='flex justify-between gap-4 mt-4'>
-        <BloodRequestStats heading='Weekly Blood Usage Overview'/>
+        <BloodRequestStats 
+          heading='Weekly Blood Usage Overview'
+          data={[
+            { type: 'O+', count: 12 },
+            { type: 'A+', count: 9 },
+            { type: 'B+', count: 6 },
+            { type: 'AB+', count: 3 },
+            { type: 'O-', count: 5 },
+            { type: 'A-', count: 4 },
+          ]}
+          percentChange={8}
+        />
         <PieChartWithLegend 
           title="Available Blood Packets"
           data={bloodTypeData}

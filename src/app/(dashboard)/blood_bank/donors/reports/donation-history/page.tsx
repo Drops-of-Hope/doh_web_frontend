@@ -237,11 +237,24 @@ export default function DonationHistoryReportPage() {
       if (typeof window !== "undefined") alert("No data to export.");
       return;
     }
-    const [{ jsPDF }, { default: autoTable }]: [
-      { jsPDF: typeof import("jspdf").jsPDF },
-      { default: (doc: import("jspdf").jsPDF, options: unknown) => void }
-    ] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
-    const doc = new jsPDF({ orientation: "landscape", unit: "pt" });
+    // Dynamically import jsPDF supporting both named and default exports across versions
+    const [jspdfModule, autotableModule] = await Promise.all([
+      import("jspdf"),
+      import("jspdf-autotable"),
+    ]);
+    type JsPDFConstructor = typeof import("jspdf").jsPDF;
+    const jsPdfExports = jspdfModule as unknown as {
+      jsPDF?: JsPDFConstructor;
+      default?: JsPDFConstructor;
+    };
+    const JsPDFCtor: JsPDFConstructor = jsPdfExports.jsPDF ?? jsPdfExports.default!;
+
+    type AutoTableType = (doc: import("jspdf").jsPDF, options: unknown) => void;
+    const autoTableExports = autotableModule as unknown as { default?: AutoTableType };
+    const autoTable: AutoTableType = autoTableExports.default ?? (autotableModule as unknown as AutoTableType);
+
+    type JsPDFOptions = ConstructorParameters<JsPDFConstructor>[0];
+    const doc = new JsPDFCtor({ orientation: "landscape", unit: "pt" } as JsPDFOptions);
     const head = [
       ["Donor Name", "Blood Type", "Date", "Time", "Units (ml)", "Status"],
     ];
