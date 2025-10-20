@@ -14,6 +14,9 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
   reasonsForRequest,
   nearbyBloodBanks,
 }) => {
+  // State for submit button loading
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
   // Fetch medical establishments on mount; fall back to provided nearbyBloodBanks if none fetched
   const [fetchAllEstablishments, { data, isLoading, isError }] =
     useGetAllMedicalEstablishmentsMutation();
@@ -32,8 +35,14 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         }))
       : nearbyBloodBanks;
 
-  const handleSubmitClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmitClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    
+    setIsSubmitting(true);
+    
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     toast.success(
       "Form submitted successfully! Your blood request has been processed.",
       {
@@ -45,6 +54,8 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         draggable: true,
       }
     );
+    
+    setIsSubmitting(false);
   };
 
   return (
@@ -247,9 +258,36 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
           <button
             type="button"
             onClick={handleSubmitClick}
-            className="bg-[#FB7373] hover:bg-red-400 text-white font-medium rounded-lg transition-colors duration-200 px-6 py-2"
+            disabled={isSubmitting}
+            className={`${
+              isSubmitting 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-[#FB7373] hover:bg-red-400'
+            } text-white font-medium rounded-lg transition-colors duration-200 px-6 py-2 flex items-center gap-2`}
           >
-            Submit Request
+            {isSubmitting && (
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            )}
+            {isSubmitting ? 'Processing...' : 'Submit Request'}
           </button>
         </div>
       </div>
