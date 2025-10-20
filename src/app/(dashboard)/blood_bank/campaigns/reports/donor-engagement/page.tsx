@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Download, Search, Users, UserCheck, UserX, TrendingUp, Award } from "lucide-react";
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -146,7 +144,7 @@ export default function DonorEngagementReportPage() {
       autoTable(doc, {
         head: [['Donor Name', 'Participations', 'Last Participation']],
         body: donorData,
-        startY: (doc as any).lastAutoTable.finalY + 20,
+        startY: (doc as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 20,
         styles: { fontSize: 10, cellPadding: 6 },
         headStyles: { fillColor: [59, 130, 246] },
       });

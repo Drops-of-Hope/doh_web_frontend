@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Download, Search, Calendar, BarChart3, TrendingUp, Target, Users } from "lucide-react";
+import { Download, BarChart3, TrendingUp, Target, Users } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -21,10 +21,7 @@ import { useGetCampaignPerformanceStatsMutation } from "@/store/api/ReportsApi";
 import { BackButton } from "@/components";
 
 export default function CampaignPerformanceReportPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-
-  // Fetch campaign performance stats via RTK Query mutation
+  // Fetch campaign performance stats via RTK Query mutation (manually triggered on mount)
   const [getCampaignPerformanceStats, { data: statsResponse, isLoading: statsLoading }] =
     useGetCampaignPerformanceStatsMutation();
 

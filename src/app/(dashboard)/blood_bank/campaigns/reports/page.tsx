@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FileText, BarChart3, Users, TrendingUp } from "lucide-react";
+import { FileText, BarChart3, Users } from "lucide-react";
 import { BackButton } from "@/components";
 
 export default function CampaignReportsPage() {
