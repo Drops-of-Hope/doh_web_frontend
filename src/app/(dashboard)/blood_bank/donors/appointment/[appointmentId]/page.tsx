@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
 import { RecentDonations, BackButton, DonorProfileCard, QRScanner } from '@/components';
+import { useGetDonationHistoryByDonorQuery } from '@/store/api/bloodDonationApi';
 import { useRouter, useParams } from 'next/navigation';
 import { useGetAppointmentByIdQuery, useConfirmAppointmentMutation } from '@/store/api/appointmentsApi';
 
@@ -85,11 +86,19 @@ export default function Appointment() {
   // Type guard to ensure we have properly typed appointment data
   const typedAppointmentData = appointmentData as AppointmentData | undefined;
 
-  const donationHistory: DonationHistory[] = [
-    { id: 1, date: "2024-12-15", type: "Whole Blood", location: "Colombo Blood Bank" },
-    { id: 2, date: "2024-09-10", type: "Whole Blood", location: "Kandy General Hospital" },
-    { id: 3, date: "2024-06-05", type: "Whole Blood", location: "Colombo Blood Bank" }
-  ];
+  // Fetch donation history by donorId (from appointment donor)
+  const donorIdForHistory = typedAppointmentData?.donor?.id;
+  const { data: historyData } = useGetDonationHistoryByDonorQuery(
+    { donorId: donorIdForHistory ?? '' },
+    { skip: !donorIdForHistory }
+  );
+
+  const donationHistory: DonationHistory[] = (historyData?.data ?? []).map((d, idx) => ({
+    id: idx + 1,
+    date: d.donationDate,
+    type: 'Whole Blood',
+    location: d.placeName,
+  }));
 
   const handleQRSuccess = (result: unknown) => {
     console.log('QR scan result:', result);
@@ -158,7 +167,7 @@ export default function Appointment() {
           />
         </div>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent mb-4"></div>
         </div>
       </div>
     );
@@ -252,7 +261,7 @@ export default function Appointment() {
               
               <button
                 onClick={handleViewForm}
-                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-4 transition-colors duration-200 hover:underline"
+                className="ml-4 inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm mt-4 transition-colors duration-200 hover:underline"
               >
                 View Form
                 <FaExternalLinkAlt className="w-3 h-3" />

@@ -1,11 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { slotsApi } from './api/slotsApi';
-import { appointmentsApi } from './api/appointmentsApi'; 
-import { donationFormApi } from './api/donationFormApi';
-import { healthVitalsApi } from './api/healthVitalsApi';
-import { bloodDonationApi } from './api/bloodDonationApi';
-import { inventoryApi } from './api/inventoryApi';
-import { bloodTestApi } from './api/bloodTestApi';
+import { configureStore } from "@reduxjs/toolkit";
+import { slotsApi } from "./api/slotsApi";
+import { appointmentsApi } from "./api/appointmentsApi";
+import { donationFormApi } from "./api/donationFormApi";
+import { healthVitalsApi } from "./api/healthVitalsApi";
+import { bloodDonationApi } from "./api/bloodDonationApi";
+import { inventoryApi } from "./api/inventoryApi";
+import { bloodTestApi } from "./api/bloodTestApi";
+import { campaignsApi } from "./api/campaignsApi";
+import { donorsApi } from "./api/DonorsApi";
+import { reportsApi } from "./api/ReportsApi";
+import { bloodBankHomeApi } from "./api/bloodBankHomeApi";
+import { requestsApi } from "./api/RequestsApi";
+import { medicalEstablishmentsApi } from "./api/MedicalEstablishmentsApi";
 import { bloodEquipmentApi } from './api/bloodEquipmentApi';
 
 export const makeStore = () =>
@@ -13,12 +19,18 @@ export const makeStore = () =>
     reducer: {
       // Add your other reducers here
       [slotsApi.reducerPath]: slotsApi.reducer,
-      [appointmentsApi.reducerPath]: appointmentsApi.reducer,  
-      [donationFormApi.reducerPath]: donationFormApi.reducer, 
-      [healthVitalsApi.reducerPath]: healthVitalsApi.reducer, 
-      [bloodDonationApi.reducerPath]: bloodDonationApi.reducer, 
-      [inventoryApi.reducerPath]: inventoryApi.reducer, 
+      [appointmentsApi.reducerPath]: appointmentsApi.reducer,
+      [donationFormApi.reducerPath]: donationFormApi.reducer,
+      [healthVitalsApi.reducerPath]: healthVitalsApi.reducer,
+      [bloodDonationApi.reducerPath]: bloodDonationApi.reducer,
+      [inventoryApi.reducerPath]: inventoryApi.reducer,
       [bloodTestApi.reducerPath]: bloodTestApi.reducer,
+      [campaignsApi.reducerPath]: campaignsApi.reducer,
+      [donorsApi.reducerPath]: donorsApi.reducer,
+      [reportsApi.reducerPath]: reportsApi.reducer,
+      [bloodBankHomeApi.reducerPath]: bloodBankHomeApi.reducer,
+      [requestsApi.reducerPath]: requestsApi.reducer,
+      [medicalEstablishmentsApi.reducerPath]: medicalEstablishmentsApi.reducer,
       [bloodEquipmentApi.reducerPath]: bloodEquipmentApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
@@ -30,10 +42,16 @@ export const makeStore = () =>
         .concat(bloodDonationApi.middleware)
         .concat(inventoryApi.middleware)
         .concat(bloodTestApi.middleware)
+        .concat(campaignsApi.middleware)
+        .concat(donorsApi.middleware)
+        .concat(reportsApi.middleware)
+        .concat(bloodBankHomeApi.middleware)
+        .concat(requestsApi.middleware)
+        .concat(medicalEstablishmentsApi.middleware)
         .concat(bloodEquipmentApi.middleware),
   });
 
 // Export types for usage elsewhere
 export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore['getState']>;
-export type AppDispatch = AppStore['dispatch'];
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];

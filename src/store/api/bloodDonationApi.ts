@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface BloodUnit {
   id: string;
@@ -22,6 +22,40 @@ interface BloodDonation {
   endTime: string;
 }
 
+// Nested user details returned from GET /api/blood-donation
+interface UserDetails {
+  id: string;
+  address: string | null;
+  city: string | null;
+  userId: string;
+  allergies: string | null;
+  emergencyContact: string | null;
+  medicalConditions: string | null;
+  phoneNumber: string | null;
+  district: string | null;
+  type: string | null;
+}
+
+interface User {
+  id: string;
+  nic: string;
+  email: string;
+  name: string;
+  bloodGroup: string;
+  createdAt: string;
+  donationBadge: string;
+  isActive: boolean;
+  nextEligible: string | null;
+  profileImageUrl: string | null;
+  totalDonations: number;
+  totalPoints: number;
+  updatedAt: string;
+  userDetails: UserDetails | null;
+}
+
+// Donation object returned by GET includes nested user
+type BloodDonationWithUser = BloodDonation & { user: User };
+
 interface SystemLog {
   id: string;
   dateTime: string;
@@ -34,6 +68,22 @@ interface BloodDonationResponse {
   bloodDonation: BloodDonation;
   bloodUnits: BloodUnit[];
   systemLog: SystemLog;
+}
+
+// Response from GET /api/blood-donation
+interface GetBloodDonationsResponse {
+  success: boolean;
+  data: BloodDonationWithUser[];
+}
+
+// Donation history by donor (separate endpoint /api/donations)
+export interface DonationHistoryItem {
+  donationDate: string;
+  placeName: string;
+}
+
+export interface DonationHistoryResponse {
+  data: DonationHistoryItem[];
 }
 
 interface CreateBloodDonationPayload {
@@ -49,25 +99,61 @@ interface CreateBloodDonationPayload {
 }
 
 export const bloodDonationApi = createApi({
-  reducerPath: 'bloodDonationApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/blood-donation' }),
-  tagTypes: ['BloodDonations'],
-  
+  reducerPath: "bloodDonationApi",
+  baseQuery: fetchBaseQuery({
+    baseUrl: "http://localhost:5000/api/blood-donation",
+  }),
+  tagTypes: ["BloodDonations"],
+
   endpoints: (builder) => ({
-    createBloodDonation: builder.mutation<BloodDonationResponse, CreateBloodDonationPayload>({
+    // GET all blood donations
+    getBloodDonations: builder.query<GetBloodDonationsResponse, void>({
+      query: () => ({
+        url: "/",
+        method: "GET",
+      }),
+      providesTags: (result) => {
+        if (!result?.data)
+          return [{ type: "BloodDonations" as const, id: "LIST" }];
+        return [
+          ...result.data
+            .filter((d) => d.userId)
+            .map((d) => ({
+              type: "BloodDonations" as const,
+              id: d.userId as string,
+            })),
+          { type: "BloodDonations" as const, id: "LIST" },
+        ];
+      },
+    }),
+    createBloodDonation: builder.mutation<
+      BloodDonationResponse,
+      CreateBloodDonationPayload
+    >({
       query: (newBloodDonation) => ({
-        url: '/',
-        method: 'POST',
+        url: "/",
+        method: "POST",
         body: newBloodDonation,
       }),
       invalidatesTags: (result, error, arg) => [
-        { type: 'BloodDonations', id: arg.userId },
-        { type: 'BloodDonations', id: arg.bdfId },
+        { type: "BloodDonations", id: arg.userId },
+        { type: "BloodDonations", id: arg.bdfId },
+        { type: "BloodDonations", id: "LIST" },
       ],
+    }),
+    // GET donation history by donor
+    getDonationHistoryByDonor: builder.query<
+      DonationHistoryResponse,
+      { donorId: string }
+    >({
+      // This endpoint lives under /api/donations, so override baseUrl via full path
+      query: ({ donorId }) => ({
+        url: `http://localhost:5000/api/donations/history/by-donor?donorId=${donorId}`,
+        method: "GET",
+      }),
     }),
   }),
 });
 
-export const {
-  useCreateBloodDonationMutation,
-} = bloodDonationApi;
+export const { useGetBloodDonationsQuery, useCreateBloodDonationMutation, useGetDonationHistoryByDonorQuery } =
+  bloodDonationApi;

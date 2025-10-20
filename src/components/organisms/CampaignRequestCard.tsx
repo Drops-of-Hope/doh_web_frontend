@@ -35,9 +35,9 @@ const CampaignRequestsCard: React.FC<CampaignRequestsCardProps> = ({
   const router = useRouter();
 
   const handleCampaignClick = (campaignId: string, status: string) => {
-    // Navigate to requests page for any pending campaign request
+    // Navigate to request details page with campaignId
     if (enableNavigation && status === 'Pending') {
-      router.push('/blood_bank/campaigns/requests');
+      router.push(`/blood_bank/campaigns/requests/${campaignId}`);
     }
   };
   const getStatusColor = (status: string) => {

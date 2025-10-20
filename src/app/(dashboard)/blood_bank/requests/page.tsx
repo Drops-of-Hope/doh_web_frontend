@@ -1,14 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Heart, ArrowUp, ArrowDown, Clock, Plus, Truck } from 'lucide-react';
 import { MetricCard, Button } from '@/components';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useGetIncomingPendingRequestsQuery, useGetOutgoingPendingRequestsQuery, useGetRequestsSummaryQuery } from '@/store/api/RequestsApi';
 
 type TabType = 'incoming' | 'outgoing';
 
 export default function RequestPage() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const medicalEstablishmentId = session?.decodedIdToken?.sub;
   const [activeTab, setActiveTab] = useState<TabType>('incoming');
 
   const handleNewRequest = (): void => {
@@ -23,6 +27,27 @@ export default function RequestPage() {
     setActiveTab(tab);
   };
 
+  // Fetch summary
+  const { data: summaryData } = useGetRequestsSummaryQuery(
+    { medicalEstablishmentId: medicalEstablishmentId ?? '' },
+    { skip: !medicalEstablishmentId }
+  );
+
+  // Fetch incoming (recipient)
+  const { data: incomingData, isLoading: incomingLoading, isError: incomingError } = useGetIncomingPendingRequestsQuery(
+    { medicalEstablishmentId: medicalEstablishmentId ?? '' },
+    { skip: !medicalEstablishmentId }
+  );
+
+  // Fetch outgoing (requester). The endpoint expects bloodBankId; using same id
+  const { data: outgoingData, isLoading: outgoingLoading, isError: outgoingError } = useGetOutgoingPendingRequestsQuery(
+    { medicalEstablishmentId: medicalEstablishmentId ?? '' },
+    { skip: !medicalEstablishmentId }
+  );
+
+  const incomingRequests = useMemo(() => incomingData?.data ?? [], [incomingData]);
+  const outgoingRequests = useMemo(() => outgoingData?.data ?? [], [outgoingData]);
+
   return (
     <div className="min-h-[100vh] p-4 bg-[#f8f8f8]">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -30,7 +55,7 @@ export default function RequestPage() {
           iconBgColor="#EF4444"
           heading="Total Requests"
           body="All blood requests"
-          count={127}
+          count={summaryData?.data?.total ?? (incomingRequests.length + outgoingRequests.length)}
           icon={<Heart className="w-6 h-6 text-white" />}
         />
         
@@ -38,7 +63,7 @@ export default function RequestPage() {
           iconBgColor="#F59E0B"
           heading="Incoming Requests"
           body="From hospitals & banks"
-          count={89}
+          count={summaryData?.data?.incoming ?? incomingRequests.length}
           icon={<ArrowDown className="w-6 h-6 text-white" />}
         />
         
@@ -46,7 +71,7 @@ export default function RequestPage() {
           iconBgColor="#10B981"
           heading="Outgoing Requests"
           body="To donors & facilities"
-          count={38}
+          count={summaryData?.data?.outgoing ?? outgoingRequests.length}
           icon={<ArrowUp className="w-6 h-6 text-white" />}
         />
         
@@ -54,7 +79,7 @@ export default function RequestPage() {
           iconBgColor="#8B5CF6"
           heading="In Transit"
           body="Currently being delivered"
-          count={23}
+          count={summaryData?.data?.inTransit ?? 0}
           icon={<Clock className="w-6 h-6 text-white" />}
         />
       </div>
@@ -110,64 +135,56 @@ export default function RequestPage() {
           {activeTab === 'incoming' ? (
             <div>
               <h3 className="text-lg font-semibold mb-4">Incoming Requests</h3>
-              <div className="space-y-4">
-                <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-100"
-                onClick={() => router.push('/blood_bank/requests/request_details')}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">City Hospital</h4>
-                    <span className="text-sm text-gray-500">2 hours ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Blood Type: O+ | Quantity: 4 units</p>
-                  <p className="text-sm text-gray-600">Priority: High</p>
+              {incomingLoading && (
+                <div className="bg-white rounded-lg shadow-sm p-6">Loading incoming requests...</div>
+              )}
+              {incomingError && (
+                <div className="bg-white rounded-lg shadow-sm p-6 text-red-600">Failed to load incoming requests.</div>
+              )}
+              {!incomingLoading && !incomingError && (
+                <div className="space-y-4">
+                  {incomingRequests.length === 0 && (
+                    <div className="p-4 border border-gray-200 rounded-lg text-gray-500">No incoming requests.</div>
+                  )}
+                  {incomingRequests.map((req) => (
+                    <div key={req.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-100 cursor-pointer" onClick={() => router.push(`/blood_bank/requests/request_details?id=${req.id}`)}>
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{req.requestingBloodBank?.name || 'Unknown Requester'}</h4>
+                        <span className="text-sm text-gray-500">{new Date(req.createdAt || '').toLocaleString()}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">Blood Type: {req.bloodGroup?.replace('_', ' ').replace('POSITIVE','+').replace('NEGATIVE','-')} | Quantity: {req.unitsRequired} units</p>
+                      <p className="text-sm text-gray-600">Priority: {req.urgencyLevel?.toLowerCase() === 'high' ? 'High' : req.urgencyLevel?.toLowerCase() === 'medium' ? 'Medium' : 'Low'}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">Regional Blood Bank</h4>
-                    <span className="text-sm text-gray-500">5 hours ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Blood Type: AB- | Quantity: 2 units</p>
-                  <p className="text-sm text-gray-600">Priority: Medium</p>
-                </div>
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">Emergency Medical Center</h4>
-                    <span className="text-sm text-gray-500">1 day ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Blood Type: A+ | Quantity: 6 units</p>
-                  <p className="text-sm text-gray-600">Priority: Low</p>
-                </div>
-              </div>
+              )}
             </div>
           ) : (
             <div>
               <h3 className="text-lg font-semibold mb-4">Outgoing Requests</h3>
-              <div className="space-y-4">
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">Donor Network A</h4>
-                    <span className="text-sm text-gray-500">1 hour ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Blood Type: B+ | Quantity: 3 units</p>
-                  <p className="text-sm text-gray-600">Status: Pending</p>
+              {outgoingLoading && (
+                <div className="bg-white rounded-lg shadow-sm p-6">Loading outgoing requests...</div>
+              )}
+              {outgoingError && (
+                <div className="bg-white rounded-lg shadow-sm p-6 text-red-600">Failed to load outgoing requests.</div>
+              )}
+              {!outgoingLoading && !outgoingError && (
+                <div className="space-y-4">
+                  {outgoingRequests.length === 0 && (
+                    <div className="p-4 border border-gray-200 rounded-lg text-gray-500">No outgoing requests.</div>
+                  )}
+                  {outgoingRequests.map((req) => (
+                    <div key={req.id} className="p-4 border border-gray-200 rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">{req.medicalEstablishment?.name || 'Unknown Recipient'}</h4>
+                        <span className="text-sm text-gray-500">{new Date(req.createdAt || '').toLocaleString()}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">Blood Type: {req.bloodGroup?.replace('_', ' ').replace('POSITIVE','+').replace('NEGATIVE','-')} | Quantity: {req.unitsRequired} units</p>
+                      <p className="text-sm text-gray-600">Status: {req.status?.toLowerCase().replace(/^./, (c) => c.toUpperCase())}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">Central Blood Facility</h4>
-                    <span className="text-sm text-gray-500">3 hours ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Blood Type: O- | Quantity: 5 units</p>
-                  <p className="text-sm text-gray-600">Status: Confirmed</p>
-                </div>
-                <div className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-medium">Mobile Donation Unit</h4>
-                    <span className="text-sm text-gray-500">6 hours ago</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">Blood Type: A- | Quantity: 2 units</p>
-                  <p className="text-sm text-gray-600">Status: In Progress</p>
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>
