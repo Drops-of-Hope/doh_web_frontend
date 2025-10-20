@@ -54,8 +54,7 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
 }) => {
   if (!availabilityData) return null;
 
-  const { currentStock, requestedQuantity, bloodType } = availabilityData;
-  const available = true;
+  const { currentStock, requestedQuantity, bloodType, available } = availabilityData as AvailabilityData & { available: boolean };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -121,13 +120,15 @@ export const AvailabilityChecker: React.FC<AvailabilityCheckerProps> = ({
           {/* Action Buttons - Only show if request is still pending */}
           {requestStatus === 'pending' && (
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                title="Accept Request"
-                containerStyles="bg-green-50 hover:bg-green-100 text-green-600 border border-green-600 rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
-                handleClick={onAccept}
-                leftIcon={<CheckCircle className="w-5 h-5" />}
-                iconSpacing="gap-2"
-              />
+              {available && (
+                <Button
+                  title="Accept Request"
+                  containerStyles="bg-green-50 hover:bg-green-100 text-green-600 border border-green-600 rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
+                  handleClick={onAccept}
+                  leftIcon={<CheckCircle className="w-5 h-5" />}
+                  iconSpacing="gap-2"
+                />
+              )}
               <Button
                 title="Reject Request"
                 containerStyles="bg-red-50 hover:bg-red-100 text-red-600 border border-red-600 rounded-lg font-medium transition-all transform hover:scale-105 flex-1"
