@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useGetAllBloodEquipmentQuery, useDeleteBloodEquipmentMutation } from '@/store/api/bloodEquipmentApi';
 import { MetricCard, SearchBar } from '@/components';
 import { FaTools, FaCheckCircle, FaExclamationTriangle, FaClock, FaPlus, FaEye, FaTrash } from 'react-icons/fa';
 
 export default function EquipmentPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 

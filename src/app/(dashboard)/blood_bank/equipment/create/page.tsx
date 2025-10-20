@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useCreateBloodEquipmentMutation } from '@/store/api/bloodEquipmentApi';
 import { BackButton } from '@/components';
 import { FaTools, FaSave, FaTimes } from 'react-icons/fa';
 
 export default function CreateEquipmentPage() {
   const router = useRouter();
-  const { data: session } = useSession();
   const [createEquipment, { isLoading }] = useCreateBloodEquipmentMutation();
 
   const [formData, setFormData] = useState({
@@ -116,15 +114,19 @@ export default function CreateEquipmentPage() {
       console.log('✅ Success! Equipment created:', result);
       alert('Equipment created successfully!');
       router.push('/blood_bank/equipment');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ ERROR - Failed to create equipment');
       console.error('Full error object:', error);
-      console.error('Error status:', error?.status);
-      console.error('Error data:', error?.data);
-      console.error('Error message:', error?.message);
+      const err = (error ?? {}) as Record<string, unknown>;
+      const status = (err.status as string | number | undefined);
+      const data = err.data as Record<string, unknown> | undefined;
+      const msg = (err.message as string | undefined);
+      console.error('Error status:', status);
+      console.error('Error data:', data);
+      console.error('Error message:', msg);
       
       // Check for network/connection errors
-      if (error?.status === 'FETCH_ERROR' || !error?.status) {
+      if (status === 'FETCH_ERROR' || status === undefined) {
         alert('❌ Cannot connect to backend server!\n\nPlease check:\n1. Backend is running on http://localhost:5000\n2. No CORS issues\n3. Check browser console for details');
         return;
       }
@@ -132,14 +134,14 @@ export default function CreateEquipmentPage() {
       // Extract detailed error message
       let errorMessage = 'Failed to create equipment.';
       
-      if (error?.data?.message) {
-        errorMessage = error.data.message;
-      } else if (error?.data?.error) {
-        errorMessage = error.data.error;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      } else if (error?.status) {
-        errorMessage = `Server error: ${error.status}`;
+      if (data && typeof data === 'object' && 'message' in data && typeof data.message === 'string') {
+        errorMessage = data.message as string;
+      } else if (data && typeof data === 'object' && 'error' in data && typeof (data as Record<string, unknown>).error === 'string') {
+        errorMessage = (data as Record<string, unknown>).error as string;
+      } else if (typeof msg === 'string') {
+        errorMessage = msg;
+      } else if (typeof status === 'string' || typeof status === 'number') {
+        errorMessage = `Server error: ${String(status)}`;
       }
       
       alert(`❌ Error: ${errorMessage}\n\nCheck the console for more details.`);
