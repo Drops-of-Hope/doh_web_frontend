@@ -24,7 +24,7 @@ const transitData: TransitInfo[] = [
     isPrivateHospital: false,
   },
   {
-    from: "Northern Blood Center",
+    from: "Central Blood Bank",
     to: "City Medical Clinic",
     estimatedDelivery: "1 hr 15 mins",
     bloodGroup: "A-",
