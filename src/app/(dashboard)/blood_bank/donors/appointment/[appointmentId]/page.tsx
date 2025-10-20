@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { FaCalendarDay, FaClock, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
 import { RecentDonations, BackButton, DonorProfileCard, QRScanner } from '@/components';
+import { useGetDonationHistoryByDonorQuery } from '@/store/api/bloodDonationApi';
 import { useRouter, useParams } from 'next/navigation';
 import { useGetAppointmentByIdQuery, useConfirmAppointmentMutation } from '@/store/api/appointmentsApi';
 
@@ -85,11 +86,19 @@ export default function Appointment() {
   // Type guard to ensure we have properly typed appointment data
   const typedAppointmentData = appointmentData as AppointmentData | undefined;
 
-  const donationHistory: DonationHistory[] = [
-    { id: 1, date: "2024-12-15", type: "Whole Blood", location: "Colombo Blood Bank" },
-    { id: 2, date: "2024-09-10", type: "Whole Blood", location: "Kandy General Hospital" },
-    { id: 3, date: "2024-06-05", type: "Whole Blood", location: "Colombo Blood Bank" }
-  ];
+  // Fetch donation history by donorId (from appointment donor)
+  const donorIdForHistory = typedAppointmentData?.donor?.id;
+  const { data: historyData } = useGetDonationHistoryByDonorQuery(
+    { donorId: donorIdForHistory ?? '' },
+    { skip: !donorIdForHistory }
+  );
+
+  const donationHistory: DonationHistory[] = (historyData?.data ?? []).map((d, idx) => ({
+    id: idx + 1,
+    date: d.donationDate,
+    type: 'Whole Blood',
+    location: d.placeName,
+  }));
 
   const handleQRSuccess = (result: unknown) => {
     console.log('QR scan result:', result);
