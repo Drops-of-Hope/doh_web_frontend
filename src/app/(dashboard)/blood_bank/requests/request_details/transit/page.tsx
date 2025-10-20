@@ -99,7 +99,26 @@ export default function TransitFormPage() {
 
     try {
       // Frontend-only simulation with toast
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Show success toast
+      toast.success(
+        "Transit initiated successfully! Driver has been notified.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            backgroundColor: "white",
+            color: "green",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+          },
+        }
+      );
 
       // Store locally so details display when returning
       if (typeof window !== "undefined") {
@@ -114,13 +133,20 @@ export default function TransitFormPage() {
         );
       }
 
+      // Wait a bit for the toast to show before redirecting
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Redirect to request details summary page with transit info
       const params = new URLSearchParams();
       if (typeof window !== "undefined") {
         const id = new URLSearchParams(window.location.search).get("id");
         if (id) params.set("id", id);
       }
-      router.push(`/blood_bank/requests/request_details/summary${params.toString() ? `?${params.toString()}` : ""}`);
+      router.push(
+        `/blood_bank/requests/request_details/summary${
+          params.toString() ? `?${params.toString()}` : ""
+        }`
+      );
     } catch (error) {
       console.error("Error submitting transit form:", error);
       toast.error("Something went wrong. Please try again.");
@@ -131,7 +157,20 @@ export default function TransitFormPage() {
 
   return (
     <div className="min-h-screen p-4">
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="colored" />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="light"
+        toastStyle={{
+          backgroundColor: "white",
+          color: "green",
+          border: "1px solid #e5e7eb",
+        }}
+      />
       <div className="">
         {/* Header */}
         <div className="mb-8">
