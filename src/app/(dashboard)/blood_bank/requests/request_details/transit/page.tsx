@@ -4,6 +4,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BackButton } from "@/components";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface TransitFormData {
   driverName: string;
@@ -89,16 +91,17 @@ export default function TransitFormPage() {
     e.preventDefault();
 
     if (!validateForm()) {
+      toast.error("Please fix the highlighted fields.");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Frontend-only simulation with toast
+      await new Promise((resolve) => setTimeout(resolve, 600));
 
-      // Store transit details in localStorage (in a real app, this would be an API call)
+      // Store locally so details display when returning
       if (typeof window !== "undefined") {
         localStorage.setItem("transitStatus", "ongoing");
         localStorage.setItem(
@@ -111,10 +114,12 @@ export default function TransitFormPage() {
         );
       }
 
-      // Redirect back to request details page
-      router.push("/blood_bank/requests/request_details");
+      toast.success("Transit initiated successfully.");
+      // Give user a brief moment to read the toast
+      setTimeout(() => router.push("/blood_bank/requests/request_details"), 900);
     } catch (error) {
       console.error("Error submitting transit form:", error);
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -122,6 +127,7 @@ export default function TransitFormPage() {
 
   return (
     <div className="min-h-screen p-4">
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop closeOnClick pauseOnHover theme="colored" />
       <div className="">
         {/* Header */}
         <div className="mb-8">
