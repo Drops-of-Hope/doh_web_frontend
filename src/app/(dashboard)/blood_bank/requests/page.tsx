@@ -9,6 +9,38 @@ import { useGetIncomingPendingRequestsQuery, useGetOutgoingPendingRequestsQuery,
 
 type TabType = 'incoming' | 'outgoing';
 
+type MaybeName = { name?: string };
+type ReqNameShape = {
+  requestingBloodBank?: MaybeName;
+  medicalEstablishment?: MaybeName;
+} & Partial<{
+  BloodBank: MaybeName;
+  MedicalEstablishment: MaybeName;
+  requestingBloodBankId: string;
+}>;
+
+const getRequesterDisplayName = (req: unknown): string => {
+  const r = req as ReqNameShape;
+  return (
+    r.requestingBloodBank?.name ??
+    r.BloodBank?.name ??
+    r.medicalEstablishment?.name ??
+    r.MedicalEstablishment?.name ??
+    'Unknown Requester'
+  );
+};
+
+const getRecipientDisplayName = (req: unknown): string => {
+  const r = req as ReqNameShape;
+  return (
+    r.medicalEstablishment?.name ??
+    r.MedicalEstablishment?.name ??
+    r.requestingBloodBank?.name ??
+    r.BloodBank?.name ??
+    'Unknown Recipient'
+  );
+};
+
 export default function RequestPage() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -87,7 +119,7 @@ export default function RequestPage() {
       <div className="flex justify-end mb-6 gap-3">
         <Button
           title="Manage Transits"
-          containerStyles="bg-blue-50 hover:bg-blye-100 text-blue-500 border border-blue-500 rounded-lg font-medium transition-colors"
+          containerStyles="bg-blue-50 hover:bg-blue-100 text-blue-500 border border-blue-500 rounded-lg font-medium transition-colors"
           handleClick={handleManageTransits}
           leftIcon={<Truck className="w-5 h-5" />}
           iconSpacing="gap-2"
@@ -149,7 +181,7 @@ export default function RequestPage() {
                   {incomingRequests.map((req) => (
                     <div key={req.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-100 cursor-pointer" onClick={() => router.push(`/blood_bank/requests/request_details?id=${req.id}`)}>
                       <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium">{req.requestingBloodBank?.name || 'Unknown Requester'}</h4>
+                        <h4 className="font-medium">{getRequesterDisplayName(req)}</h4>
                         <span className="text-sm text-gray-500">{new Date(req.createdAt || '').toLocaleString()}</span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">Blood Type: {req.bloodGroup?.replace('_', ' ').replace('POSITIVE','+').replace('NEGATIVE','-')} | Quantity: {req.unitsRequired} units</p>
@@ -176,7 +208,7 @@ export default function RequestPage() {
                   {outgoingRequests.map((req) => (
                     <div key={req.id} className="p-4 border border-gray-200 rounded-lg">
                       <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium">{req.medicalEstablishment?.name || 'Unknown Recipient'}</h4>
+                        <h4 className="font-medium">{getRecipientDisplayName(req)}</h4>
                         <span className="text-sm text-gray-500">{new Date(req.createdAt || '').toLocaleString()}</span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">Blood Type: {req.bloodGroup?.replace('_', ' ').replace('POSITIVE','+').replace('NEGATIVE','-')} | Quantity: {req.unitsRequired} units</p>
