@@ -12,6 +12,7 @@ import { reportsApi } from "./api/ReportsApi";
 import { bloodBankHomeApi } from "./api/bloodBankHomeApi";
 import { requestsApi } from "./api/RequestsApi";
 import { medicalEstablishmentsApi } from "./api/MedicalEstablishmentsApi";
+import { bloodEquipmentApi } from './api/bloodEquipmentApi';
 
 export const makeStore = () =>
   configureStore({
@@ -30,6 +31,7 @@ export const makeStore = () =>
       [bloodBankHomeApi.reducerPath]: bloodBankHomeApi.reducer,
       [requestsApi.reducerPath]: requestsApi.reducer,
       [medicalEstablishmentsApi.reducerPath]: medicalEstablishmentsApi.reducer,
+      [bloodEquipmentApi.reducerPath]: bloodEquipmentApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware()
@@ -45,7 +47,8 @@ export const makeStore = () =>
         .concat(reportsApi.middleware)
         .concat(bloodBankHomeApi.middleware)
         .concat(requestsApi.middleware)
-        .concat(medicalEstablishmentsApi.middleware),
+        .concat(medicalEstablishmentsApi.middleware)
+        .concat(bloodEquipmentApi.middleware),
   });
 
 // Export types for usage elsewhere
