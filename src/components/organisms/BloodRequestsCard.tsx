@@ -111,7 +111,7 @@ const BloodRequestsCard: React.FC<BloodRequestsCardProps> = ({
                     </div>
                     <div className="flex items-center gap-1">
                       <FaMapMarkerAlt className="text-gray-400" />
-                      <span>{request.hospital}, {request.location}</span>
+                      <span>Central Blood Bank, Narahenpita</span>
                     </div>
                     <div className="mt-2 text-sm text-gray-500">
                       <span className="font-medium">Requested at:</span> {request.requestTime}

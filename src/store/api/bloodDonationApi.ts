@@ -76,6 +76,16 @@ interface GetBloodDonationsResponse {
   data: BloodDonationWithUser[];
 }
 
+// Donation history by donor (separate endpoint /api/donations)
+export interface DonationHistoryItem {
+  donationDate: string;
+  placeName: string;
+}
+
+export interface DonationHistoryResponse {
+  data: DonationHistoryItem[];
+}
+
 interface CreateBloodDonationPayload {
   bdfId: string;
   userId: string;
@@ -131,8 +141,19 @@ export const bloodDonationApi = createApi({
         { type: "BloodDonations", id: "LIST" },
       ],
     }),
+    // GET donation history by donor
+    getDonationHistoryByDonor: builder.query<
+      DonationHistoryResponse,
+      { donorId: string }
+    >({
+      // This endpoint lives under /api/donations, so override baseUrl via full path
+      query: ({ donorId }) => ({
+        url: `http://localhost:5000/api/donations/history/by-donor?donorId=${donorId}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetBloodDonationsQuery, useCreateBloodDonationMutation } =
+export const { useGetBloodDonationsQuery, useCreateBloodDonationMutation, useGetDonationHistoryByDonorQuery } =
   bloodDonationApi;
