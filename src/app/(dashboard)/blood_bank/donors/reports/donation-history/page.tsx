@@ -237,11 +237,43 @@ export default function DonationHistoryReportPage() {
       if (typeof window !== "undefined") alert("No data to export.");
       return;
     }
-    const [{ jsPDF }, { default: autoTable }]: [
-      { jsPDF: typeof import("jspdf").jsPDF },
-      { default: (doc: import("jspdf").jsPDF, options: unknown) => void }
-    ] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
-    const doc = new jsPDF({ orientation: "landscape", unit: "pt" });
+    // Dynamically import jsPDF supporting both named and default exports across versions
+    const [jspdfModule, autotableModule] = await Promise.all([
+      import("jspdf"),
+      import("jspdf-autotable"),
+    ]);
+
+    // Minimal typings to avoid dependency on module-internal type exports
+    type JsPDFDoc = {
+      setFontSize: (n: number) => void;
+      text: (text: string, x: number, y: number) => void;
+      save: (filename: string) => void;
+    };
+    type JsPDFCtor = new (options: { orientation?: string; unit?: string }) => JsPDFDoc;
+
+    const { jsPDF: jsPDFNamed, default: jsPDFDefault } = jspdfModule as unknown as {
+      jsPDF?: unknown;
+      default?: unknown;
+    };
+    const JsPDFCtorResolved = (jsPDFNamed ?? jsPDFDefault) as JsPDFCtor;
+
+    type AutoTableFn = (
+      doc: JsPDFDoc,
+      options: {
+        head: string[][];
+        body: (string | number)[][];
+        styles?: { fontSize?: number; cellPadding?: number };
+        headStyles?: { fillColor?: [number, number, number] };
+        margin?: { top?: number; left?: number; right?: number };
+        didDrawPage?: () => void;
+      }
+    ) => void;
+
+    const autoTableResolved = (
+      ((autotableModule as unknown as { default?: unknown }).default ?? autotableModule) as unknown
+    ) as AutoTableFn;
+
+    const doc = new JsPDFCtorResolved({ orientation: "landscape", unit: "pt" });
     const head = [
       ["Donor Name", "Blood Type", "Date", "Time", "Units (ml)", "Status"],
     ];
@@ -253,7 +285,7 @@ export default function DonationHistoryReportPage() {
       String(r.units),
       r.status,
     ]);
-    autoTable(doc, {
+  autoTableResolved(doc, {
       head,
       body,
       styles: { fontSize: 10, cellPadding: 6 },

@@ -114,9 +114,13 @@ export default function TransitFormPage() {
         );
       }
 
-      toast.success("Transit initiated successfully.");
-      // Give user a brief moment to read the toast
-      setTimeout(() => router.push("/blood_bank/requests/request_details"), 900);
+      // Redirect to request details summary page with transit info
+      const params = new URLSearchParams();
+      if (typeof window !== "undefined") {
+        const id = new URLSearchParams(window.location.search).get("id");
+        if (id) params.set("id", id);
+      }
+      router.push(`/blood_bank/requests/request_details/summary${params.toString() ? `?${params.toString()}` : ""}`);
     } catch (error) {
       console.error("Error submitting transit form:", error);
       toast.error("Something went wrong. Please try again.");

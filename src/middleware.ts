@@ -1,19 +1,21 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+// 1. REMOVE the import for getToken
+// import { getToken } from 'next-auth/jwt';
+
+// 2. ADD an import for 'auth' from your auth.ts file
+import { auth } from './auth';
 
 export async function middleware(request: NextRequest) {
   /**
-   * Retrieve the JWT that NextAuth stores in the cookie
-   * (`next-auth.session-token` in development or
-   *  `__Secure-next-auth.session-token` on HTTPS).
+   * Use the `auth()` function which is connected to your NextAuth configuration.
+   * It will securely read the session from the cookie.
    */
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-  });
+  // 3. CHANGE this line from getToken to auth()
+  const session = await auth();
 
-  if (!token) {
+  // 4. CHANGE the check from `token` to `session`
+  if (!session) {
     const signInUrl = new URL('/api/auth/signin', request.url);
 
     signInUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
@@ -25,9 +27,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Your matcher remains the same
   matcher: [
     '/donor/:path*',
     '/blood_bank/:path*',
   ],
 };
-

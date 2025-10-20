@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AvailabilityChecker,
@@ -100,7 +100,7 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
   return `${dateString} ${hh}:${mm}:00`;
 };
 
-export default function RequestDetailsPage() {
+function RequestDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestId = searchParams.get("id") ?? "";
@@ -119,55 +119,7 @@ export default function RequestDetailsPage() {
   const [requestStatus, setRequestStatus] = useState<RequestStatus>("pending");
   const [hasCheckedAvailability, setHasCheckedAvailability] = useState(false);
   const [showRejectionSection, setShowRejectionSection] = useState(false);
-  // Transit status: 'not_started' | 'ongoing' | 'completed'
-  const [transitStatus, setTransitStatus] = useState<
-    "not_started" | "ongoing" | "completed"
-  >(() => {
-    if (typeof window !== "undefined") {
-      return (
-        (localStorage.getItem("transitStatus") as
-          | "not_started"
-          | "ongoing"
-          | "completed") || "not_started"
-      );
-    }
-    return "not_started";
-  });
-
-  // Define a type for transit details or use 'unknown' if the structure is not known
-  type TransitDetails =
-    | {
-        transporter: string;
-        driverName: string;
-        driverContact: string;
-        emergencyContact: string;
-        vehicle: string;
-        departureTime: string;
-        note: string;
-      }
-    | undefined;
-
-  const [transitDetails, setTransitDetails] = useState<TransitDetails>(() => {
-    if (typeof window !== "undefined") {
-      const details = localStorage.getItem("transitDetails");
-      return details ? JSON.parse(details) : undefined;
-    }
-    return undefined;
-  });
-
-  // Keep transit status/details in sync if user returns from transit form
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const status =
-        (localStorage.getItem("transitStatus") as
-          | "not_started"
-          | "ongoing"
-          | "completed") || "not_started";
-      setTransitStatus(status);
-      const details = localStorage.getItem("transitDetails");
-      setTransitDetails(details ? JSON.parse(details) : undefined);
-    }
-  }, []);
+  // Transit-related UI is handled on the summary page; not used here.
 
   const handleCheckAvailability = async () => {
     const unitsRequested = requestData?.data?.unitsRequired ?? 0;
@@ -232,9 +184,9 @@ export default function RequestDetailsPage() {
     setRequestStatus("accepted");
     setShowRejectionSection(false);
     setShowAvailability(false);
-    setTransitStatus("ongoing");
     // Redirect to transit form page
-    router.push("/blood_bank/requests/request_details/transit");
+    const query = requestId ? `?id=${encodeURIComponent(requestId)}` : "";
+    router.push(`/blood_bank/requests/request_details/transit${query}`);
   };
 
   const handleRejectClick = () => {
@@ -303,19 +255,7 @@ export default function RequestDetailsPage() {
       <RequestDetailsCard
         request={requestView}
         requestStatus={requestStatus}
-        transitStatus={transitStatus}
-        transitDetails={transitDetails}
       />
-
-      {/* Transit Status Section */}
-      {requestStatus === "accepted" && (
-        <div className="my-4 p-4 bg-blue-50 border border-blue-200 rounded text-gray-600">
-          <span className="font-semibold">Transit Status: </span>
-          {transitStatus === "not_started" && "Not started"}
-          {transitStatus === "ongoing" && "Ongoing"}
-          {transitStatus === "completed" && "Completed"}
-        </div>
-      )}
 
       {showRejectionSection && <RejectionSection onReject={handleReject} />}
 
@@ -337,5 +277,13 @@ export default function RequestDetailsPage() {
         hasCheckedAvailability={hasCheckedAvailability}
       />
     </div>
+  );
+}
+
+export default function RequestDetailsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">Loading...</div>}>
+      <RequestDetailsContent />
+    </Suspense>
   );
 }

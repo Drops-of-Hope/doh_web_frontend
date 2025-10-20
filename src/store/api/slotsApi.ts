@@ -12,7 +12,7 @@ interface CreateSlotPayload {
 
 export const slotsApi = createApi({
   reducerPath: 'slotsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/slots' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://doh-backend.onrender.com/api/slots' }),
   tagTypes: ['Slots'], 
   endpoints: (builder) => ({
     getSlotsByMedicalEstablishment: builder.query<AppointmentSlot[], string>({

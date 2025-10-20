@@ -63,7 +63,7 @@ export interface BloodTestCounts {
 export const bloodTestApi = createApi({
   reducerPath: "bloodTestApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api/blood-test",
+    baseUrl: "https://doh-backend.onrender.com/api/blood-test",
   }),
   tagTypes: ["BloodTests"],
   endpoints: (builder) => ({
