@@ -100,7 +100,7 @@ const BloodRequestStats: React.FC<BloodRequestStatsProps> = ({
       <div className="flex flex-col justify-end gap-3 pb-3 h-full">
         {[
           {
-            label: "Blood requests",
+            label: "Blood donation",
             value:
               percentChange !== undefined && percentChange !== null
                 ? `${percentChange >= 0 ? "+" : ""}${percentChange.toFixed(0)}%`
