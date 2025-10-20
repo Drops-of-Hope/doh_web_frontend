@@ -28,7 +28,7 @@ export default function HomePage() {
   // Fetch dashboard counts
   const [
     getCounts,
-    { data: countsData, isLoading: countsLoading, isError: countsError },
+    { data: countsData, isLoading: countsLoading },
   ] = useGetCountsMutation();
 
   React.useEffect(() => {
@@ -38,7 +38,7 @@ export default function HomePage() {
   // Fetch blood type distribution for pie chart
   const [
     getBloodTypeDistribution,
-    { data: distributionData, isLoading: distributionLoading },
+    { data: distributionData },
   ] = useGetBloodTypeDistributionMutation();
 
   React.useEffect(() => {
@@ -136,7 +136,7 @@ export default function HomePage() {
   ];
 
   // Fetch two-week donations for BloodRequestStats
-  const [getTwoWeeks, { data: twoWeeksData, isLoading: twoWeeksLoading }] =
+  const [getTwoWeeks, { data: twoWeeksData }] =
     useGetDonationsTwoWeeksMutation();
 
   React.useEffect(() => {
