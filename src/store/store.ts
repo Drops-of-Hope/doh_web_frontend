@@ -9,6 +9,7 @@ import { bloodTestApi } from "./api/bloodTestApi";
 import { campaignsApi } from "./api/campaignsApi";
 import { donorsApi } from "./api/DonorsApi";
 import { reportsApi } from "./api/ReportsApi";
+import { bloodBankHomeApi } from "./api/bloodBankHomeApi";
 import { requestsApi } from "./api/RequestsApi";
 import { medicalEstablishmentsApi } from "./api/MedicalEstablishmentsApi";
 
@@ -26,6 +27,7 @@ export const makeStore = () =>
       [campaignsApi.reducerPath]: campaignsApi.reducer,
       [donorsApi.reducerPath]: donorsApi.reducer,
       [reportsApi.reducerPath]: reportsApi.reducer,
+      [bloodBankHomeApi.reducerPath]: bloodBankHomeApi.reducer,
       [requestsApi.reducerPath]: requestsApi.reducer,
       [medicalEstablishmentsApi.reducerPath]: medicalEstablishmentsApi.reducer,
     },
@@ -41,6 +43,7 @@ export const makeStore = () =>
         .concat(campaignsApi.middleware)
         .concat(donorsApi.middleware)
         .concat(reportsApi.middleware)
+        .concat(bloodBankHomeApi.middleware)
         .concat(requestsApi.middleware)
         .concat(medicalEstablishmentsApi.middleware),
   });
