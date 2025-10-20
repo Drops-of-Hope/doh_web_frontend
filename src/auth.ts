@@ -9,6 +9,8 @@ interface DecodedIdToken {
   sub?: string;
   aud?: string;
   iss?: string;
+  given_name?: string;
+  family_name?: string;
   [key: string]: unknown;
 }
 
@@ -55,9 +57,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   callbacks: {
     async session({ session, token }): Promise<ExtendedSession> {
-      console.log("Session:", session);
-      console.log("Token:", token);
-
       const extendedToken = token as ExtendedToken;
 
       const extendedSession: ExtendedSession = {
@@ -72,6 +71,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (extendedToken.decodedIdToken) {
         extendedSession.user = {
           ...session.user,
+          // ✅ FIX: This line constructs the user's name, solving the redirect loop.
+          name: `${extendedToken.decodedIdToken.given_name} ${extendedToken.decodedIdToken.family_name}`,
           roles: extendedToken.decodedIdToken.roles || [],
           groups: extendedToken.decodedIdToken.groups || [],
           sub: extendedToken.decodedIdToken.sub,
@@ -87,21 +88,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const extendedToken: ExtendedToken = { ...token };
 
       if (account) {
-        console.log("account found");
-
         extendedToken.accessToken = account.access_token;
         extendedToken.idToken = account.id_token;
         extendedToken.refreshToken = account.refresh_token;
         extendedToken.expiresAt = account.expires_at;
 
-        console.log("access token from asgardeo:", account.access_token);
-        console.log("id token from asgardeo:", account.id_token);
-
         if (account.id_token) {
           try {
             const decodedIdToken: DecodedIdToken = jwtDecode(account.id_token);
             extendedToken.decodedIdToken = decodedIdToken;
-            console.log("Decoded ID Token:", decodedIdToken);
           } catch (error) {
             console.error("Error decoding ID token:", error);
           }

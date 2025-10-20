@@ -34,7 +34,7 @@ interface CreateHealthVitalPayload {
 
 export const healthVitalsApi = createApi({
   reducerPath: 'healthVitalsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/health-vitals' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://doh-backend.onrender.com/api/health-vitals' }),
   tagTypes: ['HealthVitals'],
   
   endpoints: (builder) => ({
