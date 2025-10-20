@@ -37,12 +37,12 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
 
   const handleSubmitClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    
+
     setIsSubmitting(true);
-    
+
     // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     toast.success(
       "Form submitted successfully! Your blood request has been processed.",
       {
@@ -54,7 +54,7 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
         draggable: true,
       }
     );
-    
+
     setIsSubmitting(false);
   };
 
@@ -260,9 +260,9 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
             onClick={handleSubmitClick}
             disabled={isSubmitting}
             className={`${
-              isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-[#FB7373] hover:bg-red-400'
+              isSubmitting
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#FB7373] hover:bg-red-400"
             } text-white font-medium rounded-lg transition-colors duration-200 px-6 py-2 flex items-center gap-2`}
           >
             {isSubmitting && (
@@ -287,7 +287,7 @@ export const RequestFormSections: React.FC<RequestFormSectionsProps> = ({
                 ></path>
               </svg>
             )}
-            {isSubmitting ? 'Processing...' : 'Submit Request'}
+            {isSubmitting ? "Processing..." : "Submit Request"}
           </button>
         </div>
       </div>
