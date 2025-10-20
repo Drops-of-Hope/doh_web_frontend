@@ -64,6 +64,11 @@ export interface RequestsListResponse {
 	data: BloodRequestItem[];
 }
 
+export interface RequestByIdResponse {
+	message: string;
+	data: BloodRequestItem;
+}
+
 export const requestsApi = createApi({
 	reducerPath: "requestsApi",
 	baseQuery: fetchBaseQuery({
@@ -109,6 +114,13 @@ export const requestsApi = createApi({
 				body,
 			}),
 		}),
+			// GET request by id
+			getRequestById: builder.query<
+				RequestByIdResponse,
+				{ requestId: string }
+			>({
+				query: ({ requestId }) => `/requests/${requestId}`,
+			}),
 	}),
 });
 
@@ -116,6 +128,7 @@ export const requestsApi = createApi({
 		useGetRequestsSummaryQuery,
 		useGetIncomingPendingRequestsQuery,
 		useGetOutgoingPendingRequestsQuery,
+		useGetRequestByIdQuery,
 		useCreateRequestMutation,
 	} = requestsApi;
 

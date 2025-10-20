@@ -147,7 +147,7 @@ export default function RequestPage() {
                     <div className="p-4 border border-gray-200 rounded-lg text-gray-500">No incoming requests.</div>
                   )}
                   {incomingRequests.map((req) => (
-                    <div key={req.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-100">
+                    <div key={req.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-100 cursor-pointer" onClick={() => router.push(`/blood_bank/requests/request_details?id=${req.id}`)}>
                       <div className="flex justify-between items-start mb-2">
                         <h4 className="font-medium">{req.requestingBloodBank?.name || 'Unknown Requester'}</h4>
                         <span className="text-sm text-gray-500">{new Date(req.createdAt || '').toLocaleString()}</span>
