@@ -242,19 +242,38 @@ export default function DonationHistoryReportPage() {
       import("jspdf"),
       import("jspdf-autotable"),
     ]);
-    type JsPDFConstructor = typeof import("jspdf").jsPDF;
-    const jsPdfExports = jspdfModule as unknown as {
-      jsPDF?: JsPDFConstructor;
-      default?: JsPDFConstructor;
+
+    // Minimal typings to avoid dependency on module-internal type exports
+    type JsPDFDoc = {
+      setFontSize: (n: number) => void;
+      text: (text: string, x: number, y: number) => void;
+      save: (filename: string) => void;
     };
-    const JsPDFCtor: JsPDFConstructor = jsPdfExports.jsPDF ?? jsPdfExports.default!;
+    type JsPDFCtor = new (options: { orientation?: string; unit?: string }) => JsPDFDoc;
 
-    type AutoTableType = (doc: import("jspdf").jsPDF, options: unknown) => void;
-    const autoTableExports = autotableModule as unknown as { default?: AutoTableType };
-    const autoTable: AutoTableType = autoTableExports.default ?? (autotableModule as unknown as AutoTableType);
+    const { jsPDF: jsPDFNamed, default: jsPDFDefault } = jspdfModule as unknown as {
+      jsPDF?: unknown;
+      default?: unknown;
+    };
+    const JsPDFCtorResolved = (jsPDFNamed ?? jsPDFDefault) as JsPDFCtor;
 
-    type JsPDFOptions = ConstructorParameters<JsPDFConstructor>[0];
-    const doc = new JsPDFCtor({ orientation: "landscape", unit: "pt" } as JsPDFOptions);
+    type AutoTableFn = (
+      doc: JsPDFDoc,
+      options: {
+        head: string[][];
+        body: (string | number)[][];
+        styles?: { fontSize?: number; cellPadding?: number };
+        headStyles?: { fillColor?: [number, number, number] };
+        margin?: { top?: number; left?: number; right?: number };
+        didDrawPage?: () => void;
+      }
+    ) => void;
+
+    const autoTableResolved = (
+      ((autotableModule as unknown as { default?: unknown }).default ?? autotableModule) as unknown
+    ) as AutoTableFn;
+
+    const doc = new JsPDFCtorResolved({ orientation: "landscape", unit: "pt" });
     const head = [
       ["Donor Name", "Blood Type", "Date", "Time", "Units (ml)", "Status"],
     ];
@@ -266,7 +285,7 @@ export default function DonationHistoryReportPage() {
       String(r.units),
       r.status,
     ]);
-    autoTable(doc, {
+  autoTableResolved(doc, {
       head,
       body,
       styles: { fontSize: 10, cellPadding: 6 },

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AvailabilityChecker,
@@ -22,7 +22,7 @@ const toUrgency = (u?: string): "High" | "Medium" | "Low" => {
   return "Low";
 };
 
-export default function RequestDetailsPage() {
+function RequestDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestId = searchParams.get("id") ?? "";
@@ -211,5 +211,13 @@ export default function RequestDetailsPage() {
         hasCheckedAvailability={hasCheckedAvailability}
       />
     </div>
+  );
+}
+
+export default function RequestDetailsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">Loading...</div>}>
+      <RequestDetailsContent />
+    </Suspense>
   );
 }
