@@ -237,10 +237,11 @@ export default function DonationHistoryReportPage() {
       if (typeof window !== "undefined") alert("No data to export.");
       return;
     }
-    const [{ jsPDF }, { default: autoTable }]: [
-      { jsPDF: typeof import("jspdf").jsPDF },
-      { default: (doc: import("jspdf").jsPDF, options: unknown) => void }
-    ] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
+    const [jsPDFModule, { default: autoTable }] = await Promise.all([
+      import("jspdf"), 
+      import("jspdf-autotable")
+    ]);
+    const jsPDF = jsPDFModule.default;
     const doc = new jsPDF({ orientation: "landscape", unit: "pt" });
     const head = [
       ["Donor Name", "Blood Type", "Date", "Time", "Units (ml)", "Status"],

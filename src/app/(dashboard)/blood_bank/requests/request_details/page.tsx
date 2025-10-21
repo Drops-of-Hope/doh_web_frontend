@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AvailabilityChecker,
@@ -101,6 +101,14 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
 };
 
 export default function RequestDetailsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RequestDetailsContent />
+    </Suspense>
+  );
+}
+
+function RequestDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestId = searchParams.get("id") ?? "";
