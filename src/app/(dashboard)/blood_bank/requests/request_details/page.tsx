@@ -16,7 +16,13 @@ import { useSession } from "next-auth/react";
 
 // Helper formatters
 const formatBloodGroup = (bg?: string): string =>
-  bg ? bg.replace("_", " ").replace("POSITIVE", "+").replace("NEGATIVE", "-").replace(/\s+/g, "") : "";
+  bg
+    ? bg
+        .replace("_", " ")
+        .replace("POSITIVE", "+")
+        .replace("NEGATIVE", "-")
+        .replace(/\s+/g, "")
+    : "";
 const toUrgency = (u?: string): "High" | "Medium" | "Low" => {
   const v = (u || "").toUpperCase();
   if (v === "CRITICAL" || v === "HIGH") return "High";
@@ -25,7 +31,10 @@ const toUrgency = (u?: string): "High" | "Medium" | "Low" => {
 };
 
 // Combine delivery date and time into a single local datetime string (YYYY-MM-DD HH:MM:SS)
-const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string | null => {
+const combineDeliveryDateTime = (
+  dateIso?: string,
+  timeField?: string
+): string | null => {
   if (!dateIso && !timeField) return null;
 
   // Prefer an explicit date from either timeField (if date-only) or dateIso
@@ -38,8 +47,8 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
     const d = new Date(dateIso);
     if (!isNaN(d.getTime())) {
       const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const da = String(d.getDate()).padStart(2, '0');
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const da = String(d.getDate()).padStart(2, "0");
       dateString = `${y}-${m}-${da}`;
     }
   }
@@ -55,9 +64,9 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
     let h = parseInt(m[1], 10);
     const min = m[2] ? parseInt(m[2], 10) : 0;
     const suffix = m[3].toUpperCase();
-    if (suffix === 'AM') {
+    if (suffix === "AM") {
       if (h === 12) h = 0;
-    } else if (suffix === 'PM') {
+    } else if (suffix === "PM") {
       if (h !== 12) h += 12;
     }
     return { h, m: min };
@@ -70,7 +79,8 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
     // Try AM/PM first
     const ap = parseAmPm(endRaw);
     if (ap) {
-      hour = ap.h; minute = ap.m;
+      hour = ap.h;
+      minute = ap.m;
     } else if (/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.test(endRaw)) {
       const m = endRaw.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/)!;
       hour = parseInt(m[1], 10);
@@ -78,7 +88,8 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
     }
   } else if (parseAmPm(tf)) {
     const ap = parseAmPm(tf)!;
-    hour = ap.h; minute = ap.m;
+    hour = ap.h;
+    minute = ap.m;
   } else if (/^(\d{1,2})(?::(\d{2}))?$/.test(tf)) {
     // Numeric time-only like '14' or '14:30'
     const m = tf.match(/^(\d{1,2})(?::(\d{2}))?$/)!;
@@ -95,8 +106,8 @@ const combineDeliveryDateTime = (dateIso?: string, timeField?: string): string |
 
   if (!dateString) return null;
 
-  const hh = String(hour).padStart(2, '0');
-  const mm = String(minute).padStart(2, '0');
+  const hh = String(hour).padStart(2, "0");
+  const mm = String(minute).padStart(2, "0");
   return `${dateString} ${hh}:${mm}:00`;
 };
 
@@ -113,13 +124,16 @@ function RequestDetailsContent() {
   const searchParams = useSearchParams();
   const requestId = searchParams.get("id") ?? "";
   const { data: session } = useSession();
-  const medicalEstablishmentId = session?.decodedIdToken?.sub as string | undefined;
+  const medicalEstablishmentId = session?.decodedIdToken?.sub as
+    | string
+    | undefined;
   // inventory_id is assumed to be the same as medical establishment id; adjust if different
   const inventoryId = medicalEstablishmentId;
-  const { data: requestData, isLoading, isError } = useGetRequestByIdQuery(
-    { requestId },
-    { skip: !requestId }
-  );
+  const {
+    data: requestData,
+    isLoading,
+    isError,
+  } = useGetRequestByIdQuery({ requestId }, { skip: !requestId });
   const [checkAvailability] = useCheckAvailabilityByDeadlineMutation();
   const [showAvailability, setShowAvailability] = useState(false);
   const [availabilityData, setAvailabilityData] =
@@ -189,10 +203,12 @@ function RequestDetailsContent() {
         requestData?.data?.requestDeliveryTime
       );
       // combined is like 'YYYY-MM-DD HH:MM:SS'; take date part
-      return combined ? combined.slice(0, 10) : (requestData?.data?.requestDeliveryDate?.slice(0,10) || "");
+      return combined
+        ? combined.slice(0, 10)
+        : requestData?.data?.requestDeliveryDate?.slice(0, 10) || "";
     })();
 
-  if (!inventoryId || !bloodGroup || !unitsRequested || !deadlineDate) {
+    if (!inventoryId || !bloodGroup || !unitsRequested || !deadlineDate) {
       // Minimal guard; you may want to show a toast
       setAvailabilityData({
         available: false,
@@ -264,9 +280,14 @@ function RequestDetailsContent() {
       patientName: d.requestReason || "Request",
       bloodGroup: formatBloodGroup(d.bloodGroup),
       quantity: d.unitsRequired,
-      requestedDate: d.requestDeliveryDate ? new Date(d.requestDeliveryDate).toLocaleDateString() : "",
-      deadline: combineDeliveryDateTime(d.requestDeliveryDate, d.requestDeliveryTime) || "",
-      hospital: d.requestingBloodBank?.name || d.medicalEstablishment?.name || "",
+      requestedDate: d.requestDeliveryDate
+        ? new Date(d.requestDeliveryDate).toLocaleDateString()
+        : "",
+      deadline:
+        combineDeliveryDateTime(d.requestDeliveryDate, d.requestDeliveryTime) ||
+        "",
+      hospital:
+        d.requestingBloodBank?.name || d.medicalEstablishment?.name || "",
       contactDetails: {
         phone: "",
         email: "",
@@ -281,9 +302,14 @@ function RequestDetailsContent() {
     return (
       <div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">
         <div className="mb-6">
-          <BackButton fallbackUrl="/blood_bank/requests" className="hover:shadow-md" />
+          <BackButton
+            fallbackUrl="/blood_bank/requests"
+            className="hover:shadow-md"
+          />
         </div>
-        <div className="bg-white rounded-lg shadow-sm p-6">Loading request details...</div>
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          Loading request details...
+        </div>
       </div>
     );
   }
@@ -292,9 +318,14 @@ function RequestDetailsContent() {
     return (
       <div className="min-h-screen bg-[#f8f8f8] p-4 pb-24">
         <div className="mb-6">
-          <BackButton fallbackUrl="/blood_bank/requests" className="hover:shadow-md" />
+          <BackButton
+            fallbackUrl="/blood_bank/requests"
+            className="hover:shadow-md"
+          />
         </div>
-        <div className="bg-white rounded-lg shadow-sm p-6 text-red-600">Failed to load request details.</div>
+        <div className="bg-white rounded-lg shadow-sm p-6 text-red-600">
+          Failed to load request details.
+        </div>
       </div>
     );
   }
