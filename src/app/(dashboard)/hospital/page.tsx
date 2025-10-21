@@ -17,6 +17,15 @@ export default function HomePage() {
     { name: 'A-', value: 18 }
   ];
 
+  const bloodUsageData = [
+    { type: 'O+', count: 25 },
+    { type: 'A+', count: 18 },
+    { type: 'B+', count: 12 },
+    { type: 'AB+', count: 8 },
+    { type: 'O-', count: 15 },
+    { type: 'A-', count: 10 }
+  ];
+
     const bloodRequests = [
     {
       id: '#BR001',
@@ -118,7 +127,10 @@ export default function HomePage() {
         />
       </div>
       <div className='flex justify-between gap-4 mt-4'>
-        <BloodRequestStats heading='Weekly Blood Usage Overview'/>
+        <BloodRequestStats 
+          heading='Weekly Blood Usage Overview'
+          data={bloodUsageData}
+        />
         <PieChartWithLegend 
           title="Available Blood Packets"
           data={bloodTypeData}
