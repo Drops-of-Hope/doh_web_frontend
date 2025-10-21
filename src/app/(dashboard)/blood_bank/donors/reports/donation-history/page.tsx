@@ -238,8 +238,8 @@ export default function DonationHistoryReportPage() {
       return;
     }
     const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
-      import("jspdf"), 
-      import("jspdf-autotable")
+      import("jspdf"),
+      import("jspdf-autotable"),
     ]);
     const doc = new jsPDF({ orientation: "landscape", unit: "pt" });
     const head = [
