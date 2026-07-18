@@ -72,6 +72,7 @@ import { EvaluationForm } from "./organisms/EvaluationForm";
 import { TestModals } from "./organisms/TestModals";
 import HealthVitalsDisplay from "./organisms/HealthVitalsDisplay";
 import BloodEquipmentList from "./organisms/BloodEquipmentList";
+import ForecastDashboard from "./organisms/ForecastDashboard";
 
 export {
     Button,
@@ -151,7 +152,8 @@ export {
     EvaluationForm,
     TestModals,
     HealthVitalsDisplay,
-    BloodEquipmentList
+    BloodEquipmentList,
+    ForecastDashboard,
 }
 
 
