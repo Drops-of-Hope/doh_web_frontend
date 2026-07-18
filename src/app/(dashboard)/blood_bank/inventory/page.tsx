@@ -6,6 +6,7 @@ import {
   FaTimesCircle,
   FaClock,
   FaFileExport,
+  FaChartLine,
 } from "react-icons/fa";
 import {
   MetricCard,
@@ -204,17 +205,38 @@ export default function InventoryPage() {
         <DonationUsageChart />
       </div>
 
-      <div className="mt-8 mb-6 w-full flex justify-center">
-        <div className="bg-white rounded-lg shadow-md p-6 w-full flex justify-between">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+      <div className="mt-8 mb-6 w-full flex flex-col gap-4">
+        {/* Export Report */}
+        <div className="bg-white rounded-lg shadow-md p-6 w-full flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-gray-800">
             Export Inventory Report
           </h3>
           <button
             onClick={handleExportReport}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <FaFileExport size={18} />
             Export Report
+          </button>
+        </div>
+
+        {/* Blood Demand Forecast */}
+        <div className="bg-gradient-to-r from-red-50 to-rose-50 border border-red-100 rounded-lg shadow-md p-6 w-full flex justify-between items-center">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <FaChartLine className="text-red-500" size={18} />
+              Blood Demand Forecast
+            </h3>
+            <p className="text-sm text-gray-500 mt-0.5">
+              AI-powered predictions for blood requests, RCC issues, and component usage
+            </p>
+          </div>
+          <button
+            onClick={() => router.push("/blood_bank/inventory/forecast")}
+            className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 whitespace-nowrap"
+          >
+            <FaChartLine size={16} />
+            View Forecast
           </button>
         </div>
       </div>
