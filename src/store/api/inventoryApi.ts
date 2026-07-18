@@ -107,7 +107,7 @@ export interface CheckAvailabilityByDeadlineResponse {
 export const inventoryApi = createApi({
   reducerPath: "inventoryApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://doh-backend.onrender.com/api",
+    baseUrl: "http://localhost:5000/api/",
   }),
   tagTypes: ["Inventory"],
 

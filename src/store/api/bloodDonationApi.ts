@@ -100,7 +100,7 @@ interface CreateBloodDonationPayload {
 
 export const bloodDonationApi = createApi({
   reducerPath: 'bloodDonationApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://doh-backend.onrender.com/api/blood-donation' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/blood-donation' }),
   tagTypes: ['BloodDonations'],
   
   endpoints: (builder) => ({

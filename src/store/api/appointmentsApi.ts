@@ -3,7 +3,7 @@ import { Appointment } from '../../../types';
 
 export const appointmentsApi = createApi({
   reducerPath: 'appointmentsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://doh-backend.onrender.com/api/appointments' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/appointments' }),
   tagTypes: ['Appointments'],
   endpoints: (builder) => ({
     getAppointmentsByMedicalEstablishment: builder.query<Appointment[], string>({

@@ -93,7 +93,7 @@ export interface CampaignsSummaryResponse {
 
 export const campaignsApi = createApi({
   reducerPath: "campaignsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://doh-backend.onrender.com/api/campaigns" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api/campaigns" }),
   tagTypes: ["Campaigns"],
   endpoints: (builder) => ({
     getPendingCampaignsByMedicalEstablishment: builder.query<

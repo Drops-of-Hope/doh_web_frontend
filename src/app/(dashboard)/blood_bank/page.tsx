@@ -8,7 +8,7 @@ import {
   BloodRequestsCard,
 } from "@/components";
 import { useRouter } from "next/navigation";
-import { FaTint, FaClock, FaTruck } from "react-icons/fa";
+import { FaTint, FaClock, FaFlask } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 import {
   useGetCountsMutation,
@@ -178,9 +178,9 @@ export default function HomePage() {
           icon={<FaClock />}
         />
         <StatCard
-          title="In Transit"
-          count={countsLoading ? "…" : countsData?.transitRecords ?? 0}
-          icon={<FaTruck />}
+          title="Pending Tests"
+          count={46}
+          icon={<FaFlask />}
         />
       </div>
 
