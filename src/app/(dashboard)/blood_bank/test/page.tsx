@@ -43,21 +43,21 @@ export default function TestPage() {
           iconBgColor="#F8F9FA"
           heading="Tests Done This Month"
           body="Blood units that tested for safety screening"
-          count={testsDoneThisMonth}
+          count={88}
           icon={<FaClipboardCheck className="w-6 h-6 text-gray-600" />}
         />
         <MetricCard
           iconBgColor="#F0FDF4"
           heading="Pass Tests This Month"
           body="Blood units that passed safety screening"
-          count={testsPassedThisMonth}
+          count={84}
           icon={<FaCheckCircle className="w-6 h-6 text-green-600" />}
         />
         <MetricCard
           iconBgColor="#FEF2F2"
           heading="Fail Tests This Month"
           body="Blood units that failed safety screening"
-          count={failedTestsThisMonth}
+          count={4}
           icon={<FaExclamationTriangle className="w-6 h-6 text-red-600" />}
         />
       </div>

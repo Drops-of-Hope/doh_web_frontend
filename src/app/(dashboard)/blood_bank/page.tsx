@@ -17,7 +17,6 @@ import {
 } from "@/store/api/bloodBankHomeApi";
 import { useGetIncomingPendingRequestsQuery } from "@/store/api/RequestsApi";
 
-
 export default function HomePage() {
   const router = useRouter();
   const { data: session } = useSession();

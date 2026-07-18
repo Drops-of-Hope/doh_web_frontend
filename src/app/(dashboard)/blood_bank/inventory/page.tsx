@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 
 export default function InventoryPage() {
   const [showOnlyExpired, setShowOnlyExpired] = React.useState(false);
-  const inventory_id = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+  const inventory_id = "3d24eb85-1b4b-4055-8f94-a712fa4ff1d3";
   const router = useRouter();
 
   // Fetch stock counts on mount

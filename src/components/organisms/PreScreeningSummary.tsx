@@ -65,7 +65,7 @@ const PreScreeningSummary: React.FC<PreScreeningSummaryProps> = ({ formData }) =
 
   return (
     <div
-      className={`border-l-4 rounded-md p-4 mb-6 ${
+      className={`rounded-md p-4 mb-6 ${
         result.status === "Risky (Not Fit)"
           ? "border-red-500 bg-red-50 text-red-700"
           : result.status === "Further Review Needed"

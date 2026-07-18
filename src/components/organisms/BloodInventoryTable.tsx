@@ -35,7 +35,7 @@ export default function BloodInventoryTable({
   //     skip: !medicalEstablishmentId,
   //   });
 
-  const inventoryId = "3d24eb85-dg27-4055-8f94-a712fa4ff1d2";
+  const inventoryId = "3d24eb85-1b4b-4055-8f94-a712fa4ff1d3";
 
   // POST: fetch blood units by inventory (hardcoded inventory id)
   const [
