@@ -28,35 +28,36 @@ const PreScreeningFormDisplay: React.FC<PreScreeningFormDisplayProps> = ({ formD
     const questions = screeningQuestions;
 
     questions.forEach(question => {
-      const currentAnswer = formData[question.key as keyof typeof formData] as string;
-      const previousAnswers: Array<{ date: string; answer: string; id: string; isInconsistent: boolean }> = [];
-      let hasInconsistency = false;
+  const rawCurrent = formData[question.key as keyof typeof formData];
+  const currentAnswer = typeof rawCurrent === 'boolean' ? boolToYesNo(rawCurrent) : (rawCurrent as string);
+  const previousAnswers: Array<{ date: string; answer: string; id: string; isInconsistent: boolean }> = [];
+  let hasInconsistency = false;
 
-      mockPreviousResponses.forEach(prevResponse => {
-        const prevAnswer = prevResponse.responses[question.key as keyof typeof prevResponse.responses];
-        const isInconsistent = prevAnswer !== currentAnswer;
-        
-        if (isInconsistent) {
-          hasInconsistency = true;
-        }
-        
-        previousAnswers.push({
-          date: prevResponse.date,
-          answer: prevAnswer,
-          id: prevResponse.id,
-          isInconsistent
-        });
-      });
+  mockPreviousResponses.forEach(prevResponse => {
+    const prevAnswer = prevResponse.responses[question.key as keyof typeof prevResponse.responses];
+    const isInconsistent = prevAnswer?.toLowerCase() !== currentAnswer?.toLowerCase();
 
-      if (hasInconsistency) {
-        inconsistencies.push({
-          questionNumber: question.number,
-          question: question.text,
-          currentAnswer,
-          previousAnswers
-        });
-      }
+    if (isInconsistent) {
+      hasInconsistency = true;
+    }
+
+    previousAnswers.push({
+      date: prevResponse.date,
+      answer: prevAnswer,
+      id: prevResponse.id,
+      isInconsistent
     });
+  });
+
+  if (hasInconsistency) {
+    inconsistencies.push({
+      questionNumber: question.number,
+      question: question.text,
+      currentAnswer,
+      previousAnswers
+    });
+  }
+});
 
     return inconsistencies;
   };

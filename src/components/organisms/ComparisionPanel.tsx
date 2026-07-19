@@ -75,7 +75,7 @@ const PreScreeningComparisonPanel: React.FC<ComparisonPanelProps> = ({
 
                     <div className="space-y-2">
                       <div className="bg-blue-50 border border-blue-200 rounded p-2">
-                        <div className="text-xs text-blue-700 font-medium">Current (Mar 15, 2024)</div>
+                        <div className="text-xs text-blue-700 font-medium">Current (July 19, 2026)</div>
                         <div className="text-sm text-blue-900">{inconsistency.currentAnswer}</div>
                       </div>
 

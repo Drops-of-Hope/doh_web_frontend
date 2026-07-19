@@ -25,9 +25,6 @@ export default function TestPage() {
   }, [fetchCounts]);
 
   const untestedUnits = data?.untested_units ?? 0;
-  const testsDoneThisMonth = data?.tests_done_this_month ?? 0;
-  const testsPassedThisMonth = data?.tests_passed_this_month ?? 0;
-  const failedTestsThisMonth = data?.failed_tests_this_month ?? 0;
 
   return (
     <div className="min-h-[100vh] p-4 pt-0 bg-[#f8f8f8]">
