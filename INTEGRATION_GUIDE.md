@@ -5,16 +5,14 @@ A Python/Flask API (`api_server.py`) that serves blood demand predictions
 from 3 trained XGBoost models. This doc tells you how to run it and how
 to call it from the app.
 
-## ⚠️ Data status (read before wiring anything to production)
-The 3 models are currently trained on **placeholder/estimated data**
-(`RCC_Issues_est`, `Blood_Requests_est`, `Total_Component_Issues_est` in
-`training_data.csv`), not real reported figures — the source reports only
-had true monthly granularity for donation collection, not for
-requests/issues. The API and app integration below are fully functional,
-but the numbers returned are **demo values**, not production-accurate,
-until `raw_monthly_demand.csv` is replaced with real monthly data and the
-models are retrained (`python3 train_model.py`). Do not present these
-numbers to real users as forecasts without doing that swap first.
+## ⚠️ Data policy (read before wiring anything to production)
+The pipeline is **real-data-only**. No estimated/placeholder values are ever
+used for training. Training data is aggregated from actual records on the main
+backend (`http://localhost:5000`) or its database; anything the real data
+cannot honestly support returns the documented `insufficient_data` 422 error
+(see below) instead of a fabricated number. Models require at least
+`MIN_HISTORY_MONTHS` (default 12) real months per series/entity before they
+are trained; until then the endpoints self-report the gap.
 
 ## Files needed to run the server
 Put these in the same folder:
@@ -95,7 +93,10 @@ Example: `GET /forecast?start_year=2025&start_month=January&months=6`
 ### `GET /why?target=Blood_Requests_est`
 Feature importance for one model — use for a "why this forecast?"
 tooltip/expander. `target` must be one of `Blood_Requests_est`,
-`RCC_Issues_est`, `Total_Component_Issues_est`.
+`RCC_Issues_est`, `Total_Component_Issues_est`, or a group target
+(`Group_Demand_est`, …). For group targets an optional
+`blood_group=O+` selects that group's model (features/metrics are
+per-group); without it, the request behaves exactly as before.
 
 ```json
 {
@@ -109,6 +110,63 @@ tooltip/expander. `target` must be one of `Blood_Requests_est`,
   ]
 }
 ```
+
+### `GET /forecast/group?start_year=YYYY&start_month=MonthName&months=N&blood_group=<optional>`
+Per-blood-group demand forecast (Feature 1). `blood_group` accepts short
+form (`O+`) or underscore form (`O_POSITIVE`); responses always use short
+form. Omitting `blood_group` forecasts all eligible groups. Each point is
+an existing `ForecastDataPoint` extended with `blood_group`, `target`, and
+`wastage_est` / `wastage_confidence_range` when the wastage model exists.
+Groups with fewer than 12 real months are reported under `excluded` rather
+than invented.
+
+### `GET /netposition?start_year=YYYY&start_month=MonthName&months=N`
+Supply / demand / wastage projection (Features 2+3). The per-group-per-month
+array is the top-level **`positions`** key (confirmed contract — do not look
+for `series`/`projection`). Each position:
+
+```json
+{
+  "months_forecast": 3, "start_year": 2026, "start_month": "August",
+  "as_of_utc": "2026-08-12T15:03:56.017325+00:00",
+  "opening_stock_definition": "SAFE, unexpired, unconsumed/un-disposed units",
+  "opening_stock": { "O+": 23, "A+": 22, "B+": 62, "AB+": 10, "O-": 3, "A-": 3, "B-": 4, "AB-": 2 },
+  "positions": [
+    {
+      "year": 2026, "month": "August", "blood_group": "O+",
+      "opening_stock": 23,
+      "supply_est": 28, "supply_confidence_range": [20, 36],
+      "demand_est": 12, "demand_confidence_range": [8, 16],
+      "wastage_est": 3, "wastage_confidence_range": [1, 5],
+      "net_position": 36
+    }
+  ],
+  "excluded": [{ "blood_group": "AB-", "error": "insufficient_data", "detail": "…" }]
+}
+```
+
+`opening_stock` is a real snapshot; month 1 uses it directly, later months
+chain from the previous `net_position`. `net_position` =
+`opening_stock + supply_est − demand_est − wastage_est`. Confidence ranges
+are suffixed per metric (`supply_confidence_range`, `demand_confidence_range`,
+`wastage_confidence_range`) — matching `/forecast/group`'s
+`wastage_confidence_range` convention.
+
+### Insufficient real data (`422`)
+When a series has fewer than `MIN_HISTORY_MONTHS` real months, endpoints
+return `422` with:
+
+```json
+{ "error": "insufficient_data", "detail": "<real counts, plain text>",
+  "target": "…", "blood_group": "…", "excluded": [ … ], "targets_missing": [ … ] }
+```
+
+Extra keys appear only when applicable. The frontend renders `error ===
+"insufficient_data"` as a distinct "not enough real data yet" state and
+reads `detail` directly. Parameter mistakes keep the legacy `400`
+`{"error": "…"}` shape. Every aggregate/group endpoint returns a 200 only
+once real-data models exist; the proxies `/api/forecast/{type}` and
+`/api/forecast/group` relay status codes unchanged.
 
 ## UI suggestions (map directly to fields above)
 - **Headline number**: `predicted`, formatted with commas.

@@ -25,6 +25,7 @@ import {
   FaInfoCircle,
   FaChevronDown,
   FaChevronUp,
+  FaExchangeAlt,
 } from "react-icons/fa";
 
 // ─── API Types ───────────────────────────────────────────────────────────────
@@ -78,6 +79,69 @@ interface WhyResponse {
   model_mae: number;
   model_r2: number;
   feature_importance: FeatureImportanceItem[];
+  blood_group?: string;
+  status?: string;
+}
+
+// Feature 1 — per-blood-group demand forecast (GET /forecast/group)
+interface GroupForecastPoint extends ForecastDataPoint {
+  target: string;
+  blood_group: string;
+  wastage_est?: number;
+  wastage_confidence_range?: [number, number];
+}
+
+interface GroupForecastResponse {
+  months_forecast: number;
+  start_year: number;
+  start_month: string;
+  blood_group: string | null;
+  target: string;
+  forecast?: GroupForecastPoint[];
+  excluded?: Array<{ blood_group: string; error?: string; detail?: string }>;
+  error?: string;
+  detail?: string;
+  targets_missing?: string[];
+}
+
+// Features 2+3 — supply / demand / wastage net position (GET /netposition)
+interface NetPositionPoint {
+  year?: number;
+  month: string;
+  blood_group: string;
+  opening_stock: number;
+  supply_est: number;
+  supply_confidence_range?: [number, number];
+  demand_est: number;
+  demand_confidence_range?: [number, number];
+  wastage_est: number;
+  wastage_confidence_range?: [number, number];
+  net_position: number;
+}
+
+interface NetPositionResponse {
+  months_forecast: number;
+  start_year: number;
+  start_month: string;
+  as_of_utc?: string;
+  opening_stock_definition?: string;
+  opening_stock?: Record<string, number>;
+  positions?: NetPositionPoint[];
+  excluded?: Array<{ blood_group: string; error?: string; detail?: string }>;
+  error?: string;
+  detail?: string;
+  targets_missing?: string[];
+}
+
+// Insufficient-data error payload (422) from the backend
+interface InsufficientBody {
+  error?: string;
+  detail?: string;
+  target?: string;
+  blood_group?: string;
+  targets_missing?: string[];
+  insufficient?: Array<{ target?: string; detail?: string }>;
+  excluded?: Array<{ blood_group?: string; error?: string; detail?: string }>;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -93,10 +157,22 @@ const buildForecastUrl = (year: number, month: string, months: number) =>
 const buildWhyUrl = (target: string) =>
   `${API_BASE}/why?target=${encodeURIComponent(target)}`;
 
+const buildGroupForecastUrl = (year: number, month: string, months: number, bloodGroup: string | null) =>
+  `${API_BASE}/group?start_year=${year}&start_month=${encodeURIComponent(month)}&months=${months}${
+    bloodGroup ? `&blood_group=${encodeURIComponent(bloodGroup)}` : ""
+  }`;
+
+const buildNetPositionUrl = (year: number, month: string, months: number) =>
+  `${API_BASE}/netposition?start_year=${year}&start_month=${encodeURIComponent(month)}&months=${months}`;
+
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
+
+const BLOOD_GROUPS = ["O+", "A+", "B+", "AB+", "O-", "A-", "B-", "AB-"] as const;
+
+const GROUP_COLORS = ["#CE121A", "#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899", "#14B8A6", "#64748B"];
 
 const TARGET_LABELS: Record<string, string> = {
   Blood_Requests_est: "Blood Requests",
@@ -131,6 +207,32 @@ function formatNum(n: number) {
 function getCurrentYearMonth() {
   const now = new Date();
   return { year: now.getFullYear(), month: MONTHS[now.getMonth()] };
+}
+
+// Extract human-readable lines from a 422 insufficient_data response (or null otherwise)
+function collectInsufficient(body: Partial<InsufficientBody> | null | undefined): string[] | null {
+  if (!body || body.error !== "insufficient_data") return null;
+  const lines: string[] = [];
+  if (typeof body.detail === "string" && body.detail) lines.push(body.detail);
+  if (Array.isArray(body.insufficient)) {
+    body.insufficient.forEach((it) => {
+      if (it?.detail) lines.push(it.target ? `${it.target}: ${it.detail}` : it.detail);
+    });
+  }
+  if (Array.isArray(body.excluded)) {
+    body.excluded.forEach((it) => {
+      if (it?.detail) lines.push(it.blood_group ? `${it.blood_group}: ${it.detail}` : it.detail);
+    });
+  }
+  if (Array.isArray(body.targets_missing) && body.targets_missing.length > 0) {
+    lines.push(`Models required: ${body.targets_missing.join(", ")}`);
+  }
+  return lines.length > 0 ? lines : null;
+}
+
+function getNetSeries(resp: NetPositionResponse | null): NetPositionPoint[] {
+  if (!resp?.positions) return [];
+  return resp.positions;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -270,21 +372,28 @@ interface WhyExpanderProps {
 const WhyExpander: React.FC<WhyExpanderProps> = ({ target }) => {
   const [open, setOpen] = React.useState(false);
   const [data, setData] = React.useState<WhyResponse | null>(null);
+  const [note, setNote] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
   const load = async () => {
-    if (data) { setOpen((o) => !o); return; }
+    if (data || note) { setOpen((o) => !o); return; }
     setLoading(true);
     try {
       const res = await fetch(buildWhyUrl(target));
-      if (res.ok) setData(await res.json());
+      const body: Partial<InsufficientBody> = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setData(body as WhyResponse);
+      } else {
+        const ins = collectInsufficient(body);
+        setNote(ins ? ins.join(" ") : (body.error ?? `Error ${res.status}`));
+      }
     } catch { /* ignore */ } finally {
       setLoading(false);
       setOpen(true);
     }
   };
 
-  const top3 = data?.feature_importance.slice(0, 5) ?? [];
+  const top3 = data?.feature_importance?.slice(0, 5) ?? [];
   const maxImp = top3[0]?.importance ?? 1;
 
   return (
@@ -299,6 +408,7 @@ const WhyExpander: React.FC<WhyExpanderProps> = ({ target }) => {
       {open && (
         <div className="mt-3 p-3 bg-white/70 rounded-xl border border-white">
           {loading && <p className="text-xs text-gray-400">Loading model insights…</p>}
+          {note && <p className="text-xs text-amber-600">{note}</p>}
           {data && (
             <>
               <p className="text-xs text-gray-500 mb-3">
@@ -324,7 +434,7 @@ const WhyExpander: React.FC<WhyExpanderProps> = ({ target }) => {
 
 // ─── Tab Definitions ──────────────────────────────────────────────────────────
 
-type Tab = "overview" | "trends" | "insights";
+type Tab = "overview" | "trends" | "insights" | "supply";
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
@@ -336,27 +446,36 @@ const ForecastDashboard: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = React.useState(defaultMonth);
   const [forecastMonths, setForecastMonths] = React.useState(6);
   const [activeTab, setActiveTab] = React.useState<Tab>("overview");
+  const [selectedBloodGroup, setSelectedBloodGroup] = React.useState<string | null>(null);
 
   // Data
   const [predictData, setPredictData] = React.useState<PredictResponse | null>(null);
   const [forecastData, setForecastData] = React.useState<ForecastResponse | null>(null);
+  const [groupForecastData, setGroupForecastData] = React.useState<GroupForecastResponse | null>(null);
+  const [netPositionData, setNetPositionData] = React.useState<NetPositionResponse | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [insufficientLines, setInsufficientLines] = React.useState<string[] | null>(null);
 
   // ── Fetch single-month prediction ──────────────────────────────────────────
   const fetchPredict = React.useCallback(async () => {
     setLoading(true);
     setError(null);
+    setInsufficientLines(null);
     try {
       const res = await fetch(buildPredictUrl(selectedYear, selectedMonth), {
         cache: "no-store",
         headers: { Accept: "application/json" },
       });
+      const body: Partial<InsufficientBody> = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Error ${res.status}`);
+        const ins = collectInsufficient(body);
+        if (ins) setInsufficientLines(ins);
+        else setError(body.error ?? `Error ${res.status}`);
+        setPredictData(null);
+        return;
       }
-      setPredictData(await res.json());
+      setPredictData(body as PredictResponse);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to fetch prediction");
       setPredictData(null);
@@ -369,16 +488,21 @@ const ForecastDashboard: React.FC = () => {
   const fetchForecast = React.useCallback(async () => {
     setLoading(true);
     setError(null);
+    setInsufficientLines(null);
     try {
       const res = await fetch(buildForecastUrl(selectedYear, selectedMonth, forecastMonths), {
         cache: "no-store",
         headers: { Accept: "application/json" },
       });
+      const body: Partial<InsufficientBody> = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Error ${res.status}`);
+        const ins = collectInsufficient(body);
+        if (ins) setInsufficientLines(ins);
+        else setError(body.error ?? `Error ${res.status}`);
+        setForecastData(null);
+        return;
       }
-      setForecastData(await res.json());
+      setForecastData(body as ForecastResponse);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to fetch forecast");
       setForecastData(null);
@@ -387,11 +511,70 @@ const ForecastDashboard: React.FC = () => {
     }
   }, [selectedYear, selectedMonth, forecastMonths]);
 
+  // ── Fetch per-blood-group demand forecast ──────────────────────────────────
+  const fetchGroupForecast = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setInsufficientLines(null);
+    try {
+      const res = await fetch(
+        buildGroupForecastUrl(selectedYear, selectedMonth, forecastMonths, selectedBloodGroup),
+        { cache: "no-store", headers: { Accept: "application/json" } }
+      );
+      const body: Partial<InsufficientBody> = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const ins = collectInsufficient(body);
+        if (ins) setInsufficientLines(ins);
+        else setError(body.error ?? `Error ${res.status}`);
+        setGroupForecastData(null);
+        return;
+      }
+      setGroupForecastData(body as GroupForecastResponse);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to fetch group forecast");
+      setGroupForecastData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedYear, selectedMonth, forecastMonths, selectedBloodGroup]);
+
+  // ── Fetch net position (supply / demand / wastage) ─────────────────────────
+  const fetchNetPosition = React.useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setInsufficientLines(null);
+    try {
+      const res = await fetch(buildNetPositionUrl(selectedYear, selectedMonth, forecastMonths), {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      });
+      const body: Partial<InsufficientBody> = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const ins = collectInsufficient(body);
+        if (ins) setInsufficientLines(ins);
+        else setError(body.error ?? `Error ${res.status}`);
+        setNetPositionData(null);
+        return;
+      }
+      setNetPositionData(body as NetPositionResponse);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to fetch net position");
+      setNetPositionData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedYear, selectedMonth, forecastMonths]);
+
   // Initial load & re-fetch on param changes
   React.useEffect(() => {
     if (activeTab === "overview") fetchPredict();
-    if (activeTab === "trends" || activeTab === "insights") fetchForecast();
-  }, [activeTab, fetchPredict, fetchForecast]);
+    if (activeTab === "trends") {
+      if (selectedBloodGroup) fetchGroupForecast();
+      else fetchForecast();
+    }
+    if (activeTab === "insights") fetchForecast();
+    if (activeTab === "supply") fetchNetPosition();
+  }, [activeTab, fetchPredict, fetchForecast, fetchGroupForecast, fetchNetPosition, selectedBloodGroup]);
 
   // ── Prepare chart data ─────────────────────────────────────────────────────
   const chartData = React.useMemo(() => {
@@ -413,6 +596,33 @@ const ForecastDashboard: React.FC = () => {
     }));
   }, [forecastData]);
 
+  // ── Prepare single-group forecast chart data ───────────────────────────────
+  const groupChartData = React.useMemo(() => {
+    if (!groupForecastData?.forecast) return [];
+    return groupForecastData.forecast.map((p) => ({
+      month: p.month,
+      "Predicted": p.predicted,
+      "Lower": p.confidence_range[0],
+      "Upper": p.confidence_range[1],
+      "Wastage": p.wastage_est,
+    }));
+  }, [groupForecastData]);
+
+  const showGroupWastage = groupChartData.some((d) => d.Wastage != null);
+
+  // ── Prepare net position chart data (per-group net lines by month) ────────
+  const netChartData = React.useMemo(() => {
+    const pts = getNetSeries(netPositionData);
+    if (pts.length === 0) return [];
+    const byMonth = new Map<string, Record<string, number>>();
+    pts.forEach((p) => {
+      const row = byMonth.get(p.month) ?? {};
+      row[p.blood_group] = p.net_position;
+      byMonth.set(p.month, row);
+    });
+    return [...byMonth.entries()].map(([month, row]) => ({ month, ...row }));
+  }, [netPositionData]);
+
   // ── Year options (current ± 2) ─────────────────────────────────────────────
   const yearOptions = [defaultYear - 1, defaultYear, defaultYear + 1, defaultYear + 2];
 
@@ -420,6 +630,7 @@ const ForecastDashboard: React.FC = () => {
     { id: "overview", label: "Overview", icon: <FaTint size={13} /> },
     { id: "trends", label: "Forecast Trends", icon: <FaChartLine size={13} /> },
     { id: "insights", label: "Model Insights", icon: <FaBrain size={13} /> },
+    { id: "supply", label: "Supply Outlook", icon: <FaExchangeAlt size={13} /> },
   ];
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -488,9 +699,32 @@ const ForecastDashboard: React.FC = () => {
             </div>
           )}
 
+          {/* Blood group (only for per-group forecast) */}
+          {activeTab === "trends" && (
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-gray-600">Blood Group</label>
+              <select
+                className="text-sm border-2 border-gray-200 rounded-lg px-3 py-2 bg-white hover:border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100 transition-all font-medium text-gray-700"
+                value={selectedBloodGroup ?? "ALL"}
+                onChange={(e) => setSelectedBloodGroup(e.target.value === "ALL" ? null : e.target.value)}
+              >
+                <option value="ALL">All Groups</option>
+                {BLOOD_GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+          )}
+
           {/* Fetch button */}
           <button
-            onClick={activeTab === "overview" ? fetchPredict : fetchForecast}
+            onClick={() => {
+              if (activeTab === "overview") fetchPredict();
+              else if (activeTab === "trends") {
+                if (selectedBloodGroup) fetchGroupForecast();
+                else fetchForecast();
+              }
+              else if (activeTab === "supply") fetchNetPosition();
+              else fetchForecast();
+            }}
             disabled={loading}
             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 disabled:opacity-60 text-white font-semibold text-sm px-5 py-2 rounded-lg shadow-sm transition-colors"
           >
@@ -524,6 +758,23 @@ const ForecastDashboard: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {/* ── Insufficient real-data state (422) ── */}
+      {insufficientLines && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 flex items-start gap-2">
+          <FaInfoCircle className="text-amber-500 mt-0.5 flex-shrink-0" size={14} />
+          <div>
+            <p className="text-sm font-semibold text-amber-700">Not enough real data yet</p>
+            {insufficientLines.map((l, i) => (
+              <p key={i} className="text-xs text-amber-600 mt-1">{l}</p>
+            ))}
+            <p className="text-xs text-amber-500 mt-2">
+              Forecasts are trained on real records only. Once enough history accumulates, models
+              retrain automatically and this view will populate.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ── Error state ── */}
       {error && (
@@ -622,11 +873,11 @@ const ForecastDashboard: React.FC = () => {
       {/* ════════════════════════════════════════════════════════ TREND CHARTS */}
       {activeTab === "trends" && (
         <div className="space-y-5">
-          {loading && !forecastData && (
+          {!selectedBloodGroup && loading && !forecastData && (
             <div className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
           )}
 
-          {forecastData && chartData.length > 0 && (
+          {!selectedBloodGroup && forecastData && chartData.length > 0 && (
             <>
               {/* Combined overview chart */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -739,6 +990,100 @@ const ForecastDashboard: React.FC = () => {
               </div>
             </>
           )}
+
+          {/* ── Per-blood-group forecast (when a group is selected) ── */}
+          {selectedBloodGroup && (
+            <>
+              {loading && !groupForecastData && (
+                <div className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
+              )}
+
+              {groupForecastData && groupChartData.length > 0 && (
+                <>
+                  {/* Group demand chart with confidence band + wastage */}
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div className="mb-4">
+                      <h3 className="font-semibold text-gray-800">{selectedBloodGroup} — {forecastMonths}-Month Forecast</h3>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Starting {selectedMonth} {selectedYear} · Target: {groupForecastData.target}
+                      </p>
+                    </div>
+                    <div className="h-72">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={groupChartData} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
+                          <defs>
+                            <linearGradient id="grad-group" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#CE121A" stopOpacity={0.15} />
+                              <stop offset="95%" stopColor="#CE121A" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                          <XAxis dataKey="month" tick={{ fontSize: 11 }} axisLine={{ stroke: "#e0e0e0" }} tickLine={false} />
+                          <YAxis tick={{ fontSize: 11 }} axisLine={{ stroke: "#e0e0e0" }} tickLine={false} width={55} tickFormatter={(v) => v.toLocaleString()} />
+                          <Tooltip content={<ForecastTooltip />} />
+                          <Area type="monotone" dataKey="Upper" stroke="none" fill="#CE121A" fillOpacity={0.08} legendType="none" name="Upper Bound" />
+                          <Area type="monotone" dataKey="Lower" stroke="none" fill="#ffffff" fillOpacity={1} legendType="none" name="Lower Bound" />
+                          <Area type="monotone" dataKey="Predicted" stroke="#CE121A" strokeWidth={2.5} fill="url(#grad-group)" dot={{ r: 3, fill: "#CE121A" }} activeDot={{ r: 6 }} name="Predicted" />
+                          {showGroupWastage && (
+                            <Line type="monotone" dataKey="Wastage" stroke="#F59E0B" strokeWidth={1.5} strokeDasharray="4 3" dot={{ r: 2, fill: "#F59E0B" }} name="Proj. Wastage" />
+                          )}
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Group forecast data table */}
+                  <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-100">
+                      <h3 className="font-semibold text-gray-800 text-sm">Group Forecast Table — {selectedBloodGroup}</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            {["Blood Group", "Month", "Predicted", "Lower", "Upper", "Proj. Wastage", "Trend", "Risk"].map((h) => (
+                              <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {(groupForecastData.forecast ?? []).map((item, i) => (
+                            <tr key={i} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-4 py-3 font-semibold text-gray-700">{item.blood_group}</td>
+                              <td className="px-4 py-3 text-gray-700">{item.month}</td>
+                              <td className="px-4 py-3 font-bold text-gray-800">{formatNum(item.predicted)}</td>
+                              <td className="px-4 py-3 text-gray-600 text-xs">{formatNum(item.confidence_range[0])}</td>
+                              <td className="px-4 py-3 text-gray-600 text-xs">{formatNum(item.confidence_range[1])}</td>
+                              <td className="px-4 py-3 text-gray-600 text-xs">{item.wastage_est != null ? formatNum(item.wastage_est) : "—"}</td>
+                              <td className="px-4 py-3">
+                                <span className="flex items-center gap-1 text-xs font-medium text-gray-600">
+                                  <TrendIcon trend={item.trend_vs_prev_month} />
+                                  {item.trend_vs_prev_month.charAt(0).toUpperCase() + item.trend_vs_prev_month.slice(1)}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3">
+                                <RiskBadge risk={item.risk} />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Groups the backend could not forecast (no real history) */}
+                  {groupForecastData.excluded && groupForecastData.excluded.length > 0 && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                      <p className="text-xs font-semibold text-amber-700 mb-1">Groups excluded — insufficient real history</p>
+                      {groupForecastData.excluded.map((e, i) => (
+                        <p key={i} className="text-xs text-amber-600 mt-0.5">{e.blood_group}: {e.detail ?? e.error ?? "insufficient data"}</p>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </div>
       )}
 
@@ -784,6 +1129,125 @@ const ForecastDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ════════════════════════════════════════════════════════ SUPPLY OUTLOOK */}
+      {activeTab === "supply" && (
+        <div className="space-y-5">
+          {loading && !netPositionData && (
+            <div className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
+          )}
+
+          {netPositionData && (
+            <>
+              {/* Opening stock snapshot */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div className="mb-4">
+                  <h3 className="font-semibold text-gray-800">Starting Stock (real snapshot)</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {netPositionData.as_of_utc ? `As of ${netPositionData.as_of_utc}` : "Current safe units"}
+                    {netPositionData.opening_stock_definition
+                      ? ` · ${netPositionData.opening_stock_definition}`
+                      : ""}
+                    <span className="block mt-0.5">Projected net = opening + supply − demand − wastage</span>
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(netPositionData.opening_stock ?? {}).map(([g, n]) => (
+                    <span
+                      key={g}
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${
+                        n > 0 ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"
+                      }`}
+                    >
+                      {g}: {n} unit{n === 1 ? "" : "s"}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Net position chart */}
+              {netChartData.length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                  <div className="mb-4">
+                    <h3 className="font-semibold text-gray-800">Projected Net Position — {forecastMonths}-Month Outlook</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">Starting {selectedMonth} {selectedYear}. A falling line means the group will run short.</p>
+                  </div>
+                  <div className="h-72">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={netChartData} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <XAxis dataKey="month" tick={{ fontSize: 11 }} axisLine={{ stroke: "#e0e0e0" }} tickLine={false} />
+                        <YAxis tick={{ fontSize: 11 }} axisLine={{ stroke: "#e0e0e0" }} tickLine={false} width={55} tickFormatter={(v) => v.toLocaleString()} />
+                        <Tooltip content={<ForecastTooltip />} />
+                        <Legend wrapperStyle={{ fontSize: "12px" }} iconType="circle" />
+                        {Object.keys(netChartData[0] ?? {})
+                          .filter((k) => k !== "month")
+                          .map((g, i) => (
+                            <Line
+                              key={g}
+                              type="monotone"
+                              dataKey={g}
+                              stroke={GROUP_COLORS[i % GROUP_COLORS.length]}
+                              strokeWidth={2}
+                              dot={{ r: 2.5 }}
+                              activeDot={{ r: 5 }}
+                              name={g}
+                            />
+                          ))}
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              )}
+
+              {/* Net position table */}
+              {getNetSeries(netPositionData).length > 0 && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-100">
+                    <h3 className="font-semibold text-gray-800 text-sm">Projected Stock Balance</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          {["Blood Group", "Month", "Opening", "Supply (est)", "Demand (est)", "Wastage (est)", "Net Position"].map((h) => (
+                            <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {getNetSeries(netPositionData).map((p, i) => (
+                          <tr key={i} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-4 py-3 font-semibold text-gray-700">{p.blood_group}</td>
+                            <td className="px-4 py-3 text-gray-700">{p.month}{p.year ? ` ${p.year}` : ""}</td>
+                            <td className="px-4 py-3 text-gray-600">{formatNum(p.opening_stock)}</td>
+                            <td className="px-4 py-3 text-gray-700">{formatNum(p.supply_est)}</td>
+                            <td className="px-4 py-3 text-gray-700">{formatNum(p.demand_est)}</td>
+                            <td className="px-4 py-3 text-gray-700">{formatNum(p.wastage_est)}</td>
+                            <td className={`px-4 py-3 font-bold ${p.net_position < 0 ? "text-red-600" : "text-green-700"}`}>
+                              {formatNum(p.net_position)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Groups the backend could not project (no real history) */}
+              {netPositionData.excluded && netPositionData.excluded.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                  <p className="text-xs font-semibold text-amber-700 mb-1">Groups excluded — insufficient real history</p>
+                  {netPositionData.excluded.map((e, i) => (
+                    <p key={i} className="text-xs text-amber-600 mt-0.5">{e.blood_group}: {e.detail ?? e.error ?? "insufficient data"}</p>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -792,20 +1256,34 @@ const ForecastDashboard: React.FC = () => {
 
 const InsightCard: React.FC<{ target: string }> = ({ target }) => {
   const [data, setData] = React.useState<WhyResponse | null>(null);
+  const [note, setNote] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setNote(null);
     fetch(buildWhyUrl(target), {
       cache: "no-store",
       headers: { Accept: "application/json" },
     })
-      .then((r) => r.json())
-      .then(setData)
+      .then(async (r) => {
+        const body: Partial<InsufficientBody> = await r.json().catch(() => ({}));
+        if (!active) return;
+        if (!r.ok) {
+          const ins = collectInsufficient(body);
+          if (ins) setNote(ins.join(" "));
+          else setData(body as WhyResponse);
+          return;
+        }
+        setData(body as WhyResponse);
+      })
       .catch(() => { /* ignore */ })
-      .finally(() => setLoading(false));
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [target]);
 
-  const top5 = data?.feature_importance.slice(0, 5) ?? [];
+  const top5 = data?.feature_importance?.slice(0, 5) ?? [];
   const maxImp = top5[0]?.importance ?? 1;
 
   return (
@@ -821,6 +1299,13 @@ const InsightCard: React.FC<{ target: string }> = ({ target }) => {
       </div>
 
       {loading && <div className="h-24 bg-gray-100 rounded-xl animate-pulse" />}
+
+      {note && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
+          <FaInfoCircle className="text-amber-500 mt-0.5 flex-shrink-0" size={12} />
+          <p className="text-xs text-amber-600">{note}</p>
+        </div>
+      )}
 
       {data && (
         <>
