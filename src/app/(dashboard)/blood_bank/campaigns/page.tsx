@@ -1,13 +1,15 @@
 "use client";
 import React, { useMemo } from 'react';
 import { MetricCard, CampaignRequestsCard } from '@/components';
-import { FaExclamationTriangle, FaClock, FaTrophy, FaUsers } from 'react-icons/fa';
+import { FaExclamationTriangle, FaClock, FaTrophy, FaUsers, FaFileAlt } from 'react-icons/fa';
 import { useGetPendingCampaignsByMedicalEstablishmentQuery, useGetUpcomingCampaignsByMedicalEstablishmentQuery, useGetCampaignSummaryByMedicalEstablishmentQuery, useGetCompletedCampaignsByMedicalEstablishmentQuery } from '@/store/api/campaignsApi';
 import type { CampaignDto, CompletedCampaignDto } from '@/store/api/campaignsApi';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function CampaignPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const medicalEstablishmentId = session?.decodedIdToken?.sub;
 
   const { data: pendingData, isLoading: pendingLoading, isError: pendingError } =
@@ -102,7 +104,16 @@ export default function CampaignPage() {
         <MetricCard heading="Total Campaigns Held" body="All time campaigns" count={summaryData?.data?.totalCampaignsHeld ?? 0} icon={<FaTrophy className="text-white" />} iconBgColor="#9B59B6" />
         <MetricCard heading="Total Campaign Donors" body="From recent campaigns" count={summaryData?.data?.totalCampaignDonors ?? 0} icon={<FaUsers className="text-white" />} iconBgColor="#27AE60" />
       </div>
-      <div className="flex justify-end mt-6">
+      <div className="flex justify-between items-center mt-6">
+        <div className="flex justify-end">
+          <button
+            onClick={() => router.push("/blood_bank/campaigns/reports")}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 shadow-sm flex items-center gap-2"
+          >
+            <FaFileAlt className="w-4 h-4" />
+            Generate Reports
+          </button>
+        </div>
         <button className="bg-[#FB7373] hover:bg-red-400 text-white font-medium rounded-lg px-4 py-2 transition-colors duration-200">Create Campaign</button>
       </div>
       <div className='flex flex-col gap-4'>
