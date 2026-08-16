@@ -34,7 +34,7 @@ interface PredictionResult {
   predicted: number;
   confidence_range: [number, number];
   same_month_last_year: number;
-  change_pct_vs_last_year: number;
+  change_pct_vs_last_year: number | null;
   trend_vs_prev_month: "up" | "down" | "flat";
   risk: "high" | "low" | "normal";
 }
@@ -55,7 +55,7 @@ interface ForecastDataPoint {
   predicted: number;
   confidence_range: [number, number];
   same_month_last_year: number;
-  change_pct_vs_last_year: number;
+  change_pct_vs_last_year: number | null;
   trend_vs_prev_month: "up" | "down" | "flat";
   risk: "high" | "low" | "normal";
 }
@@ -259,7 +259,14 @@ const RiskBadge: React.FC<{ risk: "high" | "low" | "normal" }> = ({ risk }) => {
   );
 };
 
-const YoYBadge: React.FC<{ pct: number; month: string; year: number }> = ({ pct, month, year }) => {
+const YoYBadge: React.FC<{ pct: number | null; month: string; year: number }> = ({ pct, month, year }) => {
+  if (pct === null || pct === undefined) {
+    return (
+      <span className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+        N/A vs {month.slice(0, 3)} {year - 1}
+      </span>
+    );
+  }
   const sign = pct >= 0 ? "+" : "";
   const isPositive = pct >= 0;
   return (
